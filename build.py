@@ -26,7 +26,18 @@ CACHE_DIR = os.environ.get("CACHE_DIR", ".cache")
 
 SLEEPER = "https://api.sleeper.app/v1"
 PROJ = "https://api.sleeper.com/projections/nfl"
+FP_API = "https://api.fantasypros.com/public/v2/json/nfl"
 UA = {"User-Agent": "sleeper-rankings (github.com/etanetan/sleeper-rankings)"}
+
+# Read from a repo secret, never committed. The site is public, so this must
+# stay server-side: a key shipped to the browser is a published key.
+FP_KEY = os.environ.get("FANTASYPROS_API_KEY", "").strip()
+
+# FantasyPros scoring codes, chosen per league from its own rec value.
+FP_SCORING = {"std": "STD", "half": "HALF", "ppr": "PPR"}
+# Positions whose rankings differ by scoring, and those that don't.
+FP_SCORED_POS = ["RB", "WR", "TE", "FLEX"]
+FP_SHARED_POS = ["QB", "K", "DST"]
 
 # Sleeper's own guidance for the player dump.
 PLAYERS_MAX_AGE = 20 * 3600
@@ -89,6 +100,9 @@ def load_players():
             team = (m.get("team") or "").upper()
         players[pid] = {
             "n": name, "p": pos, "t": team,
+            # Match key for joining against FantasyPros: normalized name, or
+            # the team abbreviation for defenses.
+            "k": team if pos == "DEF" else norm(name),
             "i": m.get("injury_status") or "", "b": m.get("bye_week"),
         }
     log(f"  -> {len(players)} fantasy-relevant players kept")
@@ -133,6 +147,98 @@ def fetch_projections(season, week):
     return out
 
 
+
+# --------------------------------------------------------------------------
+# FantasyPros consensus rankings (official API, key required)
+# --------------------------------------------------------------------------
+
+SUFFIXES = {"jr", "sr", "ii", "iii", "iv", "v"}
+
+
+def norm(name):
+    """Normalize a player name so Sleeper and FantasyPros spellings agree."""
+    import re
+    import unicodedata
+    name = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode()
+    name = name.lower().replace(".", "").replace("'", "").replace("-", " ")
+    parts = [p for p in re.split(r"\s+", name) if p and p not in SUFFIXES]
+    return " ".join(parts)
+
+
+def fp_get(season, week, position, scoring):
+    """One consensus-rankings call. Returns [] and logs rather than raising."""
+    url = (f"{FP_API}/{season}/consensus-rankings"
+           f"?position={position}&type=weekly&scoring={scoring}&week={week}")
+    try:
+        r = requests.get(url, headers={**UA, "x-api-key": FP_KEY}, timeout=45)
+    except requests.RequestException as e:
+        log(f"  [{position}/{scoring}] request failed: {e}")
+        return []
+    if r.status_code != 200:
+        # 401/403 means the key is missing, wrong or lacks this entitlement.
+        log(f"  [{position}/{scoring}] HTTP {r.status_code}: {r.text[:200]}")
+        return []
+    try:
+        payload = r.json()
+    except ValueError:
+        log(f"  [{position}/{scoring}] non-JSON response: {r.text[:200]}")
+        return []
+    players = payload.get("players")
+    if not players:
+        log(f"  [{position}/{scoring}] no players key; got {sorted(payload)[:10]}")
+        return []
+    return players
+
+
+def fp_table(season, week, position, scoring):
+    """{key: {rank, posRank, team}} for one position and scoring format."""
+    import re
+    rows = fp_get(season, week, position, scoring)
+    out = {}
+    for p in rows:
+        name = p.get("player_name") or ""
+        team = (p.get("player_team_id") or "").upper()
+        ppos = (p.get("player_position_id") or position).upper()
+        try:
+            rank = int(float(p.get("rank_ecr") or 0))
+        except (TypeError, ValueError):
+            continue
+        m = re.search(r"(\d+)", str(p.get("pos_rank") or ""))
+        key = team if ppos == "DST" else norm(name)
+        if not key:
+            continue
+        out[key] = {"rank": rank, "posRank": int(m.group(1)) if m else None,
+                    "team": team, "name": name}
+    log(f"  [{position}/{scoring}] {len(out)} ranked")
+    return out
+
+
+def fetch_rankings(season, week):
+    """
+    Consensus ranks for every position and scoring format.
+
+    Returns None when no key is configured, so the caller can fall back to
+    projection-derived ranks instead of failing the build.
+    """
+    if not FP_KEY:
+        log("FANTASYPROS_API_KEY not set - skipping consensus rankings")
+        return None
+
+    log(f"fetching FantasyPros consensus rankings (season={season} week={week})")
+    shared = {pos: fp_table(season, week, pos, "STD") for pos in FP_SHARED_POS}
+    formats = {}
+    for fmt, code in FP_SCORING.items():
+        formats[fmt] = {pos: fp_table(season, week, pos, code) for pos in FP_SCORED_POS}
+
+    total = (sum(len(t) for t in shared.values())
+             + sum(len(t) for f in formats.values() for t in f.values()))
+    if total == 0:
+        log("ERROR: the FantasyPros key produced no rankings at all")
+        return None
+    log(f"  -> {total} ranking rows")
+    return {"shared": shared, "formats": formats}
+
+
 def write(path, obj):
     with open(path, "w") as f:
         json.dump(obj, f, separators=(",", ":"))
@@ -157,12 +263,23 @@ def main():
             shutil.copy2(os.path.join(STATIC_DIR, f), os.path.join(OUT_DIR, f))
         log(f"copied static files from {STATIC_DIR}/")
 
+    write(f"{OUT_DIR}/data/players.json", players)
+    write(f"{OUT_DIR}/data/projections.json", projections)
+
+    rankings = fetch_rankings(season, week)
+    if rankings:
+        write(f"{OUT_DIR}/data/rankings.json", rankings)
+    else:
+        # No key, or the key failed. The page falls back to ranking by
+        # projected points, so the site still works - just without consensus.
+        log("publishing without consensus rankings; page will rank by projection")
+        write(f"{OUT_DIR}/data/rankings.json", {})
+
     write(f"{OUT_DIR}/data/meta.json", {
         "season": season, "week": week, "seasonType": state.get("season_type"),
         "generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "hasConsensus": bool(rankings),
     })
-    write(f"{OUT_DIR}/data/players.json", players)
-    write(f"{OUT_DIR}/data/projections.json", projections)
 
 
 if __name__ == "__main__":

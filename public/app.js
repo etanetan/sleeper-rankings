@@ -21,6 +21,12 @@ const SLOT_LABEL = {
   DEF: "DST", FLEX: "FLEX",
 };
 const POS_ORDER = ["QB", "RB", "WR", "TE", "K", "DEF"];
+// Sleeper -> FantasyPros team abbreviations.
+const TEAM_ALIAS = { JAX: "JAC", WAS: "WSH", LV: "LVR" };
+const FMT_OF = (settings) => {
+  const rec = (settings || {}).rec || 0;
+  return rec >= 0.75 ? "ppr" : rec >= 0.25 ? "half" : "std";
+};
 
 /* Sleeper sends full words ("Questionable"); show a short badge and decide
  * from the normalized form which statuses should sink in the lineup. */
@@ -85,16 +91,49 @@ function rankPositions(projections, players, settings) {
   return ranks;
 }
 
+/* Consensus ranks for one league, keyed by Sleeper player id.
+ *
+ * FantasyPros publishes by position and scoring format; pick the format that
+ * matches this league and index it by the same normalized key the build wrote
+ * into players.json. Returns null when no consensus data was published, so
+ * the caller falls back to ranking by projected points. */
+function consensusRanks(rankings, players, settings) {
+  if (!rankings || !rankings.shared) return null;
+  const fmt = FMT_OF(settings);
+  const scored = (rankings.formats || {})[fmt] || {};
+  const shared = rankings.shared || {};
+
+  const ranks = {};
+  for (const pid in players) {
+    const m = players[pid];
+    let hit = null;
+    if (m.p === "DEF") {
+      const t = shared.DST || {};
+      hit = t[m.k] || t[TEAM_ALIAS[m.k]] || null;
+    } else if (m.p === "QB" || m.p === "K") {
+      hit = (shared[m.p] || {})[m.k] || null;
+    } else {
+      hit = (scored[m.p] || {})[m.k] || null;
+    }
+    if (!hit || hit.posRank == null) continue;
+    const flex = (scored.FLEX || {})[m.k];
+    ranks[pid] = { posRank: hit.posRank, ecr: hit.rank,
+                   flexRank: flex ? flex.rank : null };
+  }
+  return Object.keys(ranks).length ? ranks : null;
+}
+
 function buildRoster(ids, players, ranks) {
   const out = [];
   for (const id of ids || []) {
     const meta = players[id];
     if (!meta) continue;
-    const r = ranks[id];
+    const r = ranks[id] || {};
     out.push({
       ...meta, id, status: normStatus(meta.i),
-      posRank: r ? r.posRank : null,
-      pts: r ? r.pts : null,
+      posRank: r.posRank != null ? r.posRank : null,
+      pts: r.pts != null ? r.pts : null,
+      flexRank: r.flexRank != null ? r.flexRank : null,
     });
   }
   return out;
@@ -105,11 +144,15 @@ function posKey(p) {
   const base = p.posRank != null ? p.posRank : 999;
   return base + (OUT_STATUSES.has(p.status) ? 500 : 0);
 }
-/* Across positions, compare projected points directly - they're all scored by
- * the same league settings, so they're on one scale. Negated so that lower is
- * better, matching posKey. */
+/* Cross-position ordering for flex slots. Consensus FLEX rank is the right
+ * yardstick when we have it: positional ranks from separate lists aren't
+ * comparable. Without it, projected points are, because every player on the
+ * page was scored by the same league settings. Negated points so that lower
+ * is better either way, matching posKey. */
 function flexKey(p) {
-  const base = p.pts != null ? -p.pts : 999;
+  const base = p.flexRank != null ? p.flexRank
+             : p.pts != null ? -p.pts
+             : 999;
   return base + (OUT_STATUSES.has(p.status) ? 5000 : 0);
 }
 
@@ -146,7 +189,8 @@ function pickLineup(roster, slots) {
 }
 
 if (typeof module !== "undefined") {
-  module.exports = { scoringLabel, scorePlayer, rankPositions, pickLineup,
+  module.exports = { scoringLabel, scorePlayer, rankPositions, consensusRanks,
+                    pickLineup,
                     posKey, flexKey, buildRoster, normStatus,
                     SLOT_ELIGIBLE, OUT_STATUSES };
 }
@@ -206,10 +250,11 @@ if (typeof document !== "undefined") {
 
   async function loadData() {
     if (DATA) return DATA;
-    const [meta, players, projections] = await Promise.all([
+    const [meta, players, projections, rankings] = await Promise.all([
       json("data/meta.json"), json("data/players.json"), json("data/projections.json"),
+      json("data/rankings.json").catch(() => ({})),
     ]);
-    DATA = { meta, players, projections, live: false };
+    DATA = { meta, players, projections, rankings, live: false };
     $("#week").textContent = `Week ${meta.week}`;
 
     try {
@@ -221,11 +266,13 @@ if (typeof document !== "undefined") {
 
     const when = new Date(meta.generated);
     const hours = (Date.now() - when.getTime()) / 36e5;
-    $("#gen").textContent = DATA.live
-      ? "Projections fetched live from Sleeper just now."
-      : `Projections from the last build, ` +
-        `${hours < 1.5 ? "under an hour" : ageText(hours)} old ` +
-        `(${when.toLocaleString()}).`;
+    const src = DATA.meta.hasConsensus
+      ? "FantasyPros expert consensus"
+      : "Sleeper projections";
+    $("#gen").textContent =
+      `Ranks from ${src}, built ${hours < 1.5 ? "under an hour" : ageText(hours)} ago ` +
+      `(${when.toLocaleString()}).` +
+      (DATA.live ? " Projected points refreshed live." : "");
 
     const warn = $("#stale");
     // Only the prebuilt copy can go stale; a live fetch is current by definition.
@@ -273,7 +320,21 @@ if (typeof document !== "undefined") {
           (r) => r.owner_id === user.user_id || (r.co_owners || []).includes(user.user_id));
         if (!mine) continue;
         const settings = lg.scoring_settings || {};
-        const ranks = rankPositions(data.projections, data.players, settings);
+        // Projected points are always computed - they're shown alongside the
+        // rank and are the fallback ordering when consensus is unavailable.
+        const projRanks = rankPositions(data.projections, data.players, settings);
+        const consensus = consensusRanks(data.rankings, data.players, settings);
+        const ranks = {};
+        for (const pid in projRanks) ranks[pid] = { ...projRanks[pid] };
+        if (consensus) {
+          for (const pid in consensus) {
+            ranks[pid] = { ...(ranks[pid] || {}), ...consensus[pid] };
+          }
+          // A player with consensus but no projection still needs an entry.
+          for (const pid in ranks) {
+            if (!(pid in consensus)) ranks[pid].posRank = null;
+          }
+        }
         const slots = (lg.roster_positions || []).filter((s) => !SKIP_SLOTS.has(s));
         LEAGUES.push({
           name: lg.name, id: lg.league_id, slots,
@@ -281,6 +342,7 @@ if (typeof document !== "undefined") {
           superflex: slots.includes("SUPER_FLEX"),
           teRec: settings.bonus_rec_te || 0,
           roster: buildRoster(mine.players, data.players, ranks),
+          source: consensus ? "consensus" : "projection",
         });
       }
       if (!LEAGUES.length) {
@@ -350,6 +412,9 @@ if (typeof document !== "undefined") {
     head.appendChild(el("span", "chip fmt", lg.label));
     if (lg.superflex) head.appendChild(el("span", "chip", "Superflex"));
     if (lg.teRec) head.appendChild(el("span", "chip", `TE +${lg.teRec}`));
+    if (lg.source === "projection") {
+      head.appendChild(el("span", "chip warn", "Projection ranks"));
+    }
     out.appendChild(head);
 
     const { starters, bench } = pickLineup(lg.roster, lg.slots);

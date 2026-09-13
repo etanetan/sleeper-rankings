@@ -37,6 +37,7 @@ select{flex:1;padding:9px 12px;background:var(--card);color:var(--ink)}
 .chip{background:var(--chip);color:var(--dim);border-radius:999px;padding:2px 9px;
   font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase}
 .chip.fmt{color:var(--accent)}
+.chip.warn{color:var(--bad)}
 
 h3{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);
   margin:24px 0 6px;font-weight:600}

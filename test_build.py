@@ -98,14 +98,35 @@ build.get = lambda url, tries=4: FakeResponse({"a": sample[0]})
 check("dict payload accepted", list(build.fetch_projections("2026", 2)), ["4046"])
 build.get = real_get
 
-# --- no scraping -------------------------------------------------------
+# --- hosts and secrets --------------------------------------------------
+# Official APIs only: the FantasyPros *API* host is fine, the website is not,
+# and the key must never be baked into a file that gets published.
+import re
+
 source = open("build.py").read()
-# The word appears in a comment explaining why we don't scrape it; what
-# matters is that no request is ever addressed to the host.
-check("never requests fantasypros.com", "fantasypros.com" in source.lower(), False)
-check("no http url outside sleeper",
-      [u for u in __import__("re").findall(r'https?://[a-z0-9.\-]+', source)
-       if "sleeper" not in u], [])
+hosts = {re.sub(r"^https?://", "", u) for u in re.findall(r'https?://[a-z0-9.\-]+', source)}
+check("only official API hosts contacted", sorted(hosts),
+      ["api.fantasypros.com", "api.sleeper.app", "api.sleeper.com"])
+check("never requests the fantasypros website", "www.fantasypros.com" in source, False)
+check("api key read from the environment, not hardcoded",
+      'os.environ.get("FANTASYPROS_API_KEY"' in source, True)
+
+for f in ("build.py", "probe.py", "public/app.js", "public/index.html", "workflow.yml"):
+    body = open(f).read()
+    # A bare 30+ char alphanumeric run next to the key name would be a leak.
+    leak = re.search(r'(?i)api[_-]?key["\s:=]+["\x27][A-Za-z0-9]{20,}', body)
+    check(f"no literal key in {f}", bool(leak), False)
+
+# The page is public, so the key must not reach the browser at all. Naming
+# FantasyPros in a comment or a label is fine; issuing a request is not.
+client = open("public/app.js").read()
+check("client never names the key variable", "FANTASYPROS_API_KEY" in client, False)
+check("client never requests a fantasypros host",
+      bool(re.search(r"https?://[a-z0-9.\-]*fantasypros", client, re.I)), False)
+check("client only calls sleeper hosts",
+      sorted({re.sub(r"^https?://", "", u)
+              for u in re.findall(r'https?://[a-z0-9.\-]+', client)}),
+      ["api.sleeper.app", "api.sleeper.com"])
 
 print(f"\n{sum(results)}/{len(results)} passed")
 sys.exit(0 if all(results) else 1)

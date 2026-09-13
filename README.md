@@ -7,46 +7,65 @@ ranks for your roster and the lineup they imply.
 
 ## Data sources
 
-Everything comes from **Sleeper's own public API**. Nothing is scraped.
+Two official APIs. Nothing is scraped.
 
-| Endpoint | Used for | Where |
+| Source | Used for | Where |
 | --- | --- | --- |
-| `/v1/state/nfl` | current season and week | build |
-| `/v1/players/nfl` | player names, positions, teams, injury status | build, at most once a day |
-| `/projections/nfl/{season}/{week}` | projected stat lines | live in the browser, prebuilt as fallback |
-| `/v1/user/{name}`, `/v1/user/{id}/leagues`, `/v1/league/{id}/rosters` | your leagues and rosters | live in the browser |
+| **FantasyPros API** `consensus-rankings` | expert consensus ranks by position and scoring format | build, needs an API key |
+| **Sleeper** `/v1/players/nfl` | names, positions, teams, injury status | build, at most once a day |
+| **Sleeper** `/projections/nfl/...` | projected points, and fallback ranks | live in the browser, prebuilt as backup |
+| **Sleeper** `/v1/user/...`, `/leagues`, `/rosters` | your leagues and rosters | live in the browser |
 
-An earlier version of this project scraped FantasyPros' consensus rankings.
-That was removed: their rankings are a commercial product, we have no
-permission to automate against them, and Sleeper publishes everything needed
-anyway. Nothing here requests a host other than Sleeper, and a test asserts it.
+An earlier version scraped the FantasyPros website. That was replaced with
+their official API: same data, authorized access. A test asserts the build
+never requests a host outside those two APIs.
 
 Sleeper asks callers to keep the ~5MB player dictionary to one pull per day, so
-it's cached per calendar day via `actions/cache` and the build reuses it.
+it's cached per calendar day via `actions/cache`.
+
+### The API key
+
+`FANTASYPROS_API_KEY` is read from the environment and must be stored as a
+**repository secret**, never committed. This site is public: a key shipped to
+the browser is a published key, which is why the FantasyPros call happens in
+the build rather than on the page.
+
+If the key is missing or rejected, the build still publishes - the page falls
+back to ranking by projected points and shows a "Projection ranks" chip so the
+difference is visible rather than silent.
+
+## How the two are joined
+
+FantasyPros ranks players by name; Sleeper rosters are lists of player IDs. The
+build writes a normalized match key into `players.json` (lowercased, accents
+folded, punctuation and generational suffixes stripped - so `De'Von Achane`,
+`Amon-Ra St. Brown` and `Kenneth Walker III` line up), and defenses match on
+team abbreviation with an alias map for the handful Sleeper and FantasyPros
+spell differently (`JAX`/`JAC`, `WAS`/`WSH`, `LV`/`LVR`).
 
 ## Scoring
 
-Ranks are **computed per league from its own `scoring_settings`**, not picked
-from a generic PPR/half/standard list. Each projected stat line is multiplied
-through the league's actual scoring values, so the same player can be WR2 in
-one of your leagues and WR6 in another, and that difference is real.
+Each league's `scoring_settings.rec` selects the FantasyPros scoring variant:
 
-This handles what a generic ranking list can't:
+| `rec` | Variant |
+| --- | --- |
+| `1.0` | PPR |
+| `0.5` | HALF |
+| `0` | STD |
 
-- Full, half, quarter or any other per-reception value
-- 4-point vs 6-point passing touchdowns
-- TE premium (`bonus_rec_te`), applied per reception for tight ends only
-- Custom yardage, turnover and defensive values
+QB, K and DST rankings don't vary by scoring and use one list.
 
-Positional rank is that player's place among **everyone** at the position under
-those settings, so QB1 means the best projected quarterback in the league's
-scoring, not just the best on your roster.
+Projected points are shown next to every rank, and those *are* computed from
+the league's full `scoring_settings` - every stat line multiplied through the
+league's actual values, including 6-point passing TDs and TE premium. So the
+rank is expert consensus while the points column reflects your exact league.
 
 ### Known limits
 
-Defensive scoring is approximate: Sleeper projects `pts_allow` as a single
-number while leagues score it in tiers, so DST ranks are rougher than the rest.
-Projections are also projections - they're a model, not expert consensus.
+Consensus rankings come in three buckets, so a league with unusual scoring
+(TE premium, 6-point passing TDs) gets the closest standard variant. The
+points column is exact; the rank is the nearest published list. Leagues with
+TE premium show a chip as a reminder to nudge tight ends up.
 
 ## Lineup logic
 
@@ -78,10 +97,14 @@ Both suites run in CI before the site is built.
 
 ## Setup
 
-The Actions workflow lives at `workflow.yml` in the repo root because the token
-that created this repo lacked GitHub's `workflow` scope. To activate:
+1. **Add the API key.** Settings -> Secrets and variables -> Actions ->
+   New repository secret, named `FANTASYPROS_API_KEY`.
+2. **Activate the workflow.** Open `workflow.yml` -> pencil icon -> rename to
+   `.github/workflows/build.yml` (typing the slashes moves it) -> Commit. It
+   lives in the root because the token that created this repo lacked GitHub's
+   `workflow` scope.
+3. **Settings -> Pages -> Source: GitHub Actions.**
+4. **Actions -> Build rankings -> Run workflow.**
 
-1. Open `workflow.yml` -> pencil icon -> rename to `.github/workflows/build.yml`
-   (typing the slashes moves it) -> Commit.
-2. **Settings -> Pages -> Source: GitHub Actions.**
-3. **Actions -> Build rankings -> Run workflow.**
+The first run's `Probe data sources` step reports whether the key works, which
+positions and scoring formats it can reach, and the exact response shape.

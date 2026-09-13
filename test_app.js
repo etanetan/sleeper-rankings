@@ -75,6 +75,70 @@ const partial = app.rankPositions({ a: proj.a }, players, PPR);
 check("unprojected players omitted", partial.b, undefined);
 check("unknown player ids skipped", app.rankPositions({ zzz: { rec: 5 } }, players, PPR), {});
 
+/* --- consensus ranks --------------------------------------------------- */
+const RANKINGS = {
+  shared: {
+    QB: { "josh allen": { rank: 1, posRank: 1 } },
+    K: { "brandon aubrey": { rank: 120, posRank: 2 } },
+    DST: { JAC: { rank: 140, posRank: 7 } },
+  },
+  formats: {
+    half: {
+      RB: { "volume wr": null, "rb one": { rank: 12, posRank: 5 } },
+      WR: { "volume wr": { rank: 8, posRank: 4 } },
+      TE: { "tight end": { rank: 40, posRank: 9 } },
+      FLEX: { "rb one": { rank: 14, posRank: 14 }, "volume wr": { rank: 9, posRank: 9 } },
+    },
+    ppr: {
+      RB: { "rb one": { rank: 20, posRank: 8 } },
+      WR: { "volume wr": { rank: 4, posRank: 2 } },
+      TE: {}, FLEX: {},
+    },
+    std: { RB: {}, WR: {}, TE: {}, FLEX: {} },
+  },
+};
+const cPlayers = {
+  qb1: { n: "Josh Allen", p: "QB", t: "BUF", k: "josh allen", i: "" },
+  k1: { n: "Brandon Aubrey", p: "K", t: "DAL", k: "brandon aubrey", i: "" },
+  d1: { n: "Jacksonville Jaguars", p: "DEF", t: "JAX", k: "JAX", i: "" },
+  wr1: { n: "Volume WR", p: "WR", t: "AAA", k: "volume wr", i: "" },
+  rb1: { n: "RB One", p: "RB", t: "CCC", k: "rb one", i: "" },
+  ghost: { n: "Nobody", p: "WR", t: "ZZZ", k: "nobody", i: "" },
+};
+
+const cHalf = app.consensusRanks(RANKINGS, cPlayers, { rec: 0.5 });
+check("QB read from the shared list", cHalf.qb1.posRank, 1);
+check("K read from the shared list", cHalf.k1.posRank, 2);
+check("DST matched through team alias JAX->JAC", cHalf.d1.posRank, 7);
+check("WR read from the half-PPR list", cHalf.wr1.posRank, 4);
+check("flex rank attached separately", cHalf.wr1.flexRank, 9);
+check("unranked player omitted", cHalf.ghost, undefined);
+
+const cPpr = app.consensusRanks(RANKINGS, cPlayers, { rec: 1 });
+check("scoring format changes the consensus rank", cPpr.wr1.posRank, 2);
+check("RB rank differs by format too", [cHalf.rb1.posRank, cPpr.rb1.posRank], [5, 8]);
+check("QB unchanged across formats", cPpr.qb1.posRank, 1);
+
+check("no rankings published -> null", app.consensusRanks({}, cPlayers, { rec: 1 }), null);
+check("null rankings -> null", app.consensusRanks(null, cPlayers, { rec: 1 }), null);
+check("rankings with no matches -> null",
+      app.consensusRanks(RANKINGS, { x: { p: "WR", k: "unknown guy" } }, { rec: 0.5 }), null);
+
+/* flex ordering prefers consensus FLEX rank over projected points */
+const F = (n, p, posRank, pts, flexRank = null) => ({ n, p, posRank, pts, flexRank, status: "", t: "X" });
+const flexLu = app.pickLineup(
+  [F("High points low rank", "RB", 5, 30, 40), F("Low points high rank", "WR", 6, 9, 3)],
+  ["FLEX"]);
+check("flex uses consensus rank when present",
+      Object.fromEntries(flexLu.starters.map(s => [s.slot, s.player.n])).FLEX,
+      "Low points high rank");
+
+const noFlexRank = app.pickLineup(
+  [F("More points", "RB", 5, 30), F("Fewer points", "WR", 6, 9)], ["FLEX"]);
+check("flex falls back to points without consensus",
+      Object.fromEntries(noFlexRank.starters.map(s => [s.slot, s.player.n])).FLEX,
+      "More points");
+
 /* --- roster assembly --------------------------------------------------- */
 players.e = { n: "Hurt Guy", p: "WR", t: "EEE", i: "Questionable" };
 const roster = app.buildRoster(["a", "b", "e", "nope"], players, pprRanks);

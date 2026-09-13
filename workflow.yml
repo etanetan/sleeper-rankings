@@ -52,9 +52,13 @@ jobs:
       # Sleeper's projections shape, and CORS headers. Never fails the build.
       - name: Probe data sources
         continue-on-error: true
+        env:
+          FANTASYPROS_API_KEY: ${{ secrets.FANTASYPROS_API_KEY }}
         run: python probe.py
 
       - name: Fetch rankings and build site
+        env:
+          FANTASYPROS_API_KEY: ${{ secrets.FANTASYPROS_API_KEY }}
         run: python build.py
 
       - uses: actions/upload-pages-artifact@v3
