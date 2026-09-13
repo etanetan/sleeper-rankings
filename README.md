@@ -44,3 +44,19 @@ pip install -r requirements.txt
 SLEEPER_USERNAME=someoneelse OUTPUT_PATH=site/index.html python build.py
 open site/index.html
 ```
+
+## Setup
+
+The Actions workflow file is kept at `workflow.yml` in the repo root because the
+token used to create this repo lacked GitHub's `workflow` scope. To activate it:
+
+1. Open `workflow.yml`, click the pencil icon, and rename it to
+   `.github/workflows/build.yml` (typing the slashes moves it). Commit.
+2. **Settings → Pages → Source: GitHub Actions.**
+3. **Actions → Build rankings → Run workflow.**
+
+## Tests
+
+`python3 test_build.py` covers name matching, scoring detection, URL slugs,
+lineup construction and rendering offline — everything that doesn't need the
+network.

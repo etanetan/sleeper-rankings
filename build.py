@@ -271,6 +271,9 @@ def build():
             continue
 
         flex_table = rankings("FLEX", fmt)
+        # Superflex ranks QBs and flex bodies on one scale; positional ranks
+        # from separate lists are not comparable across those positions.
+        sf_table = rankings("SUPERFLEX", fmt) if superflex else {}
         roster = []
         for pid in (mine.get("players") or []):
             meta = players_db.get(pid)
@@ -308,6 +311,8 @@ def build():
 
             fhit = lookup(flex_table, p) if pos in ("RB", "WR", "TE") else None
             p["flex_rank"] = fhit["rank"] if fhit else None
+            shit = lookup(sf_table, p) if sf_table else None
+            p["sf_rank"] = shit["rank"] if shit else None
             roster.append(p)
 
         results.append({
@@ -330,11 +335,19 @@ def pick_lineup(roster, slots):
 
     def pos_key(p):
         r = p.get("rank")
-        return (r if r else 9999) + penalty(p)
+        return (0, (r if r else 9999) + penalty(p))
 
     def flex_key(p):
         r = p.get("flex_rank") or p.get("rank")
-        return (r if r else 9999) + penalty(p)
+        return (0, (r if r else 9999) + penalty(p))
+
+    def sf_key(p):
+        """Superflex: one scale spanning QB and flex. Falls back to QBs-first."""
+        if p.get("sf_rank"):
+            return (0, p["sf_rank"] + penalty(p))
+        if p["pos"] == "QB":
+            return (0, (p.get("rank") or 9999) + penalty(p))
+        return (1, (p.get("flex_rank") or p.get("rank") or 9999) + penalty(p))
 
     avail = list(roster)
     order = sorted(range(len(slots)), key=lambda i: len(SLOT_ELIGIBLE.get(slots[i], set())))
@@ -344,11 +357,16 @@ def pick_lineup(roster, slots):
         elig = SLOT_ELIGIBLE.get(slot)
         if not elig:
             continue
-        flexy = len(elig) > 1
+        if slot == "SUPER_FLEX":
+            key = sf_key
+        elif len(elig) > 1:
+            key = flex_key
+        else:
+            key = pos_key
         pool = [p for p in avail if p["pos"] in elig]
         if not pool:
             continue
-        best = min(pool, key=flex_key if flexy else pos_key)
+        best = min(pool, key=key)
         picked[i] = best
         avail.remove(best)
 
