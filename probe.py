@@ -67,23 +67,13 @@ def probe_fantasypros(season, week):
                   "rank_ecr", "pos_rank", "tier"):
             print(f"  {f}: {players[0].get(f)!r}")
 
-    # Then every combination the build actually needs.
-    print("\n-- coverage across the calls the build makes --")
-    for pos, scorings in (("QB", ["STD"]), ("K", ["STD"]), ("DST", ["STD"]),
-                          ("RB", ["STD", "HALF", "PPR"]),
-                          ("WR", ["STD", "HALF", "PPR"]),
-                          ("TE", ["STD", "HALF", "PPR"]),
-                          ("FLEX", ["STD", "HALF", "PPR"]),
-                          ("OP", ["HALF"])):
-        for sc in scorings:
-            u = (f"{FP_API}/{season}/consensus-rankings"
-                 f"?position={pos}&type=weekly&scoring={sc}&week={week}")
-            try:
-                rr = requests.get(u, headers={**UA, "x-api-key": KEY}, timeout=45)
-                n = len((rr.json().get("players") or [])) if rr.status_code == 200 else 0
-                print(f"  {pos:<5} {sc:<5} HTTP {rr.status_code}  players={n}")
-            except Exception as e:
-                print(f"  {pos:<5} {sc:<5} failed: {e}")
+    # Deliberately does NOT sweep every position/scoring combination. Doing
+    # that burned the rate limit before the build could run.
+    print(f"\npublic_api_limited: {payload.get('public_api_limited')!r}  "
+          f"count={payload.get('count')!r}  limit={payload.get('limit')!r}  "
+          f"returned={len(players)}")
+    print("If returned is much smaller than count, the plan caps the list and "
+          "only the top few players per position are ranked.")
 
 
 def probe_sleeper(season, week):

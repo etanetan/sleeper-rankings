@@ -34,7 +34,7 @@ UA = {"User-Agent": "sleeper-rankings (github.com/etanetan/sleeper-rankings)"}
 FP_KEY = os.environ.get("FANTASYPROS_API_KEY", "").strip()
 
 FP_SCORING = {"std": "STD", "half": "HALF", "ppr": "PPR"}
-FP_SCORED_POS = ["RB", "WR", "TE", "FLEX"]
+FP_SCORED_POS = ["RB", "WR", "TE", "FLX"]
 FP_SHARED_POS = ["QB", "K", "DST"]
 
 SUFFIXES = {"jr", "sr", "ii", "iii", "iv", "v"}
@@ -55,15 +55,31 @@ def norm(name):
     return " ".join(parts)
 
 
+# The free tier rate-limits hard and returns a truncated list. Ask for more
+# rows explicitly, and pace the calls so a whole position isn't lost to a 429.
+PAGE_LIMIT = int(os.environ.get("FP_LIMIT", "300"))
+GAP_SECONDS = float(os.environ.get("FP_GAP", "1.5"))
+RETRIES = 4
+
+
 def fp_get(season, week, position, scoring):
-    """One consensus-rankings call. Returns [] and logs rather than raising."""
+    """One consensus-rankings call, retried through rate limiting."""
     url = (f"{FP_API}/{season}/consensus-rankings"
-           f"?position={position}&type=weekly&scoring={scoring}&week={week}")
-    try:
-        r = requests.get(url, headers={**UA, "x-api-key": FP_KEY}, timeout=45)
-    except requests.RequestException as e:
-        log(f"  [{position}/{scoring}] request failed: {e}")
-        return []
+           f"?position={position}&type=weekly&scoring={scoring}&week={week}"
+           f"&limit={PAGE_LIMIT}")
+    for attempt in range(RETRIES):
+        if attempt:
+            wait = GAP_SECONDS * (2 ** attempt)
+            log(f"  [{position}/{scoring}] rate limited, waiting {wait:.0f}s")
+            time.sleep(wait)
+        try:
+            r = requests.get(url, headers={**UA, "x-api-key": FP_KEY}, timeout=45)
+        except requests.RequestException as e:
+            log(f"  [{position}/{scoring}] request failed: {e}")
+            return []
+        if r.status_code == 429:
+            continue
+        break
     if r.status_code != 200:
         log(f"  [{position}/{scoring}] HTTP {r.status_code}: {r.text[:200]}")
         return []
@@ -76,6 +92,10 @@ def fp_get(season, week, position, scoring):
     if not players:
         log(f"  [{position}/{scoring}] no players key; got {sorted(payload)[:10]}")
         return []
+    if payload.get("public_api_limited"):
+        log(f"  [{position}/{scoring}] NOTE: API reports a limited plan; "
+            f"count={payload.get('count')} returned={len(players)}")
+    time.sleep(GAP_SECONDS)   # be a polite client between positions
     return players
 
 
