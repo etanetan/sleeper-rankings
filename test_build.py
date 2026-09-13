@@ -83,6 +83,16 @@ check("static files include the stylesheet", "style.css" in build.STATIC_FILES, 
 for f in build.STATIC_FILES:
     check(f"{f} exists to be copied", os.path.exists(f), True)
 
+# --- cache busting ------------------------------------------------------
+# A deploy that changes only app.js or style.css can go unseen behind a
+# browser cache unless the HTML references a versioned URL.
+html = open("index.html").read()
+for asset in ("app.js", "style.css"):
+    m = re.search(re.escape(asset) + r"\?v=(\w+)", html)
+    check(f"{asset} referenced with a version", bool(m), True)
+    if m:
+        check(f"{asset} still exists on disk", os.path.exists(asset), True)
+
 # --- hosts and secrets --------------------------------------------------
 source = open("build.py").read()
 hosts = {re.sub(r"^https?://", "", u) for u in re.findall(r'https?://[a-z0-9.\-]+', source)}
