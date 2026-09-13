@@ -91,7 +91,18 @@ check("only official API hosts contacted", sorted(hosts),
 check("never requests the fantasypros website", "www.fantasypros.com" in source, False)
 check("api key read from the environment", 'os.environ.get("FANTASYPROS_API_KEY"' in source, True)
 
-for f in ("build.py", "probe.py", "app.js", "index.html", "workflow.yml"):
+import glob
+
+# The workflow lives at .github/workflows/ once it's active, and at the repo
+# root before then; scan whichever exists rather than assuming a path.
+scanned = ["build.py", "probe.py", "app.js", "index.html"]
+scanned += glob.glob(".github/workflows/*.yml") + glob.glob(".github/workflows/*.yaml")
+if os.path.exists("workflow.yml"):
+    scanned.append("workflow.yml")
+
+check("a workflow file was found to scan",
+      any("workflow" in f for f in scanned), True)
+for f in scanned:
     body = open(f).read()
     leak = re.search(r'(?i)api[_-]?key["\s:=]+["\x27][A-Za-z0-9]{20,}', body)
     check(f"no literal key in {f}", bool(leak), False)
