@@ -48,6 +48,12 @@ jobs:
           python3 test_build.py
           node test_app.js
 
+      # Reports what the runner can see that a local session can't: robots.txt,
+      # Sleeper's projections shape, and CORS headers. Never fails the build.
+      - name: Probe data sources
+        continue-on-error: true
+        run: python probe.py
+
       - name: Fetch rankings and build site
         run: python build.py
 
