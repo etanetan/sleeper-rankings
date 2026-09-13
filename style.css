@@ -20,12 +20,12 @@ input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
 button{padding:10px 16px;background:var(--accent);color:#fff;border-color:transparent;
   font-weight:600;cursor:pointer;white-space:nowrap}
 button:hover{filter:brightness(1.08)}
-@media(max-width:480px){form{flex-direction:column}button{width:100%}}
+@media(max-width:480px){form{flex-direction:column}form button{width:100%}}
 
 #picker{display:flex;align-items:center;gap:10px;margin-bottom:18px}
 #picker label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;
   color:var(--dim);font-weight:600}
-select{flex:1;padding:9px 12px;background:var(--card);color:var(--ink)}
+select{flex:1 1 auto;min-width:0;padding:9px 12px;background:var(--card);color:var(--ink)}
 
 .stale{background:var(--chip);border-left:3px solid var(--accent);color:var(--ink);
   font-size:13px;margin:12px 0;padding:9px 12px;border-radius:6px}
@@ -63,8 +63,24 @@ tr:last-child td{border-bottom:none}
 .note{background:var(--chip);border-left:3px solid var(--accent);color:var(--ink);
   font-size:13px;margin:0 0 8px;padding:9px 12px;border-radius:6px;line-height:1.45}
 button.ghost{background:transparent;color:var(--dim);border:1px solid var(--line);
-  padding:8px 12px;font-size:15px;line-height:1;flex:0 0 auto}
+  padding:8px 12px;font-size:15px;line-height:1;flex:0 0 auto;width:auto}
 button.ghost:hover{color:var(--accent);border-color:var(--accent);filter:none}
 
 footer{color:var(--dim);font-size:12px;margin-top:40px;line-height:1.7}
 a{color:var(--accent)}
+
+@media(max-width:480px){
+  body{padding:20px 12px 56px}
+  #picker label{display:none}          /* the select is self-explanatory */
+  td,th{padding:7px 8px}
+  .slot{width:46px;font-size:10px}
+  .pos{display:none}                   /* the rank column already says WR8 */
+  .pts{width:44px;font-size:12px}
+  .rk{width:58px}
+  .nm{word-break:break-word}
+  h1{font-size:20px}
+  .lh h2{font-size:16px}
+}
+@media(max-width:340px){
+  .pts{display:none}                   /* names win over projected points */
+}
