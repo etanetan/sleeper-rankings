@@ -2,10 +2,8 @@ name: Build rankings
 
 on:
   schedule:
-    # Baseline: every morning at 13:00 UTC ≈ 9am ET.
+    # Daily at 13:00 UTC ≈ 9am ET, plus Sunday mornings when ranks actually move.
     - cron: "0 13 * * *"
-    # Sunday 12:00-17:00 UTC ≈ 8am-1pm ET, hourly, while inactives drop and
-    # ranks actually move. The 13:00 slot is covered by the daily run above.
     - cron: "0 12,14,15,16,17 * * 0"
   workflow_dispatch:
   push:
@@ -34,29 +32,21 @@ jobs:
           node-version: "20"
       - run: pip install -r requirements.txt
 
-      # Sleeper asks for at most one pull of the ~5MB player dump per day, so
-      # it is cached per calendar day. Rankings are always fetched fresh.
-      - id: day
-        run: echo "key=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
-      - uses: actions/cache@v4
-        with:
-          path: .cache
-          key: sleeper-players-${{ steps.day.outputs.key }}
-
       - name: Tests
         run: |
-          python3 test_build.py
           node test_app.js
+          python3 test_build.py
+          python3 test_norm_parity.py
 
-      # Reports what the runner can see that a local session can't: robots.txt,
-      # Sleeper's projections shape, and CORS headers. Never fails the build.
+      # Reports whether the key works and what the API returns. Never fails
+      # the build - read it in the log when something looks wrong.
       - name: Probe data sources
         continue-on-error: true
         env:
           FANTASYPROS_API_KEY: ${{ secrets.FANTASYPROS_API_KEY }}
         run: python probe.py
 
-      - name: Fetch rankings and build site
+      - name: Fetch consensus rankings and assemble site
         env:
           FANTASYPROS_API_KEY: ${{ secrets.FANTASYPROS_API_KEY }}
         run: python build.py

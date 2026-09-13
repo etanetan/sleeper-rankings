@@ -60,7 +60,11 @@ const FANTASY_POS = new Set(["QB", "RB", "WR", "TE", "K", "DEF"]);
 /* Match key for joining a Sleeper player to a rankings list by name. */
 function norm(name) {
   return (name || "")
-    .normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+    // NFKD splits accented letters into base + mark; dropping everything
+    // non-ASCII afterwards also catches letters that don't decompose (Æ, Ø,
+    // ß). build.py does exactly this, and test_norm_parity.py holds them
+    // together - if they drift, the join silently produces unranked players.
+    .normalize("NFKD").replace(/[^\x00-\x7F]/g, "")
     .toLowerCase().replace(/[.']/g, "").replace(/-/g, " ")
     .split(/\s+/).filter((w) => w && !SUFFIXES.has(w)).join(" ");
 }
@@ -388,10 +392,16 @@ if (typeof document !== "undefined") {
     DATA = { season, week, players, projections, rankings,
              playersFetched: fetched, liveStatuses };
     const injAge = (Date.now() - fetched) / 36e5;
-    $("#gen").textContent =
-      (rankings && rankings.shared
-        ? "Ranks from FantasyPros expert consensus. "
-        : "Ranks from Sleeper projections, scored by each league's settings. ") +
+    let rankSrc = "Ranks from Sleeper projections, scored by each league's settings. ";
+    if (rankings && rankings.shared) {
+      rankSrc = "Ranks from FantasyPros expert consensus";
+      if (rankings.generated) {
+        const rAge = (Date.now() - new Date(rankings.generated).getTime()) / 36e5;
+        rankSrc += `, built ${rAge < 1.5 ? "under an hour" : ageText(rAge)} ago`;
+      }
+      rankSrc += ". ";
+    }
+    $("#gen").textContent = rankSrc +
       (liveStatuses
         ? `Injury statuses refreshed live.`
         : `Injury statuses from the player list, ` +

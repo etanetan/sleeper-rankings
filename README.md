@@ -67,21 +67,33 @@ IDs into names. Sleeper asks callers not to pull it more than once a day, so the
 page trims it to the fantasy positions and keeps it in `localStorage` for 20
 hours. Everything else is fetched fresh on each visit.
 
-## Optional: FantasyPros consensus rankings
+## FantasyPros consensus rankings
 
-`build.py` and `workflow.yml` are **optional extras**, not part of the site.
-They fetch expert consensus ranks from the official FantasyPros API and publish
-them to `data/rankings.json`; the page picks that file up automatically if it
-exists and falls back to projections if it doesn't.
+`build.py` fetches expert consensus ranks from the official FantasyPros API and
+publishes them to `data/rankings.json`. The page prefers that file when it
+exists and falls back to projection ranks when it doesn't, so turning this on
+or off changes nothing else.
 
-This needs GitHub Actions, for an unavoidable reason: the FantasyPros API needs
-a key, this site is public, and a key shipped to the browser is a published key.
-Secrets only exist inside Actions runners - a static page has no way to read
-one. So the choice is a build step, or no consensus rankings.
+It runs as a build step for one unavoidable reason: the API needs a key, this
+site is public, and a key shipped to the browser is a published key. GitHub
+secrets are only readable from an Actions runner, so the call happens there.
 
-To enable it: store the key as a repository secret named
-`FANTASYPROS_API_KEY`, move `workflow.yml` to `.github/workflows/build.yml`,
-and switch Pages to "GitHub Actions" as its source.
+### Enabling it
+
+1. **Settings → Secrets and variables → Actions → New repository secret**,
+   named `FANTASYPROS_API_KEY`.
+2. Move `workflow.yml` to `.github/workflows/build.yml`.
+3. **Settings → Pages → Source: GitHub Actions.**
+
+The first run's `Probe data sources` step reports whether the key works and
+what the API returns, without printing the key.
+
+### Keeping the two normalizers in step
+
+FantasyPros ranks by player name, Sleeper rosters are player IDs, so the join
+runs through a normalized name - in Python in `build.py`, in JavaScript in
+`app.js`. If those drift the join fails silently and players just look
+unranked, so `test_norm_parity.py` runs both over the same names and compares.
 
 ## Tests
 

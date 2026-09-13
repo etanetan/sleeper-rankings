@@ -1,165 +1,55 @@
 #!/usr/bin/env python3
 """
-Prepare the data the page can't fetch for itself.
+Publish FantasyPros consensus rankings alongside the static site.
 
-Only Sleeper's public API is used. No scraping: FantasyPros' rankings are
-their commercial product and we have no permission to automate against them.
+This is the optional half of the project. The page works without it, ranking
+by Sleeper projections; when data/rankings.json exists the page prefers it.
 
-Sleeper asks callers to pull the ~5MB player dictionary no more than once a
-day, which is the one thing that genuinely needs a build step - rosters come
-back as bare player IDs and that file is the only way to name them. Weekly
-projections are prebuilt too, as a fallback for browsers that can't reach the
-projections host directly.
+It exists as a build step for one reason: the FantasyPros API needs a key, the
+site is public, and a key shipped to the browser is a published key. GitHub
+secrets are only readable from an Actions runner, so the call happens here.
+
+Everything else - players, projections, rosters - the page fetches itself.
 """
 
 import json
 import os
+import re
 import shutil
 import sys
 import time
+import unicodedata
 
 import requests
 
 OUT_DIR = os.environ.get("OUTPUT_DIR", "site")
-STATIC_DIR = os.environ.get("STATIC_DIR", "public")
-CACHE_DIR = os.environ.get("CACHE_DIR", ".cache")
+STATIC_DIR = os.environ.get("STATIC_DIR", ".")
+STATIC_FILES = ("index.html", "app.js", "style.css")
 
 SLEEPER = "https://api.sleeper.app/v1"
-PROJ = "https://api.sleeper.com/projections/nfl"
 FP_API = "https://api.fantasypros.com/public/v2/json/nfl"
 UA = {"User-Agent": "sleeper-rankings (github.com/etanetan/sleeper-rankings)"}
 
-# Read from a repo secret, never committed. The site is public, so this must
-# stay server-side: a key shipped to the browser is a published key.
+# Read from a repo secret, never committed.
 FP_KEY = os.environ.get("FANTASYPROS_API_KEY", "").strip()
 
-# FantasyPros scoring codes, chosen per league from its own rec value.
 FP_SCORING = {"std": "STD", "half": "HALF", "ppr": "PPR"}
-# Positions whose rankings differ by scoring, and those that don't.
 FP_SCORED_POS = ["RB", "WR", "TE", "FLEX"]
 FP_SHARED_POS = ["QB", "K", "DST"]
 
-# Sleeper's own guidance for the player dump.
-PLAYERS_MAX_AGE = 20 * 3600
-FANTASY_POS = {"QB", "RB", "WR", "TE", "K", "DEF"}
+SUFFIXES = {"jr", "sr", "ii", "iii", "iv", "v"}
 
 log = lambda *a: print(*a, file=sys.stderr, flush=True)
 
 
-def get(url, tries=4):
-    last = None
-    for n in range(tries):
-        try:
-            r = requests.get(url, headers=UA, timeout=45)
-            if r.status_code == 200:
-                return r
-            last = f"HTTP {r.status_code}"
-        except requests.RequestException as e:
-            last = str(e)
-        log(f"  {url} -> {last} (attempt {n + 1}/{tries})")
-        time.sleep(2 ** n)
-    raise RuntimeError(f"failed to fetch {url}: {last}")
-
-
-def load_players():
-    """
-    The trimmed Sleeper player map, from cache when it is recent enough.
-
-    The age is stored in the file rather than read from its mtime, because a
-    cache restored by CI does not necessarily preserve timestamps.
-    """
-    path = os.path.join(CACHE_DIR, "players.json")
-    if os.path.exists(path):
-        try:
-            with open(path) as f:
-                cached = json.load(f)
-            age = time.time() - cached.get("fetched", 0)
-            if 0 <= age < PLAYERS_MAX_AGE and cached.get("players"):
-                log(f"reusing cached player map ({age / 3600:.1f}h old, "
-                    f"{len(cached['players'])} players)")
-                return cached["players"]
-            log(f"cached player map is {age / 3600:.1f}h old, refetching")
-        except (json.JSONDecodeError, OSError) as e:
-            log(f"cached player map unusable ({e}), refetching")
-
-    log("fetching Sleeper player dictionary (~5MB, at most once a day)")
-    db = get(f"{SLEEPER}/players/nfl").json()
-    log(f"  -> {len(db)} entries")
-
-    players = {}
-    for pid, m in db.items():
-        pos = (m.get("position") or "").upper()
-        if pos not in FANTASY_POS:
-            continue
-        if pos == "DEF":
-            name = f"{m.get('first_name', '')} {m.get('last_name', '')}".strip() or pid
-            team = (m.get("team") or pid).upper()
-        else:
-            name = m.get("full_name") or \
-                f"{m.get('first_name', '')} {m.get('last_name', '')}".strip()
-            team = (m.get("team") or "").upper()
-        players[pid] = {
-            "n": name, "p": pos, "t": team,
-            # Match key for joining against FantasyPros: normalized name, or
-            # the team abbreviation for defenses.
-            "k": team if pos == "DEF" else norm(name),
-            "i": m.get("injury_status") or "", "b": m.get("bye_week"),
-        }
-    log(f"  -> {len(players)} fantasy-relevant players kept")
-
-    os.makedirs(CACHE_DIR, exist_ok=True)
-    with open(path, "w") as f:
-        json.dump({"fetched": time.time(), "players": players}, f, separators=(",", ":"))
-    return players
-
-
-def fetch_projections(season, week):
-    """
-    Weekly projected stat lines, keyed by player id.
-
-    The raw components are kept rather than Sleeper's precomputed pts_* values
-    so the page can score each league by its own settings.
-    """
-    url = (f"{PROJ}/{season}/{week}?season_type=regular"
-           f"&position[]=QB&position[]=RB&position[]=WR&position[]=TE"
-           f"&position[]=K&position[]=DEF&order_by=pts_half_ppr")
-    log(f"fetching projections: {url}")
-    rows = get(url).json()
-    if isinstance(rows, dict):
-        rows = list(rows.values())
-    log(f"  -> {len(rows)} projection rows")
-
-    out = {}
-    for row in rows:
-        pid = str(row.get("player_id") or "")
-        stats = row.get("stats") or {}
-        if not pid or not stats:
-            continue
-        # Drop zero values; most players project zero in most categories and
-        # the payload shrinks a lot without them. A player left with nothing
-        # isn't projected to do anything, so drop the row entirely rather than
-        # rank a crowd of scoreless players against each other.
-        kept = {k: v for k, v in stats.items() if isinstance(v, (int, float)) and v}
-        if not kept:
-            continue
-        out[pid] = kept
-    log(f"  -> {len(out)} players with a projection")
-    return out
-
-
-
-# --------------------------------------------------------------------------
-# FantasyPros consensus rankings (official API, key required)
-# --------------------------------------------------------------------------
-
-SUFFIXES = {"jr", "sr", "ii", "iii", "iv", "v"}
-
-
 def norm(name):
-    """Normalize a player name so Sleeper and FantasyPros spellings agree."""
-    import re
-    import unicodedata
-    name = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode()
+    """
+    Normalize a player name for joining against Sleeper.
+
+    Must stay identical to norm() in app.js - the join breaks silently if they
+    drift, so a test runs both over the same names and compares.
+    """
+    name = unicodedata.normalize("NFKD", name or "").encode("ascii", "ignore").decode()
     name = name.lower().replace(".", "").replace("'", "").replace("-", " ")
     parts = [p for p in re.split(r"\s+", name) if p and p not in SUFFIXES]
     return " ".join(parts)
@@ -175,7 +65,6 @@ def fp_get(season, week, position, scoring):
         log(f"  [{position}/{scoring}] request failed: {e}")
         return []
     if r.status_code != 200:
-        # 401/403 means the key is missing, wrong or lacks this entitlement.
         log(f"  [{position}/{scoring}] HTTP {r.status_code}: {r.text[:200]}")
         return []
     try:
@@ -191,11 +80,9 @@ def fp_get(season, week, position, scoring):
 
 
 def fp_table(season, week, position, scoring):
-    """{key: {rank, posRank, team}} for one position and scoring format."""
-    import re
-    rows = fp_get(season, week, position, scoring)
+    """{key: {rank, posRank}} for one position and scoring format."""
     out = {}
-    for p in rows:
+    for p in fp_get(season, week, position, scoring):
         name = p.get("player_name") or ""
         team = (p.get("player_team_id") or "").upper()
         ppos = (p.get("player_position_id") or position).upper()
@@ -207,79 +94,48 @@ def fp_table(season, week, position, scoring):
         key = team if ppos == "DST" else norm(name)
         if not key:
             continue
-        out[key] = {"rank": rank, "posRank": int(m.group(1)) if m else None,
-                    "team": team, "name": name}
+        out[key] = {"rank": rank, "posRank": int(m.group(1)) if m else None}
     log(f"  [{position}/{scoring}] {len(out)} ranked")
     return out
 
 
-def fetch_rankings(season, week):
-    """
-    Consensus ranks for every position and scoring format.
-
-    Returns None when no key is configured, so the caller can fall back to
-    projection-derived ranks instead of failing the build.
-    """
+def main():
     if not FP_KEY:
-        log("FANTASYPROS_API_KEY not set - skipping consensus rankings")
-        return None
+        log("FANTASYPROS_API_KEY is not set.")
+        log("Add it under Settings > Secrets and variables > Actions.")
+        sys.exit(1)
 
-    log(f"fetching FantasyPros consensus rankings (season={season} week={week})")
+    state = requests.get(f"{SLEEPER}/state/nfl", headers=UA, timeout=30).json()
+    season = state.get("season")
+    week = state.get("week") or state.get("display_week") or 1
+    log(f"season={season} week={week}")
+
     shared = {pos: fp_table(season, week, pos, "STD") for pos in FP_SHARED_POS}
-    formats = {}
-    for fmt, code in FP_SCORING.items():
-        formats[fmt] = {pos: fp_table(season, week, pos, code) for pos in FP_SCORED_POS}
+    formats = {fmt: {pos: fp_table(season, week, pos, code) for pos in FP_SCORED_POS}
+               for fmt, code in FP_SCORING.items()}
 
     total = (sum(len(t) for t in shared.values())
              + sum(len(t) for f in formats.values() for t in f.values()))
+    log(f"total ranking rows: {total}")
     if total == 0:
-        log("ERROR: the FantasyPros key produced no rankings at all")
-        return None
-    log(f"  -> {total} ranking rows")
-    return {"shared": shared, "formats": formats}
-
-
-def write(path, obj):
-    with open(path, "w") as f:
-        json.dump(obj, f, separators=(",", ":"))
-    log(f"wrote {path} ({os.path.getsize(path) / 1024:.0f} KB)")
-
-
-def main():
-    state = get(f"{SLEEPER}/state/nfl").json()
-    season = state.get("season")
-    week = state.get("week") or state.get("display_week") or 1
-    log(f"season={season} week={week} type={state.get('season_type')}")
-
-    players = load_players()
-    projections = fetch_projections(season, week)
-    if not projections:
-        log("ERROR: no projections returned; refusing to publish an empty site")
+        log("ERROR: the key produced no rankings at all; refusing to publish")
         sys.exit(1)
 
     os.makedirs(f"{OUT_DIR}/data", exist_ok=True)
-    if os.path.isdir(STATIC_DIR):
-        for f in os.listdir(STATIC_DIR):
-            shutil.copy2(os.path.join(STATIC_DIR, f), os.path.join(OUT_DIR, f))
-        log(f"copied static files from {STATIC_DIR}/")
+    for f in STATIC_FILES:
+        src = os.path.join(STATIC_DIR, f)
+        if not os.path.exists(src):
+            log(f"ERROR: {src} is missing; the published site would have no page")
+            sys.exit(1)
+        shutil.copy2(src, os.path.join(OUT_DIR, f))
+    log(f"copied {len(STATIC_FILES)} static files")
 
-    write(f"{OUT_DIR}/data/players.json", players)
-    write(f"{OUT_DIR}/data/projections.json", projections)
-
-    rankings = fetch_rankings(season, week)
-    if rankings:
-        write(f"{OUT_DIR}/data/rankings.json", rankings)
-    else:
-        # No key, or the key failed. The page falls back to ranking by
-        # projected points, so the site still works - just without consensus.
-        log("publishing without consensus rankings; page will rank by projection")
-        write(f"{OUT_DIR}/data/rankings.json", {})
-
-    write(f"{OUT_DIR}/data/meta.json", {
-        "season": season, "week": week, "seasonType": state.get("season_type"),
-        "generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        "hasConsensus": bool(rankings),
-    })
+    path = f"{OUT_DIR}/data/rankings.json"
+    with open(path, "w") as f:
+        json.dump({"generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                   "season": season, "week": week,
+                   "shared": shared, "formats": formats}, f, separators=(",", ":"))
+    log(f"wrote {path} ({os.path.getsize(path) / 1024:.0f} KB)")
 
 
 if __name__ == "__main__":
