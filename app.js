@@ -527,6 +527,54 @@ if (typeof document !== "undefined") {
     return wrap;
   }
 
+  // Which tab is showing, kept across league switches and re-renders so
+  // changing leagues doesn't bounce you back to the lineup.
+  let ACTIVE_TAB = "lineup";
+  try {
+    const saved = localStorage.getItem("activeTab");
+    if (saved === "lineup" || saved === "positions") ACTIVE_TAB = saved;
+  } catch (e) { /* private mode */ }
+
+  function tabBar(panels) {
+    const bar = el("div", "tabs");
+    bar.setAttribute("role", "tablist");
+    const buttons = [];
+
+    const select = (name) => {
+      ACTIVE_TAB = name;
+      try { localStorage.setItem("activeTab", name); } catch (e) { /* private mode */ }
+      buttons.forEach((b) => {
+        const on = b.dataset.tab === name;
+        b.setAttribute("aria-selected", String(on));
+        b.tabIndex = on ? 0 : -1;
+      });
+      for (const key in panels) panels[key].hidden = key !== name;
+    };
+
+    [["lineup", "Lineup"], ["positions", "By position"]].forEach(([name, label]) => {
+      const b = el("button", "tab", label);
+      b.type = "button";
+      b.dataset.tab = name;
+      b.setAttribute("role", "tab");
+      b.addEventListener("click", () => select(name));
+      buttons.push(b);
+      bar.appendChild(b);
+    });
+
+    bar.addEventListener("keydown", (e) => {
+      const i = buttons.findIndex((b) => b.dataset.tab === ACTIVE_TAB);
+      if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+        e.preventDefault();
+        const next = buttons[(i + (e.key === "ArrowRight" ? 1 : buttons.length - 1)) % buttons.length];
+        select(next.dataset.tab);
+        next.focus();
+      }
+    });
+
+    select(panels[ACTIVE_TAB] ? ACTIVE_TAB : "lineup");
+    return bar;
+  }
+
   function render(idx) {
     const lg = LEAGUES[idx];
     const out = $("#results");
@@ -540,62 +588,64 @@ if (typeof document !== "undefined") {
     if (lg.teRec) head.appendChild(el("span", "chip", `TE +${lg.teRec}`));
     out.appendChild(head);
 
+    if (lg.source === "consensus") {
+      const ranked = lg.roster.filter((p) => p.posRank != null).length;
+      if (lg.roster.length && ranked < lg.roster.length * 0.6) {
+        out.appendChild(el("p", "note warn",
+          `Only ${ranked} of ${lg.roster.length} players have a consensus rank. ` +
+          `The FantasyPros plan in use returns a truncated list, so players ` +
+          `outside the top few at each position show no rank.`));
+      }
+    }
+
     const { starters, bench } = pickLineup(lg.roster, lg.slots);
 
-    out.appendChild(el("h3", null, "Ideal lineup"));
+    // --- lineup panel: start and sit, the week's actual decision -------
+    const lineup = el("div", "panel");
     if (starters.length) {
-      // Every slot has to be filled by someone, so when the healthy players
-      // run out an unavailable one still gets started. That's not a pick, it's
-      // a gap - say so, because the answer is the waiver wire, not this page.
       const forced = starters.filter((s) => unavailable(s.player));
       if (forced.length) {
         const who = forced
           .map((s) => `${s.player.n} (${benchReason(s.player)})`).join(", ");
-        out.appendChild(el("p", "note warn",
+        lineup.appendChild(el("p", "note warn",
           `No healthy replacement for ${who}. ` +
           `${forced.length > 1 ? "They're" : "He's"} still listed below because ` +
           `the slot has to be filled — check waivers.`));
       }
-      out.appendChild(table(starters.map((s) => playerRow(s.player, s.slot))));
+      lineup.appendChild(table(starters.map((s) => playerRow(s.player, s.slot))));
     } else {
-      out.appendChild(el("p", "none", "Couldn't build a lineup from this roster."));
+      lineup.appendChild(el("p", "none", "Couldn't build a lineup from this roster."));
     }
 
     if (bench.length) {
-      out.appendChild(el("h3", null, "Sit"));
-      // A strong rank next to a benched player looks wrong unless we say why.
+      lineup.appendChild(el("h3", null, "Sit"));
       const sidelined = bench.filter(
         (p) => unavailable(p) && p.posRank != null && p.posRank <= 36);
       if (sidelined.length) {
         const who = sidelined.map((p) => `${p.n} (${benchReason(p)})`).join(", ");
-        out.appendChild(el("p", "note",
+        lineup.appendChild(el("p", "note",
           `${who} ${sidelined.length > 1 ? "rank" : "ranks"} well but ` +
           `${sidelined.length > 1 ? "are" : "is"} not expected to play, so ` +
           `${sidelined.length > 1 ? "they were" : "he was"} left out of the lineup. ` +
           `Rankings reflect a healthy week.`));
       }
       bench.sort((a, b) => POS_ORDER.indexOf(a.p) - POS_ORDER.indexOf(b.p) || posKey(a) - posKey(b));
-      out.appendChild(table(bench.map((p) => playerRow(p))));
+      lineup.appendChild(table(bench.map((p) => playerRow(p))));
     }
 
-    out.appendChild(el("h3", null, "By position"));
+    // --- positions panel: the whole roster, ranked within each position
+    const positions = el("div", "panel");
     for (const pos of POS_ORDER) {
       const grp = lg.roster.filter((p) => p.p === pos);
       if (!grp.length) continue;
       grp.sort((a, b) => posKey(a) - posKey(b));
-      out.appendChild(el("h4", null, pos === "DEF" ? "Defense" : pos));
-      out.appendChild(table(grp.map((p) => playerRow(p))));
+      positions.appendChild(el("h4", null, pos === "DEF" ? "Defense" : pos));
+      positions.appendChild(table(grp.map((p) => playerRow(p))));
     }
-  }
 
-  async function refresh() {
-    setStatus("Refreshing player and injury data…");
-    try {
-      localStorage.removeItem(PLAYERS_KEY);
-    } catch (e) { /* private mode */ }
-    DATA = null;
-    _ranksCache.clear();
-    await go($("#username").value);
+    out.appendChild(tabBar({ lineup, positions }));
+    out.appendChild(lineup);
+    out.appendChild(positions);
   }
 
   window.addEventListener("DOMContentLoaded", () => {
