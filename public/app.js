@@ -147,6 +147,14 @@ if (typeof document !== "undefined") {
     s.hidden = !msg;
   };
 
+  /* Bare duration, so callers can append "ago" or "old" as the sentence needs. */
+  function ageText(hours) {
+    if (hours < 1.5) return "less than an hour";
+    if (hours < 36) return `${Math.round(hours)} hours`;
+    const d = Math.round(hours / 24);
+    return `${d} day${d === 1 ? "" : "s"}`;
+  }
+
   async function json(url) {
     const r = await fetch(url);
     if (!r.ok) throw new Error(`${url} returned ${r.status}`);
@@ -160,7 +168,22 @@ if (typeof document !== "undefined") {
     ]);
     DATA = { meta, rankings, players };
     $("#week").textContent = `Week ${meta.week}`;
-    $("#gen").textContent = `rankings updated ${new Date(meta.generated).toLocaleString()}`;
+
+    const when = new Date(meta.generated);
+    const hours = (Date.now() - when.getTime()) / 36e5;
+    $("#gen").textContent =
+      `Rankings updated ${hours < 1.5 ? "just now" : ageText(hours) + " ago"} ` +
+      `(${when.toLocaleString()}).`;
+    // Injury flags come from Sleeper live, but the ranks themselves are only as
+    // fresh as the last build - say so rather than let them look current.
+    const warn = $("#stale");
+    if (hours > 36) {
+      warn.textContent = `These rankings are ${ageText(hours)} old. ` +
+        `Re-run the build for current numbers.`;
+      warn.hidden = false;
+    } else {
+      warn.hidden = true;
+    }
     return DATA;
   }
 

@@ -27,6 +27,8 @@ button:hover{filter:brightness(1.08)}
   color:var(--dim);font-weight:600}
 select{flex:1;padding:9px 12px;background:var(--card);color:var(--ink)}
 
+.stale{background:var(--chip);border-left:3px solid var(--accent);color:var(--ink);
+  font-size:13px;margin:12px 0;padding:9px 12px;border-radius:6px}
 .status{color:var(--dim);font-size:14px;margin:12px 0}
 .status.err{color:var(--bad)}
 

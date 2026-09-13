@@ -2,8 +2,11 @@ name: Build rankings
 
 on:
   schedule:
-    # 13:00 UTC ≈ 9am ET — Tue (post-MNF), Thu (pre-TNF), Sat, Sun (pre-kickoff)
-    - cron: "0 13 * * 2,4,6,0"
+    # Baseline: every morning at 13:00 UTC ≈ 9am ET.
+    - cron: "0 13 * * *"
+    # Sunday 12:00-17:00 UTC ≈ 8am-1pm ET, hourly, while inactives drop and
+    # ranks actually move. The 13:00 slot is covered by the daily run above.
+    - cron: "0 12,14,15,16,17 * * 0"
   workflow_dispatch:
   push:
     branches: [main]
@@ -30,6 +33,15 @@ jobs:
         with:
           node-version: "20"
       - run: pip install -r requirements.txt
+
+      # Sleeper asks for at most one pull of the ~5MB player dump per day, so
+      # it is cached per calendar day. Rankings are always fetched fresh.
+      - id: day
+        run: echo "key=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        with:
+          path: .cache
+          key: sleeper-players-${{ steps.day.outputs.key }}
 
       - name: Tests
         run: |

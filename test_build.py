@@ -55,5 +55,52 @@ check("window.ecrData variant",
                           "t")), 1)
 check("no data returns empty", build.parse_ecr("<html>nope</html>", "t"), [])
 
+# --- player map caching -------------------------------------------------
+import json as _json, os as _os, tempfile, time as _time
+
+tmp = tempfile.mkdtemp()
+build.CACHE_DIR = tmp
+path = _os.path.join(tmp, "players.json")
+
+
+def no_network(*a, **k):
+    raise AssertionError("load_players hit the network when it should have used cache")
+
+
+# a fresh cache is reused without fetching
+with open(path, "w") as f:
+    _json.dump({"fetched": _time.time(), "players": {"1": {"n": "Cached Guy"}}}, f)
+real_get, build.get = build.get, no_network
+check("fresh cache reused", build.load_players(), {"1": {"n": "Cached Guy"}})
+
+# a stale cache is not reused
+with open(path, "w") as f:
+    _json.dump({"fetched": _time.time() - 30 * 3600, "players": {"1": {"n": "Old"}}}, f)
+try:
+    build.load_players()
+    check("stale cache refetches", "no fetch", "fetch attempted")
+except AssertionError:
+    check("stale cache refetches", "fetch attempted", "fetch attempted")
+
+# a corrupt cache is not fatal
+with open(path, "w") as f:
+    f.write("{not json")
+try:
+    build.load_players()
+    check("corrupt cache refetches", "no fetch", "fetch attempted")
+except AssertionError:
+    check("corrupt cache refetches", "fetch attempted", "fetch attempted")
+
+# a cache written in the future (clock skew) is not trusted
+with open(path, "w") as f:
+    _json.dump({"fetched": _time.time() + 9999, "players": {"1": {"n": "Future"}}}, f)
+try:
+    build.load_players()
+    check("future-dated cache refetches", "no fetch", "fetch attempted")
+except AssertionError:
+    check("future-dated cache refetches", "fetch attempted", "fetch attempted")
+
+build.get = real_get
+
 print(f"\n{sum(results)}/{len(results)} passed")
 sys.exit(0 if all(results) else 1)

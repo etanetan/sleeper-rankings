@@ -15,7 +15,26 @@ headers, so a browser can't fetch it.** Sleeper does, so the browser can.
 | **Build** | GitHub Actions, on a schedule | Scrapes FantasyPros into `data/rankings.json`, trims the 5MB Sleeper player dump to `data/players.json` |
 | **Runtime** | Your browser, when you visit | Looks up your username, leagues and rosters from Sleeper live, joins them against that JSON |
 
-So rankings are as fresh as the last Actions run; rosters are always current.
+So rankings are as fresh as the last Actions run; rosters and injury flags are
+always current. If a build hasn't run in a day and a half the page says so,
+rather than letting stale ranks look live.
+
+### Why a build step at all
+
+FantasyPros sends no `Access-Control-Allow-Origin` header, so a browser is
+refused outright and the scrape has to happen server-side. Separately, the
+Sleeper player dictionary is the only way to turn roster player IDs into names,
+it weighs ~5MB, and Sleeper asks callers not to pull it more than once a day.
+Both problems are solved by fetching once and shipping the result.
+
+### Schedule
+
+Daily at ~9am ET, plus hourly on Sunday from 8am to 1pm ET, when inactives drop
+and ranks actually move. Runs also on demand and on every push.
+
+The player dump is cached per calendar day via `actions/cache`, so the Sunday
+runs refresh rankings without re-pulling it. The cache carries its own
+timestamp rather than relying on file mtimes, which CI does not preserve.
 
 ## Scoring
 

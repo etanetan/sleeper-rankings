@@ -22,6 +22,11 @@ import requests
 
 OUT_DIR = os.environ.get("OUTPUT_DIR", "site")
 STATIC_DIR = os.environ.get("STATIC_DIR", "public")
+CACHE_DIR = os.environ.get("CACHE_DIR", ".cache")
+
+# Sleeper asks callers not to pull the ~5MB player dump more than once a day,
+# so it is cached across runs while the rankings refresh as often as we like.
+PLAYERS_MAX_AGE = 20 * 3600
 
 SLEEPER = "https://api.sleeper.app/v1"
 FP = "https://www.fantasypros.com/nfl/rankings"
@@ -196,6 +201,59 @@ def fetch_pos(pos, fmt):
 # main
 # --------------------------------------------------------------------------
 
+def load_players():
+    """
+    The trimmed Sleeper player map, from cache when it is recent enough.
+
+    The age is stored in the file rather than read from its mtime, because a
+    cache restored by CI does not necessarily preserve timestamps.
+    """
+    path = os.path.join(CACHE_DIR, "players.json")
+    if os.path.exists(path):
+        try:
+            with open(path) as f:
+                cached = json.load(f)
+            age = time.time() - cached.get("fetched", 0)
+            if 0 <= age < PLAYERS_MAX_AGE and cached.get("players"):
+                log(f"reusing cached player map ({age / 3600:.1f}h old, "
+                    f"{len(cached['players'])} players)")
+                return cached["players"]
+            log(f"cached player map is {age / 3600:.1f}h old, refetching")
+        except (json.JSONDecodeError, OSError) as e:
+            log(f"cached player map unusable ({e}), refetching")
+
+    log("fetching Sleeper player dictionary (~5MB)")
+    db = get(f"{SLEEPER}/players/nfl").json()
+    log(f"  -> {len(db)} entries")
+
+    # Trim to fantasy-relevant players so the browser downloads ~1% of the dump.
+    players = {}
+    for pid, m in db.items():
+        pos = (m.get("position") or "").upper()
+        if pos not in FANTASY_POS:
+            continue
+        if pos == "DEF":
+            name = f"{m.get('first_name', '')} {m.get('last_name', '')}".strip() or pid
+            team = (m.get("team") or pid).upper()
+            key = team
+        else:
+            name = m.get("full_name") or \
+                f"{m.get('first_name', '')} {m.get('last_name', '')}".strip()
+            team = (m.get("team") or "").upper()
+            key = norm(name)
+        players[pid] = {
+            "n": name, "p": pos, "t": team, "k": key,
+            "i": m.get("injury_status") or "", "b": m.get("bye_week"),
+        }
+    log(f"  -> {len(players)} fantasy-relevant players kept")
+
+    os.makedirs(CACHE_DIR, exist_ok=True)
+    with open(path, "w") as f:
+        json.dump({"fetched": time.time(), "players": players}, f, separators=(",", ":"))
+    log(f"cached player map to {path}")
+    return players
+
+
 def main():
     state = get(f"{SLEEPER}/state/nfl").json()
     season = state.get("season")
@@ -224,30 +282,7 @@ def main():
         log("ERROR: no rankings parsed at all - the FantasyPros parser is broken")
         sys.exit(1)
 
-    log("fetching Sleeper player dictionary (~5MB)")
-    db = get(f"{SLEEPER}/players/nfl").json()
-    log(f"  -> {len(db)} entries")
-
-    # Trim to fantasy-relevant players so the browser downloads ~1% of the dump.
-    players = {}
-    for pid, m in db.items():
-        pos = (m.get("position") or "").upper()
-        if pos not in FANTASY_POS:
-            continue
-        if pos == "DEF":
-            name = f"{m.get('first_name', '')} {m.get('last_name', '')}".strip() or pid
-            team = (m.get("team") or pid).upper()
-            key = team
-        else:
-            name = m.get("full_name") or \
-                f"{m.get('first_name', '')} {m.get('last_name', '')}".strip()
-            team = (m.get("team") or "").upper()
-            key = norm(name)
-        players[pid] = {
-            "n": name, "p": pos, "t": team, "k": key,
-            "i": m.get("injury_status") or "", "b": m.get("bye_week"),
-        }
-    log(f"  -> {len(players)} fantasy-relevant players kept")
+    players = load_players()
 
     os.makedirs(f"{OUT_DIR}/data", exist_ok=True)
     if os.path.isdir(STATIC_DIR):
