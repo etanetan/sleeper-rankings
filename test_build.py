@@ -111,7 +111,7 @@ check("never requests the fantasypros website", "www.fantasypros.com" in source,
 check("api key read from the environment, not hardcoded",
       'os.environ.get("FANTASYPROS_API_KEY"' in source, True)
 
-for f in ("build.py", "probe.py", "public/app.js", "public/index.html", "workflow.yml"):
+for f in ("build.py", "probe.py", "app.js", "index.html", "workflow.yml"):
     body = open(f).read()
     # A bare 30+ char alphanumeric run next to the key name would be a leak.
     leak = re.search(r'(?i)api[_-]?key["\s:=]+["\x27][A-Za-z0-9]{20,}', body)
@@ -119,7 +119,7 @@ for f in ("build.py", "probe.py", "public/app.js", "public/index.html", "workflo
 
 # The page is public, so the key must not reach the browser at all. Naming
 # FantasyPros in a comment or a label is fine; issuing a request is not.
-client = open("public/app.js").read()
+client = open("app.js").read()
 check("client never names the key variable", "FANTASYPROS_API_KEY" in client, False)
 check("client never requests a fantasypros host",
       bool(re.search(r"https?://[a-z0-9.\-]*fantasypros", client, re.I)), False)

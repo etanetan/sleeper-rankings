@@ -1,5 +1,5 @@
 /* Offline tests for the client-side scoring, ranking and lineup logic. */
-const app = require("./public/app.js");
+const app = require("./app.js");
 const results = [];
 
 function check(label, got, want) {
@@ -8,6 +8,36 @@ function check(label, got, want) {
     (ok ? "" : `\n        got ${JSON.stringify(got)}\n       want ${JSON.stringify(want)}`));
   results.push(ok);
 }
+
+/* --- name normalization (now client-side) ----------------------------- */
+check("suffix stripped", app.norm("Marvin Harrison Jr."), "marvin harrison");
+check("apostrophe", app.norm("De'Von Achane"), "devon achane");
+check("hyphen", app.norm("Amon-Ra St. Brown"), "amon ra st brown");
+check("roman numeral", app.norm("Kenneth Walker III"), "kenneth walker");
+check("accents folded", app.norm("José Peña"), "jose pena");
+check("case and spacing", app.norm("  JOSH   ALLEN "), "josh allen");
+check("empty safe", app.norm(""), "");
+check("null safe", app.norm(null), "");
+
+/* --- trimming Sleeper's player dump ----------------------------------- */
+const dump = {
+  "1": { full_name: "Josh Allen", position: "QB", team: "buf", injury_status: null },
+  "2": { first_name: "Bijan", last_name: "Robinson", position: "RB", team: "ATL" },
+  "JAX": { first_name: "Jacksonville", last_name: "Jaguars", position: "DEF", team: null },
+  "9": { full_name: "Some Guard", position: "OL", team: "NYG" },
+  "8": { full_name: "Hurt Guy", position: "WR", team: "KC", injury_status: "Questionable" },
+};
+const trimmed = app.trimPlayers(dump);
+check("non-fantasy positions dropped", Object.keys(trimmed).sort(), ["1", "2", "8", "JAX"]);
+check("full_name preferred", trimmed["1"].n, "Josh Allen");
+check("name assembled from parts", trimmed["2"].n, "Bijan Robinson");
+check("team uppercased", trimmed["1"].t, "BUF");
+check("defense falls back to its id for team", trimmed.JAX.t, "JAX");
+check("defense keyed by team", trimmed.JAX.k, "JAX");
+check("player keyed by normalized name", trimmed["2"].k, "bijan robinson");
+check("injury carried through", trimmed["8"].i, "Questionable");
+check("missing injury becomes empty", trimmed["1"].i, "");
+check("empty dump safe", app.trimPlayers({}), {});
 
 /* --- scoring a stat line through league settings ---------------------- */
 const PPR = { rec: 1, rec_yd: 0.1, rec_td: 6, rush_yd: 0.1, rush_td: 6,

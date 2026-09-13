@@ -42,6 +42,36 @@ function normStatus(raw) {
   return INJ_ABBR[s] || s.slice(0, 3);
 }
 
+const SUFFIXES = new Set(["jr", "sr", "ii", "iii", "iv", "v"]);
+const FANTASY_POS = new Set(["QB", "RB", "WR", "TE", "K", "DEF"]);
+
+/* Match key for joining a Sleeper player to a rankings list by name. */
+function norm(name) {
+  return (name || "")
+    .normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/[.']/g, "").replace(/-/g, " ")
+    .split(/\s+/).filter((w) => w && !SUFFIXES.has(w)).join(" ");
+}
+
+/* Trim Sleeper's full player dump to the fantasy-relevant fields. The dump is
+ * ~5MB; what's kept is a couple of hundred KB and fits in localStorage. */
+function trimPlayers(db) {
+  const out = {};
+  for (const pid in db) {
+    const m = db[pid];
+    const pos = (m.position || "").toUpperCase();
+    if (!FANTASY_POS.has(pos)) continue;
+    const isDef = pos === "DEF";
+    const name = isDef
+      ? `${m.first_name || ""} ${m.last_name || ""}`.trim() || pid
+      : m.full_name || `${m.first_name || ""} ${m.last_name || ""}`.trim();
+    const team = (m.team || (isDef ? pid : "")).toUpperCase();
+    out[pid] = { n: name, p: pos, t: team, k: isDef ? team : norm(name),
+                 i: m.injury_status || "" };
+  }
+  return out;
+}
+
 /* ---------------------------------------------------------------- logic */
 
 /* Human-readable summary of a league's scoring, for the header chip. */
@@ -189,7 +219,8 @@ function pickLineup(roster, slots) {
 }
 
 if (typeof module !== "undefined") {
-  module.exports = { scoringLabel, scorePlayer, rankPositions, consensusRanks,
+  module.exports = { norm, trimPlayers, scoringLabel, scorePlayer,
+                    rankPositions, consensusRanks,
                     pickLineup,
                     posKey, flexKey, buildRoster, normStatus,
                     SLOT_ELIGIBLE, OUT_STATUSES };
@@ -206,6 +237,10 @@ if (typeof document !== "undefined") {
     return n;
   };
 
+  // Sleeper asks callers not to pull the player dump more than once a day.
+  const PLAYERS_KEY = "sleeperPlayers.v1";
+  const PLAYERS_MAX_AGE = 20 * 3600 * 1000;
+
   let DATA = null;
   let LEAGUES = [];
 
@@ -216,23 +251,40 @@ if (typeof document !== "undefined") {
     s.hidden = !msg;
   };
 
-  function ageText(hours) {
-    if (hours < 1.5) return "less than an hour";
-    if (hours < 36) return `${Math.round(hours)} hours`;
-    const d = Math.round(hours / 24);
-    return `${d} day${d === 1 ? "" : "s"}`;
-  }
-
-  async function json(url, opts) {
-    const r = await fetch(url, opts);
+  async function json(url) {
+    const r = await fetch(url);
     if (!r.ok) throw new Error(`${url} returned ${r.status}`);
     return r.json();
   }
 
-  /* Projections are prebuilt so the page always works, but try for live ones
-   * first - they move with injury news, and the prebuilt copy is only as new
-   * as the last build. */
-  async function liveProjections(season, week) {
+  function cached(key, maxAge) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+      const c = JSON.parse(raw);
+      const age = Date.now() - (c.fetched || 0);
+      return age >= 0 && age < maxAge ? c.value : null;
+    } catch (e) {
+      return null;   // private mode, quota, or corrupt entry
+    }
+  }
+
+  function cache(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify({ fetched: Date.now(), value }));
+    } catch (e) { /* over quota or private mode; not worth failing over */ }
+  }
+
+  async function loadPlayers() {
+    const hit = cached(PLAYERS_KEY, PLAYERS_MAX_AGE);
+    if (hit) return hit;
+    setStatus("Fetching the player list from Sleeper (a few MB, once a day)…");
+    const players = trimPlayers(await json(`${SLEEPER}/players/nfl`));
+    cache(PLAYERS_KEY, players);
+    return players;
+  }
+
+  async function loadProjections(season, week) {
     const url = `${PROJ}/${season}/${week}?season_type=regular` +
       `&position[]=QB&position[]=RB&position[]=WR&position[]=TE` +
       `&position[]=K&position[]=DEF&order_by=pts_half_ppr`;
@@ -242,47 +294,35 @@ if (typeof document !== "undefined") {
     for (const row of list) {
       const pid = String(row.player_id || "");
       const stats = row.stats || {};
-      if (pid && Object.keys(stats).length) out[pid] = stats;
+      if (!pid) continue;
+      const kept = {};
+      for (const k in stats) if (typeof stats[k] === "number" && stats[k]) kept[k] = stats[k];
+      if (Object.keys(kept).length) out[pid] = kept;
     }
-    if (!Object.keys(out).length) throw new Error("empty projection payload");
     return out;
   }
 
   async function loadData() {
     if (DATA) return DATA;
-    const [meta, players, projections, rankings] = await Promise.all([
-      json("data/meta.json"), json("data/players.json"), json("data/projections.json"),
-      json("data/rankings.json").catch(() => ({})),
-    ]);
-    DATA = { meta, players, projections, rankings, live: false };
-    $("#week").textContent = `Week ${meta.week}`;
+    setStatus("Checking the NFL week…");
+    const state = await json(`${SLEEPER}/state/nfl`);
+    const season = state.season;
+    const week = state.week || state.display_week || 1;
+    $("#week").textContent = `Week ${week}`;
 
-    try {
-      DATA.projections = await liveProjections(meta.season, meta.week);
-      DATA.live = true;
-    } catch (e) {
-      console.info("live projections unavailable, using prebuilt:", e.message);
-    }
+    const players = await loadPlayers();
+    setStatus("Loading projections…");
+    const projections = await loadProjections(season, week);
 
-    const when = new Date(meta.generated);
-    const hours = (Date.now() - when.getTime()) / 36e5;
-    const src = DATA.meta.hasConsensus
-      ? "FantasyPros expert consensus"
-      : "Sleeper projections";
-    $("#gen").textContent =
-      `Ranks from ${src}, built ${hours < 1.5 ? "under an hour" : ageText(hours)} ago ` +
-      `(${when.toLocaleString()}).` +
-      (DATA.live ? " Projected points refreshed live." : "");
+    // Optional: if a build has published consensus rankings, prefer them.
+    // Without one this 404s and we rank by projection instead.
+    let rankings = null;
+    try { rankings = await json("data/rankings.json"); } catch (e) { rankings = null; }
 
-    const warn = $("#stale");
-    // Only the prebuilt copy can go stale; a live fetch is current by definition.
-    if (!DATA.live && hours > 36) {
-      warn.textContent = `These projections are ${ageText(hours)} old and ` +
-        `Sleeper couldn't be reached for fresher ones. Re-run the build.`;
-      warn.hidden = false;
-    } else {
-      warn.hidden = true;
-    }
+    DATA = { season, week, players, projections, rankings };
+    $("#gen").textContent = rankings && rankings.shared
+      ? "Ranks from FantasyPros expert consensus."
+      : "Ranks from Sleeper projections, scored by each league's settings.";
     return DATA;
   }
 
@@ -290,7 +330,6 @@ if (typeof document !== "undefined") {
     username = (username || "").trim().replace(/^@/, "");
     if (!username) return setStatus("Enter your Sleeper username.", true);
 
-    setStatus("Loading projections…");
     $("#results").innerHTML = "";
     $("#picker").hidden = true;
 
@@ -298,7 +337,7 @@ if (typeof document !== "undefined") {
     try {
       data = await loadData();
     } catch (e) {
-      return setStatus(`Couldn't load the projection data (${e.message}).`, true);
+      return setStatus(`Couldn't reach Sleeper: ${e.message}`, true);
     }
 
     try {
@@ -306,10 +345,9 @@ if (typeof document !== "undefined") {
       const user = await json(`${SLEEPER}/user/${encodeURIComponent(username)}`);
       if (!user || !user.user_id) return setStatus(`No Sleeper user named "${username}".`, true);
 
-      const leagues = await json(
-        `${SLEEPER}/user/${user.user_id}/leagues/nfl/${data.meta.season}`);
+      const leagues = await json(`${SLEEPER}/user/${user.user_id}/leagues/nfl/${data.season}`);
       if (!leagues.length) {
-        return setStatus(`${username} has no NFL leagues for ${data.meta.season}.`, true);
+        return setStatus(`${username} has no NFL leagues for ${data.season}.`, true);
       }
 
       setStatus(`Loading ${leagues.length} league${leagues.length > 1 ? "s" : ""}…`);
@@ -319,21 +357,15 @@ if (typeof document !== "undefined") {
         const mine = rosters.find(
           (r) => r.owner_id === user.user_id || (r.co_owners || []).includes(user.user_id));
         if (!mine) continue;
+
         const settings = lg.scoring_settings || {};
-        // Projected points are always computed - they're shown alongside the
-        // rank and are the fallback ordering when consensus is unavailable.
         const projRanks = rankPositions(data.projections, data.players, settings);
         const consensus = consensusRanks(data.rankings, data.players, settings);
         const ranks = {};
         for (const pid in projRanks) ranks[pid] = { ...projRanks[pid] };
         if (consensus) {
-          for (const pid in consensus) {
-            ranks[pid] = { ...(ranks[pid] || {}), ...consensus[pid] };
-          }
-          // A player with consensus but no projection still needs an entry.
-          for (const pid in ranks) {
-            if (!(pid in consensus)) ranks[pid].posRank = null;
-          }
+          for (const pid in consensus) ranks[pid] = { ...(ranks[pid] || {}), ...consensus[pid] };
+          for (const pid in ranks) if (!(pid in consensus)) ranks[pid].posRank = null;
         }
         const slots = (lg.roster_positions || []).filter((s) => !SKIP_SLOTS.has(s));
         LEAGUES.push({
@@ -354,7 +386,7 @@ if (typeof document !== "undefined") {
       renderPicker();
       render(0);
     } catch (e) {
-      setStatus(`Sleeper request failed: ${e.message}.`, true);
+      setStatus(`Sleeper request failed: ${e.message}`, true);
     }
   }
 
@@ -387,7 +419,7 @@ if (typeof document !== "undefined") {
       rk.appendChild(el("b", null, `${p.p === "DEF" ? "DST" : p.p}${p.posRank}`));
     } else {
       rk.className = "rk meta";
-      rk.textContent = "unranked";
+      rk.textContent = "—";
     }
     tr.appendChild(rk);
     return tr;
@@ -412,9 +444,6 @@ if (typeof document !== "undefined") {
     head.appendChild(el("span", "chip fmt", lg.label));
     if (lg.superflex) head.appendChild(el("span", "chip", "Superflex"));
     if (lg.teRec) head.appendChild(el("span", "chip", `TE +${lg.teRec}`));
-    if (lg.source === "projection") {
-      head.appendChild(el("span", "chip warn", "Projection ranks"));
-    }
     out.appendChild(head);
 
     const { starters, bench } = pickLineup(lg.roster, lg.slots);
@@ -449,7 +478,7 @@ if (typeof document !== "undefined") {
     });
     let saved = null;
     try { saved = localStorage.getItem("sleeperUser"); } catch (e) { /* private mode */ }
-    if (saved) { $("#username").value = saved; go(saved); }
-    loadData().catch(() => {});
+    if (saved) $("#username").value = saved;
+    if (saved) go(saved);
   });
 }
