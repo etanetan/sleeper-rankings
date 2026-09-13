@@ -67,7 +67,17 @@ IDs into names. Sleeper asks callers not to pull it more than once a day, so the
 page trims it to the fantasy positions and keeps it in `localStorage` for 20
 hours. Everything else is fetched fresh on each visit.
 
-## FantasyPros consensus rankings
+## FantasyPros consensus rankings (tried, not in use)
+
+**Currently disabled.** The plan available to this project returns only the top
+10 players per position (`"public_api_limited": true`), which isn't enough to
+rank a full roster - most players would show no rank at all. Sleeper's
+projections cover every player, so the site uses those.
+
+The code below still works and is kept for if that ever changes. To turn it
+back on, restore the workflow and follow the steps in this section.
+
+### How it worked
 
 `build.py` fetches expert consensus ranks from the official FantasyPros API and
 publishes them to `data/rankings.json`. The page prefers that file when it
@@ -78,15 +88,19 @@ It runs as a build step for one unavoidable reason: the API needs a key, this
 site is public, and a key shipped to the browser is a published key. GitHub
 secrets are only readable from an Actions runner, so the call happens there.
 
-### Enabling it
+### Re-enabling it
 
-1. **Settings → Secrets and variables → Actions → New repository secret**,
-   named `FANTASYPROS_API_KEY`.
-2. Move `workflow.yml` to `.github/workflows/build.yml`.
+1. Store the key as a repository secret named `FANTASYPROS_API_KEY`.
+2. Restore a workflow at `.github/workflows/build.yml` that runs `build.py`
+   with that secret and publishes `site/`.
 3. **Settings → Pages → Source: GitHub Actions.**
 
-The first run's `Probe data sources` step reports whether the key works and
-what the API returns, without printing the key.
+The `Probe data sources` step reports whether the key works and whether the
+plan caps the list, without printing the key.
+
+Notes from the one real run: the position is spelled `FLX`, not `FLEX` (and
+`OP` for superflex), and the free tier rate-limits hard enough that calls need
+pacing and retries.
 
 ### Keeping the two normalizers in step
 
