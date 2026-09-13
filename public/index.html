@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Weekly Sleeper Rankings</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Weekly Sleeper Rankings</h1>
+    <p class="sub">
+      <span id="week">Loading…</span> ·
+      FantasyPros expert consensus, matched to each league's scoring.
+    </p>
+  </header>
+
+  <form id="form" autocomplete="off">
+    <input id="username" name="username" type="text" placeholder="Sleeper username"
+           spellcheck="false" autocapitalize="none" aria-label="Sleeper username">
+    <button type="submit">View weekly rankings</button>
+  </form>
+
+  <div id="picker" hidden>
+    <label for="league">League</label>
+    <select id="league"></select>
+  </div>
+
+  <p id="status" class="status" hidden></p>
+  <main id="results"></main>
+
+  <footer>
+    Ranks are positional (QB1, WR8, DST3). <span id="gen"></span><br>
+    Data from <a href="https://www.fantasypros.com/nfl/rankings/qb.php">FantasyPros</a>
+    and <a href="https://sleeper.com">Sleeper</a>.
+  </footer>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

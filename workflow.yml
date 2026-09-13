@@ -26,11 +26,19 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
       - run: pip install -r requirements.txt
-      - name: Build site
-        env:
-          SLEEPER_USERNAME: etanetan
+
+      - name: Tests
+        run: |
+          python3 test_build.py
+          node test_app.js
+
+      - name: Fetch rankings and build site
         run: python build.py
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
