@@ -36,6 +36,18 @@ const INJ_ABBR = {
 };
 const OUT_STATUSES = new Set(["OUT", "IR", "PUP", "SUS", "NA", "DNR", "D"]);
 
+/* A player who won't take the field this week, for whatever reason. A bye is
+ * as disqualifying as an injury and projections don't always say so. */
+function unavailable(p) {
+  return OUT_STATUSES.has(p.status) || p.onBye === true;
+}
+
+/* Why a player was left out, for display. */
+function benchReason(p) {
+  if (p.onBye) return "BYE";
+  return OUT_STATUSES.has(p.status) ? p.status : "";
+}
+
 function normStatus(raw) {
   const s = (raw || "").trim().toUpperCase();
   if (!s) return "";
@@ -82,7 +94,9 @@ function trimPlayers(db) {
       : m.full_name || `${m.first_name || ""} ${m.last_name || ""}`.trim();
     const team = (m.team || (isDef ? pid : "")).toUpperCase();
     out[pid] = { n: name, p: pos, t: team, k: isDef ? team : norm(name),
-                 i: m.injury_status || "" };
+                 i: m.injury_status || "",
+                 b: typeof m.bye_week === "number" ? m.bye_week
+                    : parseInt(m.bye_week, 10) || null };
   }
   return out;
 }
@@ -168,7 +182,7 @@ function consensusRanks(rankings, players, settings) {
   return Object.keys(ranks).length ? ranks : null;
 }
 
-function buildRoster(ids, players, ranks) {
+function buildRoster(ids, players, ranks, week) {
   const out = [];
   for (const id of ids || []) {
     const meta = players[id];
@@ -176,6 +190,7 @@ function buildRoster(ids, players, ranks) {
     const r = ranks[id] || {};
     out.push({
       ...meta, id, status: normStatus(meta.i),
+      onBye: week != null && meta.b != null && Number(meta.b) === Number(week),
       posRank: r.posRank != null ? r.posRank : null,
       pts: r.pts != null ? r.pts : null,
       flexRank: r.flexRank != null ? r.flexRank : null,
@@ -187,7 +202,7 @@ function buildRoster(ids, players, ranks) {
 /* Rank a player within their position. Unranked and unavailable players sink. */
 function posKey(p) {
   const base = p.posRank != null ? p.posRank : 999;
-  return base + (OUT_STATUSES.has(p.status) ? 500 : 0);
+  return base + (unavailable(p) ? 500 : 0);
 }
 /* Cross-position ordering for flex slots. Consensus FLEX rank is the right
  * yardstick when we have it: positional ranks from separate lists aren't
@@ -198,7 +213,7 @@ function flexKey(p) {
   const base = p.flexRank != null ? p.flexRank
              : p.pts != null ? -p.pts
              : 999;
-  return base + (OUT_STATUSES.has(p.status) ? 5000 : 0);
+  return base + (unavailable(p) ? 5000 : 0);
 }
 
 /* Fill the most restrictive slots first, so a lone eligible player isn't
@@ -234,7 +249,8 @@ function pickLineup(roster, slots) {
 }
 
 if (typeof module !== "undefined") {
-  module.exports = { norm, trimPlayers, statusFromRow, scoringLabel, scorePlayer,
+  module.exports = { norm, trimPlayers, statusFromRow, unavailable, benchReason,
+                    scoringLabel, scorePlayer,
                     rankPositions, consensusRanks,
                     pickLineup,
                     posKey, flexKey, buildRoster, normStatus,
@@ -322,6 +338,28 @@ if (typeof document !== "undefined") {
     return { projections: out, statuses };
   }
 
+  /* Ranking a full player pool is the expensive part of a render, and leagues
+   * with identical scoring produce identical ranks, so key a cache on the
+   * settings themselves. */
+  const _ranksCache = new Map();
+
+  function ranksFor(data, settings) {
+    const key = JSON.stringify(settings || {});
+    if (_ranksCache.has(key)) return _ranksCache.get(key);
+
+    const projRanks = rankPositions(data.projections, data.players, settings);
+    const consensus = consensusRanks(data.rankings, data.players, settings);
+    const ranks = {};
+    for (const pid in projRanks) ranks[pid] = { ...projRanks[pid] };
+    if (consensus) {
+      for (const pid in consensus) ranks[pid] = { ...(ranks[pid] || {}), ...consensus[pid] };
+      for (const pid in ranks) if (!(pid in consensus)) ranks[pid].posRank = null;
+    }
+    const result = { ranks, source: consensus ? "consensus" : "projection" };
+    _ranksCache.set(key, result);
+    return result;
+  }
+
   async function loadData() {
     if (DATA) return DATA;
     setStatus("Checking the NFL week…");
@@ -386,38 +424,45 @@ if (typeof document !== "undefined") {
       }
 
       setStatus(`Loading ${leagues.length} league${leagues.length > 1 ? "s" : ""}…`);
-      LEAGUES = [];
-      for (const lg of leagues) {
+
+      // Fetch every league's rosters at once rather than one round trip at a
+      // time, and keep them independent: one league failing shouldn't cost you
+      // the other eleven.
+      const settled = await Promise.allSettled(leagues.map(async (lg) => {
         const rosters = await json(`${SLEEPER}/league/${lg.league_id}/rosters`);
         const mine = rosters.find(
           (r) => r.owner_id === user.user_id || (r.co_owners || []).includes(user.user_id));
-        if (!mine) continue;
+        if (!mine) return null;
 
         const settings = lg.scoring_settings || {};
-        const projRanks = rankPositions(data.projections, data.players, settings);
-        const consensus = consensusRanks(data.rankings, data.players, settings);
-        const ranks = {};
-        for (const pid in projRanks) ranks[pid] = { ...projRanks[pid] };
-        if (consensus) {
-          for (const pid in consensus) ranks[pid] = { ...(ranks[pid] || {}), ...consensus[pid] };
-          for (const pid in ranks) if (!(pid in consensus)) ranks[pid].posRank = null;
-        }
+        const { ranks, source } = ranksFor(data, settings);
         const slots = (lg.roster_positions || []).filter((s) => !SKIP_SLOTS.has(s));
-        LEAGUES.push({
+        return {
           name: lg.name, id: lg.league_id, slots,
           label: scoringLabel(settings),
           superflex: slots.includes("SUPER_FLEX"),
           teRec: settings.bonus_rec_te || 0,
-          roster: buildRoster(mine.players, data.players, ranks),
-          source: consensus ? "consensus" : "projection",
-        });
-      }
+          roster: buildRoster(mine.players, data.players, ranks, data.week),
+          source,
+        };
+      }));
+
+      LEAGUES = [];
+      const failed = [];
+      settled.forEach((r, i) => {
+        if (r.status === "fulfilled") { if (r.value) LEAGUES.push(r.value); }
+        else failed.push(leagues[i].name || leagues[i].league_id);
+      });
+
       if (!LEAGUES.length) {
-        return setStatus(`Found leagues, but no roster owned by ${username}.`, true);
+        return setStatus(failed.length
+          ? `Couldn't load any leagues (${failed.join(", ")}).`
+          : `Found leagues, but no roster owned by ${username}.`, true);
       }
 
       try { localStorage.setItem("sleeperUser", username); } catch (e) { /* private mode */ }
-      setStatus("");
+      setStatus(failed.length
+        ? `Couldn't load ${failed.join(", ")} — showing the rest.` : "", failed.length > 0);
       renderPicker();
       render(0);
     } catch (e) {
@@ -442,6 +487,7 @@ if (typeof document !== "undefined") {
     if (slot !== undefined) tr.appendChild(el("td", "slot", SLOT_LABEL[slot] || slot));
     const nameCell = el("td", "nm");
     nameCell.appendChild(document.createTextNode(p.n));
+    if (p.onBye) nameCell.appendChild(el("span", "out", "BYE"));
     if (p.status) {
       nameCell.appendChild(el("span", OUT_STATUSES.has(p.status) ? "out" : "q", p.status));
     }
@@ -449,11 +495,11 @@ if (typeof document !== "undefined") {
     tr.appendChild(nameCell);
     tr.appendChild(el("td", "pos", p.p === "DEF" ? "DST" : p.p));
     tr.appendChild(el("td", "pts", p.pts != null ? p.pts.toFixed(1) : "—"));
-    const inactive = OUT_STATUSES.has(p.status);
+    const inactive = unavailable(p);
     const rk = el("td", "rk" + (inactive ? " inactive" : ""));
     if (p.posRank != null) {
       const b = el("b", null, `${p.p === "DEF" ? "DST" : p.p}${p.posRank}`);
-      if (inactive) b.title = `Ranked ${p.p}${p.posRank}, but listed ${p.status}`;
+      if (inactive) b.title = `Ranked ${p.p}${p.posRank}, but ${benchReason(p)} this week`;
       rk.appendChild(b);
     } else {
       rk.className = "rk meta";
@@ -488,6 +534,18 @@ if (typeof document !== "undefined") {
 
     out.appendChild(el("h3", null, "Ideal lineup"));
     if (starters.length) {
+      // Every slot has to be filled by someone, so when the healthy players
+      // run out an unavailable one still gets started. That's not a pick, it's
+      // a gap - say so, because the answer is the waiver wire, not this page.
+      const forced = starters.filter((s) => unavailable(s.player));
+      if (forced.length) {
+        const who = forced
+          .map((s) => `${s.player.n} (${benchReason(s.player)})`).join(", ");
+        out.appendChild(el("p", "note warn",
+          `No healthy replacement for ${who}. ` +
+          `${forced.length > 1 ? "They're" : "He's"} still listed below because ` +
+          `the slot has to be filled — check waivers.`));
+      }
       out.appendChild(table(starters.map((s) => playerRow(s.player, s.slot))));
     } else {
       out.appendChild(el("p", "none", "Couldn't build a lineup from this roster."));
@@ -497,9 +555,9 @@ if (typeof document !== "undefined") {
       out.appendChild(el("h3", null, "Sit"));
       // A strong rank next to a benched player looks wrong unless we say why.
       const sidelined = bench.filter(
-        (p) => OUT_STATUSES.has(p.status) && p.posRank != null && p.posRank <= 36);
+        (p) => unavailable(p) && p.posRank != null && p.posRank <= 36);
       if (sidelined.length) {
-        const who = sidelined.map((p) => `${p.n} (${p.status})`).join(", ");
+        const who = sidelined.map((p) => `${p.n} (${benchReason(p)})`).join(", ");
         out.appendChild(el("p", "note",
           `${who} ${sidelined.length > 1 ? "rank" : "ranks"} well but ` +
           `${sidelined.length > 1 ? "are" : "is"} not expected to play, so ` +
@@ -526,6 +584,7 @@ if (typeof document !== "undefined") {
       localStorage.removeItem(PLAYERS_KEY);
     } catch (e) { /* private mode */ }
     DATA = null;
+    _ranksCache.clear();
     await go($("#username").value);
   }
 

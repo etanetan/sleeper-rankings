@@ -59,6 +59,7 @@ tr:last-child td{border-bottom:none}
 .out{color:var(--bad);font-size:10px;font-weight:700;margin-left:5px}
 .q{color:var(--accent);font-size:10px;font-weight:700;margin-left:5px}
 .none{color:var(--dim);font-size:13px;font-style:italic}
+.note.warn{border-left-color:var(--bad)}
 .note{background:var(--chip);border-left:3px solid var(--accent);color:var(--ink);
   font-size:13px;margin:0 0 8px;padding:9px 12px;border-radius:6px;line-height:1.45}
 button.ghost{background:transparent;color:var(--dim);border:1px solid var(--line);

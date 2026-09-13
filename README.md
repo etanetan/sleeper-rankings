@@ -42,8 +42,23 @@ Slots fill most-restrictive-first, so a flex slot can't take the only player
 eligible for a dedicated one. Dedicated slots rank by positional rank; flex
 slots compare projected points, which is valid because every player on the page
 is scored by the same settings. `SUPER_FLEX` takes a QB whenever one is
-available. Out, doubtful, IR, PUP and suspended players sink to the bottom;
-questionable players still start.
+available.
+
+Players who won't take the field sink to the bottom: out, doubtful, IR, PUP,
+suspended, and anyone on bye that week. Questionable players still start. When
+a well-ranked player is held out, the page names him and says why, because a
+WR6 sitting on the bench otherwise looks like a bug.
+
+Slots still have to be filled, so if the healthy players at a position run out,
+an unavailable one is started anyway. That case is called out separately - it
+means the roster is short, not that the pick is good.
+
+### Known limits
+
+Kicker and defense scoring are approximate. Sleeper projects a single `fgm` and
+`pts_allow` figure while leagues score those in distance and points-allowed
+tiers, so K and DST ranks are rougher than the skill positions. Everything else
+is scored exactly.
 
 ### Caching
 

@@ -27,7 +27,10 @@ const dump = {
   "9": { full_name: "Some Guard", position: "OL", team: "NYG" },
   "8": { full_name: "Hurt Guy", position: "WR", team: "KC", injury_status: "Questionable" },
 };
+dump["1"].bye_week = 12;
 const trimmed = app.trimPlayers(dump);
+check("bye week kept", trimmed["1"].b, 12);
+check("missing bye week is null", trimmed["2"].b, null);
 check("non-fantasy positions dropped", Object.keys(trimmed).sort(), ["1", "2", "8", "JAX"]);
 check("full_name preferred", trimmed["1"].n, "Josh Allen");
 check("name assembled from parts", trimmed["2"].n, "Bijan Robinson");
@@ -191,6 +194,44 @@ check("roster keeps known players", roster.length, 3);
 check("rank attached", roster[0].posRank, 1);
 check("injury normalized", roster[2].status, "Q");
 check("unprojected player kept but unranked", roster[2].posRank, null);
+
+/* --- bye weeks --------------------------------------------------------- */
+const byePlayers = {
+  onbye: { n: "Bye Guy", p: "WR", t: "AAA", k: "bye guy", i: "", b: 7 },
+  playing: { n: "Playing Guy", p: "WR", t: "BBB", k: "playing guy", i: "", b: 11 },
+  nobye: { n: "No Bye Data", p: "WR", t: "CCC", k: "no bye data", i: "", b: null },
+};
+const byeRanks = { onbye: { posRank: 1, pts: 20 }, playing: { posRank: 40, pts: 6 },
+                   nobye: { posRank: 50, pts: 4 } };
+const wk7 = app.buildRoster(["onbye", "playing", "nobye"], byePlayers, byeRanks, 7);
+check("player on bye flagged", wk7[0].onBye, true);
+check("player not on bye clear", wk7[1].onBye, false);
+check("missing bye data is not a bye", wk7[2].onBye, false);
+check("bye counts as unavailable", app.unavailable(wk7[0]), true);
+check("bye reason reported", app.benchReason(wk7[0]), "BYE");
+
+const wk11 = app.buildRoster(["onbye", "playing"], byePlayers, byeRanks, 11);
+check("bye is week-specific", [wk11[0].onBye, wk11[1].onBye], [false, true]);
+check("no week given means no bye flag",
+      app.buildRoster(["onbye"], byePlayers, byeRanks, undefined)[0].onBye, false);
+check("string bye week still matches",
+      app.buildRoster(["s"], { s: { n: "S", p: "WR", k: "s", i: "", b: "7" } }, {}, 7)[0].onBye,
+      true);
+
+// the whole point: a WR1 on bye must not be started over a healthy WR40
+const byeLu = app.pickLineup(wk7, ["WR"]);
+check("top-ranked player on bye is benched",
+      byeLu.starters[0].player.n, "Playing Guy");
+check("bye player loses a flex slot too",
+      app.pickLineup(wk7, ["FLEX"]).starters[0].player.n, "Playing Guy");
+
+/* injury reason still reported when there is no bye */
+check("injury reason reported",
+      app.benchReason({ status: "OUT", onBye: false }), "OUT");
+check("healthy player has no reason",
+      app.benchReason({ status: "", onBye: false }), "");
+check("bye takes precedence over a status",
+      app.benchReason({ status: "Q", onBye: true }), "BYE");
 
 /* --- lineup ------------------------------------------------------------ */
 const P = (n, p, posRank, pts, status = "") => ({ n, p, posRank, pts, status, t: "XXX" });
