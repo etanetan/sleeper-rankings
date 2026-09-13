@@ -53,6 +53,21 @@ function norm(name) {
     .split(/\s+/).filter((w) => w && !SUFFIXES.has(w)).join(" ");
 }
 
+/* Injury status as reported on a projections row, if it carries one. Sleeper
+ * has moved this around, so check the shapes we've seen rather than assume.
+ * Returns undefined when the row says nothing, which is different from saying
+ * "healthy" - an absent field must not clear a real status. */
+function statusFromRow(row) {
+  if (!row || typeof row !== "object") return undefined;
+  const candidates = [row.injury_status, row.status,
+                      row.player && row.player.injury_status,
+                      row.player && row.player.status];
+  for (const c of candidates) {
+    if (typeof c === "string" && c.trim()) return c.trim();
+  }
+  return undefined;
+}
+
 /* Trim Sleeper's full player dump to the fantasy-relevant fields. The dump is
  * ~5MB; what's kept is a couple of hundred KB and fits in localStorage. */
 function trimPlayers(db) {
@@ -219,7 +234,7 @@ function pickLineup(roster, slots) {
 }
 
 if (typeof module !== "undefined") {
-  module.exports = { norm, trimPlayers, scoringLabel, scorePlayer,
+  module.exports = { norm, trimPlayers, statusFromRow, scoringLabel, scorePlayer,
                     rankPositions, consensusRanks,
                     pickLineup,
                     posKey, flexKey, buildRoster, normStatus,
@@ -257,13 +272,13 @@ if (typeof document !== "undefined") {
     return r.json();
   }
 
-  function cached(key, maxAge) {
+  function cachedWithTime(key, maxAge) {
     try {
       const raw = localStorage.getItem(key);
       if (!raw) return null;
       const c = JSON.parse(raw);
       const age = Date.now() - (c.fetched || 0);
-      return age >= 0 && age < maxAge ? c.value : null;
+      return age >= 0 && age < maxAge ? c : null;
     } catch (e) {
       return null;   // private mode, quota, or corrupt entry
     }
@@ -275,13 +290,15 @@ if (typeof document !== "undefined") {
     } catch (e) { /* over quota or private mode; not worth failing over */ }
   }
 
-  async function loadPlayers() {
-    const hit = cached(PLAYERS_KEY, PLAYERS_MAX_AGE);
-    if (hit) return hit;
+  async function loadPlayers(force) {
+    if (!force) {
+      const hit = cachedWithTime(PLAYERS_KEY, PLAYERS_MAX_AGE);
+      if (hit) return { players: hit.value, fetched: hit.fetched };
+    }
     setStatus("Fetching the player list from Sleeper (a few MB, once a day)…");
     const players = trimPlayers(await json(`${SLEEPER}/players/nfl`));
     cache(PLAYERS_KEY, players);
-    return players;
+    return { players, fetched: Date.now() };
   }
 
   async function loadProjections(season, week) {
@@ -291,15 +308,18 @@ if (typeof document !== "undefined") {
     const rows = await json(url);
     const list = Array.isArray(rows) ? rows : Object.values(rows);
     const out = {};
+    const statuses = {};
     for (const row of list) {
       const pid = String(row.player_id || "");
       const stats = row.stats || {};
       if (!pid) continue;
+      const live = statusFromRow(row);
+      if (live !== undefined) statuses[pid] = live;
       const kept = {};
       for (const k in stats) if (typeof stats[k] === "number" && stats[k]) kept[k] = stats[k];
       if (Object.keys(kept).length) out[pid] = kept;
     }
-    return out;
+    return { projections: out, statuses };
   }
 
   async function loadData() {
@@ -310,19 +330,34 @@ if (typeof document !== "undefined") {
     const week = state.week || state.display_week || 1;
     $("#week").textContent = `Week ${week}`;
 
-    const players = await loadPlayers();
+    const { players, fetched } = await loadPlayers();
     setStatus("Loading projections…");
-    const projections = await loadProjections(season, week);
+    const { projections, statuses } = await loadProjections(season, week);
+
+    // Overlay any status the live projections call reported. Injury news moves
+    // faster than anything else here and must not be served from a day-old
+    // cache; where projections say nothing, the cached value stands.
+    let liveStatuses = 0;
+    for (const pid in statuses) {
+      if (players[pid]) { players[pid].i = statuses[pid]; liveStatuses++; }
+    }
 
     // Optional: if a build has published consensus rankings, prefer them.
     // Without one this 404s and we rank by projection instead.
     let rankings = null;
     try { rankings = await json("data/rankings.json"); } catch (e) { rankings = null; }
 
-    DATA = { season, week, players, projections, rankings };
-    $("#gen").textContent = rankings && rankings.shared
-      ? "Ranks from FantasyPros expert consensus."
-      : "Ranks from Sleeper projections, scored by each league's settings.";
+    DATA = { season, week, players, projections, rankings,
+             playersFetched: fetched, liveStatuses };
+    const injAge = (Date.now() - fetched) / 36e5;
+    $("#gen").textContent =
+      (rankings && rankings.shared
+        ? "Ranks from FantasyPros expert consensus. "
+        : "Ranks from Sleeper projections, scored by each league's settings. ") +
+      (liveStatuses
+        ? `Injury statuses refreshed live.`
+        : `Injury statuses from the player list, ` +
+          `${injAge < 1 ? "under an hour" : `${Math.round(injAge)}h`} old.`);
     return DATA;
   }
 
@@ -414,9 +449,12 @@ if (typeof document !== "undefined") {
     tr.appendChild(nameCell);
     tr.appendChild(el("td", "pos", p.p === "DEF" ? "DST" : p.p));
     tr.appendChild(el("td", "pts", p.pts != null ? p.pts.toFixed(1) : "—"));
-    const rk = el("td", "rk");
+    const inactive = OUT_STATUSES.has(p.status);
+    const rk = el("td", "rk" + (inactive ? " inactive" : ""));
     if (p.posRank != null) {
-      rk.appendChild(el("b", null, `${p.p === "DEF" ? "DST" : p.p}${p.posRank}`));
+      const b = el("b", null, `${p.p === "DEF" ? "DST" : p.p}${p.posRank}`);
+      if (inactive) b.title = `Ranked ${p.p}${p.posRank}, but listed ${p.status}`;
+      rk.appendChild(b);
     } else {
       rk.className = "rk meta";
       rk.textContent = "—";
@@ -457,6 +495,17 @@ if (typeof document !== "undefined") {
 
     if (bench.length) {
       out.appendChild(el("h3", null, "Sit"));
+      // A strong rank next to a benched player looks wrong unless we say why.
+      const sidelined = bench.filter(
+        (p) => OUT_STATUSES.has(p.status) && p.posRank != null && p.posRank <= 36);
+      if (sidelined.length) {
+        const who = sidelined.map((p) => `${p.n} (${p.status})`).join(", ");
+        out.appendChild(el("p", "note",
+          `${who} ${sidelined.length > 1 ? "rank" : "ranks"} well but ` +
+          `${sidelined.length > 1 ? "are" : "is"} not expected to play, so ` +
+          `${sidelined.length > 1 ? "they were" : "he was"} left out of the lineup. ` +
+          `Rankings reflect a healthy week.`));
+      }
       bench.sort((a, b) => POS_ORDER.indexOf(a.p) - POS_ORDER.indexOf(b.p) || posKey(a) - posKey(b));
       out.appendChild(table(bench.map((p) => playerRow(p))));
     }
@@ -471,10 +520,23 @@ if (typeof document !== "undefined") {
     }
   }
 
+  async function refresh() {
+    setStatus("Refreshing player and injury data…");
+    try {
+      localStorage.removeItem(PLAYERS_KEY);
+    } catch (e) { /* private mode */ }
+    DATA = null;
+    await go($("#username").value);
+  }
+
   window.addEventListener("DOMContentLoaded", () => {
     $("#form").addEventListener("submit", (e) => {
       e.preventDefault();
       go($("#username").value);
+    });
+    $("#refresh").addEventListener("click", (e) => {
+      e.preventDefault();
+      refresh();
     });
     let saved = null;
     try { saved = localStorage.getItem("sleeperUser"); } catch (e) { /* private mode */ }

@@ -39,6 +39,21 @@ check("injury carried through", trimmed["8"].i, "Questionable");
 check("missing injury becomes empty", trimmed["1"].i, "");
 check("empty dump safe", app.trimPlayers({}), {});
 
+/* --- live injury status from a projections row ------------------------ */
+check("top-level injury_status", app.statusFromRow({ injury_status: "Questionable" }), "Questionable");
+check("top-level status", app.statusFromRow({ status: "Out" }), "Out");
+check("nested under player", app.statusFromRow({ player: { injury_status: "IR" } }), "IR");
+check("injury_status preferred over status",
+      app.statusFromRow({ injury_status: "Doubtful", status: "Active" }), "Doubtful");
+check("whitespace trimmed", app.statusFromRow({ injury_status: "  Out  " }), "Out");
+// An absent field means "no information", not "healthy" - returning "" here
+// would wipe a real status off a cached player.
+check("absent field is undefined, not empty", app.statusFromRow({ stats: {} }), undefined);
+check("empty string is undefined", app.statusFromRow({ injury_status: "   " }), undefined);
+check("non-string ignored", app.statusFromRow({ injury_status: 3 }), undefined);
+check("null row safe", app.statusFromRow(null), undefined);
+check("non-object safe", app.statusFromRow("nope"), undefined);
+
 /* --- scoring a stat line through league settings ---------------------- */
 const PPR = { rec: 1, rec_yd: 0.1, rec_td: 6, rush_yd: 0.1, rush_td: 6,
               pass_yd: 0.04, pass_td: 4, pass_int: -2, fum_lost: -2 };
