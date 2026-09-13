@@ -50,6 +50,7 @@ tr:last-child td{border-bottom:none}
 .slot{font-weight:700;color:var(--dim);font-size:11px;width:54px;letter-spacing:.03em}
 .nm{font-weight:500}
 .pos{color:var(--dim);font-size:12px;width:40px}
+.pts{text-align:right;font-variant-numeric:tabular-nums;width:52px;color:var(--dim);font-size:13px}
 .rk{text-align:right;font-variant-numeric:tabular-nums;width:74px;white-space:nowrap}
 .rk b{color:var(--accent)}
 .meta{color:var(--dim);font-size:12px;font-weight:400}

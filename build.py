@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """
-Fetch FantasyPros expert consensus rankings and a trimmed Sleeper player map,
-and write them as JSON for the static site to consume.
+Prepare the data the page can't fetch for itself.
 
-The browser can call the Sleeper API directly (it sends CORS headers), but
-FantasyPros does not allow cross-origin requests, so the rankings have to be
-fetched server-side here and shipped alongside the page.
+Only Sleeper's public API is used. No scraping: FantasyPros' rankings are
+their commercial product and we have no permission to automate against them.
 
-Runs in GitHub Actions, where outbound network access is unrestricted.
+Sleeper asks callers to pull the ~5MB player dictionary no more than once a
+day, which is the one thing that genuinely needs a build step - rosters come
+back as bare player IDs and that file is the only way to name them. Weekly
+projections are prebuilt too, as a fallback for browsers that can't reach the
+projections host directly.
 """
 
 import json
 import os
-import re
 import shutil
 import sys
 import time
-import unicodedata
 
 import requests
 
@@ -24,21 +24,12 @@ OUT_DIR = os.environ.get("OUTPUT_DIR", "site")
 STATIC_DIR = os.environ.get("STATIC_DIR", "public")
 CACHE_DIR = os.environ.get("CACHE_DIR", ".cache")
 
-# Sleeper asks callers not to pull the ~5MB player dump more than once a day,
-# so it is cached across runs while the rankings refresh as often as we like.
-PLAYERS_MAX_AGE = 20 * 3600
-
 SLEEPER = "https://api.sleeper.app/v1"
-FP = "https://www.fantasypros.com/nfl/rankings"
-UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-                    "(KHTML, like Gecko) Chrome/125.0 Safari/537.36"}
+PROJ = "https://api.sleeper.com/projections/nfl"
+UA = {"User-Agent": "sleeper-rankings (github.com/etanetan/sleeper-rankings)"}
 
-# Scoring variants FantasyPros publishes. QB/K/DST are identical across all
-# three, so they are fetched once and shared.
-FORMATS = ["std", "half", "ppr"]
-SCORED_POS = ["RB", "WR", "TE", "FLEX"]
-SHARED_POS = ["QB", "K", "DST"]
-
+# Sleeper's own guidance for the player dump.
+PLAYERS_MAX_AGE = 20 * 3600
 FANTASY_POS = {"QB", "RB", "WR", "TE", "K", "DEF"}
 
 log = lambda *a: print(*a, file=sys.stderr, flush=True)
@@ -58,148 +49,6 @@ def get(url, tries=4):
         time.sleep(2 ** n)
     raise RuntimeError(f"failed to fetch {url}: {last}")
 
-
-# --------------------------------------------------------------------------
-# name matching
-# --------------------------------------------------------------------------
-
-SUFFIXES = {"jr", "sr", "ii", "iii", "iv", "v"}
-
-
-def norm(name):
-    """Normalize a player name so Sleeper and FantasyPros spellings agree."""
-    name = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode()
-    name = name.lower().replace(".", "").replace("'", "").replace("-", " ")
-    parts = [p for p in re.split(r"\s+", name) if p and p not in SUFFIXES]
-    return " ".join(parts)
-
-
-# --------------------------------------------------------------------------
-# FantasyPros
-# --------------------------------------------------------------------------
-
-def extract_object(text, start):
-    """Return the balanced {...} JSON object beginning at or after `start`."""
-    i = text.find("{", start)
-    if i < 0:
-        return None
-    depth, in_str, esc = 0, False, False
-    for j in range(i, len(text)):
-        c = text[j]
-        if in_str:
-            if esc:
-                esc = False
-            elif c == "\\":
-                esc = True
-            elif c == '"':
-                in_str = False
-        else:
-            if c == '"':
-                in_str = True
-            elif c == "{":
-                depth += 1
-            elif c == "}":
-                depth -= 1
-                if depth == 0:
-                    return text[i:j + 1]
-    return None
-
-
-def parse_ecr(html, label):
-    """
-    Pull the rankings array out of a FantasyPros page.
-
-    The data is embedded as `var ecrData = {...}`. That has moved before, so
-    try the shapes we know and fail loudly with enough detail to fix it from
-    the Actions log rather than silently returning nothing.
-    """
-    for marker in ("var ecrData", "window.ecrData", '"ecrData"'):
-        idx = html.find(marker)
-        if idx < 0:
-            continue
-        raw = extract_object(html, idx + len(marker))
-        if not raw:
-            continue
-        try:
-            data = json.loads(raw)
-        except json.JSONDecodeError as e:
-            log(f"  [{label}] found {marker!r} but JSON failed: {e}")
-            continue
-        if data.get("players"):
-            return data["players"]
-
-    m = re.search(r'<script[^>]+id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.S)
-    if m:
-        try:
-            nxt = json.loads(m.group(1))
-        except json.JSONDecodeError:
-            nxt = None
-        if nxt:
-            found = []
-
-            def walk(node):
-                if isinstance(node, dict):
-                    if "players" in node and isinstance(node["players"], list):
-                        found.append(node["players"])
-                    for v in node.values():
-                        walk(v)
-                elif isinstance(node, list):
-                    for v in node:
-                        walk(v)
-
-            walk(nxt)
-            if found:
-                log(f"  [{label}] recovered via __NEXT_DATA__")
-                return max(found, key=len)
-
-    log(f"  [{label}] NO RANKINGS PARSED. len(html)={len(html)} "
-        f"has_ecrData={'ecrData' in html} has_table={'<table' in html}")
-    log(f"  [{label}] head: {html[:300]!r}")
-    return []
-
-
-def slug(pos, fmt):
-    """FantasyPros URL slug. QB/K/DST have no scoring variants."""
-    if pos in SHARED_POS:
-        return pos.lower()
-    prefix = {"ppr": "ppr-", "half": "half-point-ppr-", "std": ""}[fmt]
-    return f"{prefix}{pos.lower()}"
-
-
-def fetch_pos(pos, fmt):
-    """{key: {rank, posRank, team, opp, name}} for one position + format."""
-    url = f"{FP}/{slug(pos, fmt)}.php"
-    log(f"fetching {url}")
-    players = parse_ecr(get(url).text, f"{pos}/{fmt}")
-
-    out = {}
-    for p in players:
-        name = p.get("player_name") or ""
-        team = (p.get("player_team_id") or "").upper()
-        ppos = (p.get("player_position_id") or pos).upper()
-        try:
-            rank = int(float(p.get("rank_ecr") or 0))
-        except (TypeError, ValueError):
-            continue
-        pos_rank = p.get("pos_rank") or ""
-        # pos_rank arrives like "WR8"; keep just the number for display control.
-        m = re.search(r"(\d+)", str(pos_rank))
-        rec = {
-            "rank": rank,
-            "posRank": int(m.group(1)) if m else None,
-            "team": team,
-            "opp": (p.get("player_opponent") or "").strip(),
-            "name": name,
-        }
-        key = team if (ppos == "DST" or pos == "DST") else norm(name)
-        out[key] = rec
-    log(f"  -> {len(out)} players")
-    return out
-
-
-# --------------------------------------------------------------------------
-# main
-# --------------------------------------------------------------------------
 
 def load_players():
     """
@@ -222,11 +71,10 @@ def load_players():
         except (json.JSONDecodeError, OSError) as e:
             log(f"cached player map unusable ({e}), refetching")
 
-    log("fetching Sleeper player dictionary (~5MB)")
+    log("fetching Sleeper player dictionary (~5MB, at most once a day)")
     db = get(f"{SLEEPER}/players/nfl").json()
     log(f"  -> {len(db)} entries")
 
-    # Trim to fantasy-relevant players so the browser downloads ~1% of the dump.
     players = {}
     for pid, m in db.items():
         pos = (m.get("position") or "").upper()
@@ -235,14 +83,12 @@ def load_players():
         if pos == "DEF":
             name = f"{m.get('first_name', '')} {m.get('last_name', '')}".strip() or pid
             team = (m.get("team") or pid).upper()
-            key = team
         else:
             name = m.get("full_name") or \
                 f"{m.get('first_name', '')} {m.get('last_name', '')}".strip()
             team = (m.get("team") or "").upper()
-            key = norm(name)
         players[pid] = {
-            "n": name, "p": pos, "t": team, "k": key,
+            "n": name, "p": pos, "t": team,
             "i": m.get("injury_status") or "", "b": m.get("bye_week"),
         }
     log(f"  -> {len(players)} fantasy-relevant players kept")
@@ -250,39 +96,60 @@ def load_players():
     os.makedirs(CACHE_DIR, exist_ok=True)
     with open(path, "w") as f:
         json.dump({"fetched": time.time(), "players": players}, f, separators=(",", ":"))
-    log(f"cached player map to {path}")
     return players
+
+
+def fetch_projections(season, week):
+    """
+    Weekly projected stat lines, keyed by player id.
+
+    The raw components are kept rather than Sleeper's precomputed pts_* values
+    so the page can score each league by its own settings.
+    """
+    url = (f"{PROJ}/{season}/{week}?season_type=regular"
+           f"&position[]=QB&position[]=RB&position[]=WR&position[]=TE"
+           f"&position[]=K&position[]=DEF&order_by=pts_half_ppr")
+    log(f"fetching projections: {url}")
+    rows = get(url).json()
+    if isinstance(rows, dict):
+        rows = list(rows.values())
+    log(f"  -> {len(rows)} projection rows")
+
+    out = {}
+    for row in rows:
+        pid = str(row.get("player_id") or "")
+        stats = row.get("stats") or {}
+        if not pid or not stats:
+            continue
+        # Drop zero values; most players project zero in most categories and
+        # the payload shrinks a lot without them. A player left with nothing
+        # isn't projected to do anything, so drop the row entirely rather than
+        # rank a crowd of scoreless players against each other.
+        kept = {k: v for k, v in stats.items() if isinstance(v, (int, float)) and v}
+        if not kept:
+            continue
+        out[pid] = kept
+    log(f"  -> {len(out)} players with a projection")
+    return out
+
+
+def write(path, obj):
+    with open(path, "w") as f:
+        json.dump(obj, f, separators=(",", ":"))
+    log(f"wrote {path} ({os.path.getsize(path) / 1024:.0f} KB)")
 
 
 def main():
     state = get(f"{SLEEPER}/state/nfl").json()
     season = state.get("season")
     week = state.get("week") or state.get("display_week") or 1
-    season_type = state.get("season_type")
-    log(f"season={season} week={week} type={season_type}")
-
-    # The page calls Sleeper from the browser, so confirm CORS is actually open.
-    probe = requests.get(f"{SLEEPER}/state/nfl", headers={**UA, "Origin":
-                         "https://etanetan.github.io"}, timeout=30)
-    acao = probe.headers.get("access-control-allow-origin")
-    log(f"SLEEPER CORS access-control-allow-origin: {acao!r}")
-    if not acao:
-        log("WARNING: Sleeper did not return a CORS header; the browser fetch may fail")
-
-    rankings = {"shared": {}, "formats": {}}
-    for pos in SHARED_POS:
-        rankings["shared"][pos] = fetch_pos(pos, "std")
-    for fmt in FORMATS:
-        rankings["formats"][fmt] = {pos: fetch_pos(pos, fmt) for pos in SCORED_POS}
-
-    total = sum(len(v) for v in rankings["shared"].values()) + sum(
-        len(t) for f in rankings["formats"].values() for t in f.values())
-    log(f"\ntotal ranking rows: {total}")
-    if total == 0:
-        log("ERROR: no rankings parsed at all - the FantasyPros parser is broken")
-        sys.exit(1)
+    log(f"season={season} week={week} type={state.get('season_type')}")
 
     players = load_players()
+    projections = fetch_projections(season, week)
+    if not projections:
+        log("ERROR: no projections returned; refusing to publish an empty site")
+        sys.exit(1)
 
     os.makedirs(f"{OUT_DIR}/data", exist_ok=True)
     if os.path.isdir(STATIC_DIR):
@@ -290,20 +157,12 @@ def main():
             shutil.copy2(os.path.join(STATIC_DIR, f), os.path.join(OUT_DIR, f))
         log(f"copied static files from {STATIC_DIR}/")
 
-    meta = {
-        "season": season, "week": week, "seasonType": season_type,
+    write(f"{OUT_DIR}/data/meta.json", {
+        "season": season, "week": week, "seasonType": state.get("season_type"),
         "generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        "sleeperCors": bool(acao),
-    }
-    write(f"{OUT_DIR}/data/meta.json", meta)
-    write(f"{OUT_DIR}/data/rankings.json", rankings)
+    })
     write(f"{OUT_DIR}/data/players.json", players)
-
-
-def write(path, obj):
-    with open(path, "w") as f:
-        json.dump(obj, f, separators=(",", ":"))
-    log(f"wrote {path} ({os.path.getsize(path) / 1024:.0f} KB)")
+    write(f"{OUT_DIR}/data/projections.json", projections)
 
 
 if __name__ == "__main__":

@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 """
-Diagnostic probe. Answers questions this container's network policy can't:
+Diagnostic probe for the Sleeper endpoints this project depends on.
 
-  1. What does FantasyPros' robots.txt actually permit?
-  2. Does Sleeper publish projections we could use instead of scraping?
-  3. Do those endpoints send CORS headers (i.e. could the browser call them
-     directly, removing the need for a build step)?
-  4. Does the projections payload carry injury status, so we stop depending
-     on the 5MB player dump for it?
+Answers what a sandboxed session can't: the real shape of the projections
+payload, whether it carries the stat components we score with, and whether
+the endpoints send CORS headers (if they do, the browser can fetch
+projections live and the prebuilt copy is only a fallback).
 
 Prints findings and always exits 0 - this informs decisions, it isn't a test.
 """
@@ -17,8 +15,7 @@ import sys
 
 import requests
 
-UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-                    "(KHTML, like Gecko) Chrome/125.0 Safari/537.36"}
+UA = {"User-Agent": "sleeper-rankings (github.com/etanetan/sleeper-rankings)"}
 ORIGIN = {"Origin": "https://etanetan.github.io"}
 
 
@@ -31,112 +28,57 @@ def cors_of(r):
     return h.get("access-control-allow-origin") or "(none)"
 
 
-def probe_robots():
-    rule("1. FantasyPros robots.txt")
+def main():
     try:
-        r = requests.get("https://www.fantasypros.com/robots.txt",
-                         headers=UA, timeout=30)
-        print(f"HTTP {r.status_code}\n")
-        body = r.text
-        print(body[:3000])
-        if len(body) > 3000:
-            print(f"... ({len(body)} bytes total)")
-        # Call out anything that covers the paths we use.
-        print("\n-- lines mentioning /nfl/rankings --")
-        for line in body.splitlines():
-            if "rankings" in line.lower() or line.lower().startswith("crawl-delay"):
-                print(f"  {line}")
+        st = requests.get("https://api.sleeper.app/v1/state/nfl", headers=UA, timeout=30).json()
+        season, week = st.get("season", "2026"), st.get("week", 1)
     except Exception as e:
-        print(f"failed: {e}")
+        print(f"could not read NFL state: {e}")
+        season, week = "2026", 1
 
-
-def probe_sleeper_projections(season, week):
-    rule(f"2. Sleeper projections  season={season} week={week}")
-    base = "https://api.sleeper.com/projections/nfl"
-    url = (f"{base}/{season}/{week}?season_type=regular"
+    rule(f"Projections  season={season} week={week}")
+    url = (f"https://api.sleeper.com/projections/nfl/{season}/{week}?season_type=regular"
            f"&position[]=QB&position[]=RB&position[]=WR&position[]=TE"
            f"&position[]=K&position[]=DEF&order_by=pts_half_ppr")
     print(f"GET {url}\n")
     try:
         r = requests.get(url, headers={**UA, **ORIGIN}, timeout=45)
-        print(f"HTTP {r.status_code}")
-        print(f"CORS access-control-allow-origin: {cors_of(r)}")
-        if r.status_code != 200:
-            print(r.text[:500])
-            return
-        data = r.json()
-        print(f"type={type(data).__name__} count={len(data)}")
-        rows = data if isinstance(data, list) else list(data.values())
-        if not rows:
-            print("empty payload")
-            return
-        s = rows[0]
-        print("\n-- first record, keys --")
-        print(sorted(s.keys()))
-        print("\n-- first record, abridged --")
-        print(json.dumps({k: s[k] for k in list(s)[:12]}, indent=2)[:1200])
-
-        stats = s.get("stats") or {}
-        print(f"\n-- stats keys ({len(stats)}) --")
-        print(sorted(stats.keys())[:40])
-        for k in ("pts_std", "pts_half_ppr", "pts_ppr"):
-            print(f"  {k}: {stats.get(k)}")
-
-        # Raw stat lines would let us score with each league's own settings
-        # instead of bucketing into std/half/ppr.
-        raw = [k for k in stats if k.startswith(("rec", "rush", "pass"))]
-        print(f"\nraw stat components present: {sorted(raw)[:20]}")
-
-        # Injury status here would end the dependency on the 5MB dump for it.
-        for key in ("injury_status", "status", "player"):
-            if key in s:
-                print(f"\n'{key}' present: {json.dumps(s[key])[:300]}")
+        print(f"HTTP {r.status_code}   CORS: {cors_of(r)}")
+        if r.status_code == 200:
+            rows = r.json()
+            rows = rows if isinstance(rows, list) else list(rows.values())
+            print(f"rows={len(rows)}")
+            if rows:
+                s = rows[0]
+                print("\nrecord keys:", sorted(s.keys()))
+                stats = s.get("stats") or {}
+                print(f"\nstat keys ({len(stats)}):", sorted(stats)[:40])
+                print("\nsample record:")
+                print(json.dumps(s, indent=2)[:900])
+                # These are what scoring multiplies against.
+                comps = [k for k in stats if k.startswith(("rec", "rush", "pass", "fum", "def", "pts_allow"))]
+                print(f"\nscoreable components: {sorted(comps)}")
+                miss = [k for k in ("rec", "rec_yd", "rec_td", "rush_yd", "rush_td",
+                                    "pass_yd", "pass_td") if k not in stats]
+                print(f"expected components absent from this record: {miss}")
+        else:
+            print(r.text[:400])
     except Exception as e:
         print(f"failed: {e}")
 
-
-def probe_cors():
-    rule("3. CORS on the endpoints the browser already calls")
-    for url in ("https://api.sleeper.app/v1/state/nfl",
-                "https://api.sleeper.app/v1/user/etanetan",
-                "https://api.sleeper.com/projections/nfl/2026/1?season_type=regular&position[]=QB"):
+    rule("CORS on every endpoint the browser calls")
+    for u in (f"https://api.sleeper.app/v1/state/nfl",
+              f"https://api.sleeper.app/v1/user/etanetan",
+              url):
         try:
-            r = requests.get(url, headers={**UA, **ORIGIN}, timeout=30)
-            print(f"{r.status_code}  acao={cors_of(r):<20}  {url}")
+            r = requests.get(u, headers={**UA, **ORIGIN}, timeout=30)
+            print(f"{r.status_code}  acao={cors_of(r):<18} {u[:80]}")
         except Exception as e:
-            print(f"ERR  {url} -> {e}")
+            print(f"ERR  {u[:80]} -> {e}")
 
-
-def probe_fp_api():
-    rule("4. Does FantasyPros offer an official API?")
-    for url in ("https://api.fantasypros.com/v2/json/nfl/2026/consensus-rankings",
-                "https://www.fantasypros.com/about/legal/"):
-        try:
-            r = requests.get(url, headers=UA, timeout=30)
-            print(f"\n{r.status_code}  {url}")
-            if "legal" in url and r.status_code == 200:
-                import re
-                txt = re.sub(r"<[^>]+>", " ", r.text)
-                txt = re.sub(r"\s+", " ", txt)
-                for term in ("scrap", "automated", "robot", "crawl", "data mining", "spider"):
-                    for m in re.finditer(term, txt, re.I):
-                        print(f"  …{txt[max(0, m.start() - 180):m.start() + 180]}…")
-                        break
-            else:
-                print(f"  {r.text[:300]}")
-        except Exception as e:
-            print(f"  failed: {e}")
+    print("\nprobe complete")
+    sys.exit(0)
 
 
 if __name__ == "__main__":
-    try:
-        st = requests.get("https://api.sleeper.app/v1/state/nfl", headers=UA, timeout=30).json()
-        season, week = st.get("season", "2026"), st.get("week", 1)
-    except Exception:
-        season, week = "2026", 1
-    probe_robots()
-    probe_sleeper_projections(season, week)
-    probe_cors()
-    probe_fp_api()
-    print("\nprobe complete")
-    sys.exit(0)
+    main()
