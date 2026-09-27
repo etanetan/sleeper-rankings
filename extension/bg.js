@@ -48,14 +48,35 @@ async function loadAlerted() {
   } catch (e) { return {}; }
 }
 
+// MV3 can suspend the service worker the moment an event listener's
+// callback returns, whether or not work it kicked off is still in flight -
+// a bare `runCheck()` call from the alarm listener below wouldn't keep the
+// worker alive for it. A concurrent run is also guarded against here: two
+// overlapping runCheck() calls would both read the same on-disk `alerted`
+// map before either had saved it, and whichever finished last would wipe
+// out the other's newly-added keys, re-notifying for an already-seen
+// problem next cycle. This flag only guards concurrent calls within the
+// same live worker (it doesn't survive a worker restart), but two alarms
+// 30 minutes apart genuinely overlapping would mean something's already
+// badly wrong with the network, not something worth more machinery here.
+let CHECK_IN_PROGRESS = false;
+
 /* Every league, once: badges the toolbar icon with how many have a lineup
  * problem, and (when the owner has alerts on) notifies for any alert whose
  * key hasn't already fired. Nothing here should ever throw past this
  * function - a missed check beats a broken background page. */
 async function runCheck() {
+  if (CHECK_IN_PROGRESS) return;
+  CHECK_IN_PROGRESS = true;
   try {
     const { sleeperUser } = await chrome.storage.sync.get("sleeperUser");
-    if (!sleeperUser) return;   // no first-run username set yet
+    if (!sleeperUser) {
+      // No username set (or it was cleared in options) - nothing to
+      // track, so the badge shouldn't keep showing a stale count from
+      // whenever one was last configured.
+      if (chrome.action) chrome.action.setBadgeText({ text: "" });
+      return;
+    }
     const { sleeperAlerts } = await chrome.storage.sync.get("sleeperAlerts");
     const alertsOn = sleeperAlerts !== false;   // default on
 
@@ -79,7 +100,12 @@ async function runCheck() {
       for (const a of alertsFor(view)) {
         if (alerted[a.key]) continue;
         try {
-          chrome.notifications.create(a.key, {
+          // Awaited (not fired-and-forgotten): notifications.create()
+          // returns a promise in MV3, and an async rejection from it
+          // (permission revoked, a bad icon fetch, ...) would otherwise
+          // slip past the try/catch below, which only sees synchronous
+          // throws - and this alert would still get marked as shown.
+          await chrome.notifications.create(a.key, {
             type: "basic",
             iconUrl: chrome.runtime.getURL("icons/icon-128.png"),
             title: a.title,
@@ -103,12 +129,20 @@ async function runCheck() {
       chrome.action.setBadgeText({ text: badLineups > 0 ? String(badLineups) : "" });
       chrome.action.setBadgeBackgroundColor({ color: "#d97706" });
     }
-  } catch (e) { /* fail silently - see the function comment */ }
+  } catch (e) {
+    // Fail silently - a missed check beats a broken background page. The
+    // badge is deliberately left as it was: a transient failure (a flaky
+    // fetch, a bad response) doesn't mean the leagues are actually fine
+    // now, so keeping the last known count is more honest than clearing
+    // it to blank.
+  } finally {
+    CHECK_IN_PROGRESS = false;
+  }
 }
 
 if (chrome.alarms) {
   chrome.alarms.onAlarm.addListener((alarm) => {
-    if (alarm.name === ALARM_NAME) runCheck();
+    if (alarm.name === ALARM_NAME) return runCheck();
   });
 }
 
