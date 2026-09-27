@@ -136,7 +136,7 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
     const loader = createLoader({ storage });
 
     let LEAGUE_ID = null;
-    let CTX = null;   // { startingIds, bestIds, outIds, players, byNameKey, check }
+    let CTX = null;   // { startingIds, bestIds, outIds, players, byNameKey, check, matchup }
 
     // The x position of the "OWN %" column header, so every row's badge can
     // sit just to its left instead of crowding the player name - found by
@@ -242,15 +242,25 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
       document.querySelectorAll("[data-sr]").forEach((el) => delete el.dataset.sr);
     }
 
+    // The matchup page's URL is unverified (see docs/ROADMAP.md task 4d) -
+    // matches any path containing "/matchup" rather than a guessed exact
+    // route, so a wrong guess just means the pill falls back to the lineup
+    // text below instead of showing nothing.
+    function onMatchupPage() {
+      return /\/matchup/.test(location.pathname);
+    }
+
     // A small fixed pill is the only always-visible sign the extension is
     // doing anything on this page, so it shows a state whenever there's
     // context loaded - green when the lineup's already set, amber with the
     // pending changes otherwise - rather than only appearing for a warning.
+    // On the matchup page it shows the projected score and win chance
+    // instead, since the lineup check isn't what that page is about.
     // Alt+click copies a debug dump (see buildDebugDump) for pages whose
     // layout we can't see ourselves.
-    function showPill(check) {
+    function showPill(check, matchup) {
       let pill = document.getElementById("sr-pill");
-      if (!check) { if (pill) pill.remove(); return; }
+      if (!check && !(onMatchupPage() && matchup)) { if (pill) pill.remove(); return; }
       if (!pill) {
         pill = document.createElement("div");
         pill.id = "sr-pill";
@@ -270,7 +280,11 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
         });
         document.body.appendChild(pill);
       }
-      if (check.ok) {
+      if (onMatchupPage() && matchup) {
+        pill.className = matchup.win >= 0.5 ? "sr-ok" : "";
+        const winPct = Math.round(matchup.win * 100);
+        pill.textContent = `Proj ${Math.round(matchup.myProj)}–${Math.round(matchup.oppProj)} · ${winPct}%`;
+      } else if (check.ok) {
         pill.className = "sr-ok";
         pill.textContent = "✓ Lineup set";
       } else {
@@ -365,14 +379,14 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
         const byNameKey = {};
         pool.forEach((p) => { players[p.id] = p; byNameKey[norm(p.n)] = p.id; });
 
-        CTX = { startingIds, bestIds, outIds, players, byNameKey, check: view.check };
+        CTX = { startingIds, bestIds, outIds, players, byNameKey, check: view.check, matchup: view.matchup };
         // Redraw from scratch, not just over whatever's already there - this
         // runs again after the user edits their lineup on Sleeper itself
         // (see maybeReload below), when the same rows are still on the page
         // but need new colors, not a second badge next to the old one.
         resetBadges();
         sweep();
-        showPill(view.check);
+        showPill(view.check, view.matchup);
 
         try { chrome.runtime.sendMessage({ type: "sr-league", id: String(lg.league_id) }); }
         catch (e) { /* no panel listening right now */ }
@@ -400,6 +414,10 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
         // Switching tabs within the same league (Team -> Players) doesn't
         // change LEAGUE_ID below, but the column header can still differ.
         OWN_PCT_X = null;
+        // The pill shows different content on the matchup page, so it needs
+        // a redraw on any path change, not just a league change - from
+        // whatever's already loaded, no re-fetch needed for that alone.
+        if (CTX) showPill(CTX.check, CTX.matchup);
       }
       const m = LEAGUE_RE.exec(path);
       const id = m ? m[1] : null;

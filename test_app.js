@@ -433,5 +433,35 @@ check("kept ones are sorted by descending gain",
 check("no eligible starters at all means nothing is suggested",
       app.waiverUpgrades([faRB], wRostered, { starters: [] }), []);
 
+/* --- matchup: projectedTotal, winProb (Phase 4) ------------------------ */
+const mtPlayerA = PL("mtA", "Player A", "RB", 12.5);
+const mtPlayerB = PL("mtB", "Player B", "WR", 7.5);
+check("projectedTotal sums player.pts across slots",
+      app.projectedTotal([{ slot: "RB", player: mtPlayerA }, { slot: "WR", player: mtPlayerB }]),
+      20);
+check("an empty slot counts 0",
+      app.projectedTotal([{ slot: "RB", player: mtPlayerA }, { slot: "WR", player: null }]),
+      12.5);
+check("a player with no projection counts 0",
+      app.projectedTotal([{ slot: "RB", player: PL("mtC", "No Proj", "RB", null) }]),
+      0);
+check("an empty lineup totals 0", app.projectedTotal([]), 0);
+
+// Rounded: the A&S 7.1.26 erf approximation isn't exact at x=0 (its
+// coefficients are tuned to minimize max error over the whole domain, not
+// to zero out at any one point), so this lands a few billionths off 0.5.
+const round6 = (x) => Math.round(x * 1e6) / 1e6;
+check("equal projections are a coin flip", round6(app.winProb(100, 100)), 0.5);
+check("both teams at 0 is still a coin flip", round6(app.winProb(0, 0)), 0.5);
+check("a bigger lead means a higher win chance",
+      app.winProb(130, 100) > app.winProb(110, 100), true);
+check("trailing means below even odds", app.winProb(90, 110) < 0.5, true);
+{
+  const sum = app.winProb(118.4, 104.2) + app.winProb(104.2, 118.4);
+  check("winProb(a,b) + winProb(b,a) is ~1", Math.round(sum * 1000) / 1000, 1);
+}
+check("win probability is bounded above by 1", app.winProb(500, 0) <= 1, true);
+check("win probability is bounded below by 0", app.winProb(0, 500) >= 0, true);
+
 console.log(`\n${results.filter(Boolean).length}/${results.length} passed`);
 process.exit(results.every(Boolean) ? 0 : 1);

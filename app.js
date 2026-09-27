@@ -132,13 +132,23 @@ if (typeof document !== "undefined") {
 
   /* A short suffix for the picker and the league strip: ✓ when Sleeper's
    * lineup already matches, otherwise how many changes are pending, or ⚠
-   * when a starter needs attention (OUT/bye/empty) regardless of count. */
+   * when a starter needs attention (OUT/bye/empty) regardless of count -
+   * plus this week's win chance, when there's a matchup to compute one from. */
   function checkSuffix(lg) {
-    if (!lg.check) return "";
-    if (lg.check.unavailable.length || lg.check.empty.length) return "⚠";
-    if (lg.check.ok) return "✓";
-    const n = lg.check.changes.length;
-    return `${n} change${n === 1 ? "" : "s"}`;
+    let suffix = "";
+    if (lg.check) {
+      if (lg.check.unavailable.length || lg.check.empty.length) suffix = "⚠";
+      else if (lg.check.ok) suffix = "✓";
+      else {
+        const n = lg.check.changes.length;
+        suffix = `${n} change${n === 1 ? "" : "s"}`;
+      }
+    }
+    if (lg.matchup) {
+      const winPct = Math.round(lg.matchup.win * 100);
+      suffix = suffix ? `${suffix} · ${winPct}%` : `${winPct}%`;
+    }
+    return suffix;
   }
 
   function renderPicker() {
@@ -259,6 +269,82 @@ if (typeof document !== "undefined") {
     return li;
   }
 
+  /* One row of a matchup's starter column - a currentLineup-shaped entry
+   * ({slot, player}), player possibly null for an empty slot. Reuses
+   * playerRow for a real player so an opponent's OUT/bye starter gets the
+   * same "out"/"q" tag and inactive rank styling the lineup tab already
+   * uses - a hole should look like a hole, whichever side it's on. */
+  function matchupRow(e) {
+    if (e.player) return playerRow(e.player, e.slot);
+    const tr = el("tr");
+    tr.appendChild(el("td", "slot", SLOT_LABEL[e.slot] || e.slot));
+    const nm = el("td", "nm");
+    nm.appendChild(el("span", "out", "EMPTY"));
+    tr.appendChild(nm);
+    tr.appendChild(el("td", "pos"));
+    tr.appendChild(el("td", "pts", "—"));
+    tr.appendChild(el("td", "rk meta", "—"));
+    return tr;
+  }
+
+  function matchupSide(label, entries) {
+    const wrap = el("div", "deal-side");
+    wrap.appendChild(el("h4", null, label));
+    wrap.appendChild(table(entries.map(matchupRow)));
+    return wrap;
+  }
+
+  /* This week's opponent: projected score, win chance, and both lineups
+   * side by side (reusing the .deal/.deal-side layout the trade detail view
+   * already uses, so it stacks on narrow screens for free). */
+  function matchupPanel(lg) {
+    const panel = el("div", "panel");
+    const m = lg.matchup;
+    if (!m) {
+      panel.appendChild(el("p", "none",
+        "No matchup found for this week yet - check back once the schedule's set."));
+      return panel;
+    }
+
+    // Once either side has scored, that's more informative than a
+    // projection frozen at kickoff; a real 0-0 is indistinguishable from
+    // "hasn't started" for the seconds before the first snap, and that's
+    // an acceptable tradeoff for not needing a separate "has it started"
+    // signal from Sleeper.
+    const started = m.myPts > 0 || m.oppPts > 0;
+    const myShown = started ? m.myPts : m.myProj;
+    const oppShown = started ? m.oppPts : m.oppProj;
+    const winPct = Math.round(m.win * 100);
+
+    const head = el("p", "mu-head");
+    head.appendChild(el("b", null, "You"));
+    head.appendChild(document.createTextNode(` ${myShown.toFixed(1)} – ${oppShown.toFixed(1)} `));
+    head.appendChild(el("b", null, m.oppName));
+    head.appendChild(el("span", "chip fmt", `${winPct}% to win`));
+    panel.appendChild(head);
+
+    if (!started && Math.abs(m.myProjAsSet - m.myProj) > 0.05) {
+      panel.appendChild(el("p", "note",
+        `${m.myProjAsSet.toFixed(1)} as your Sleeper lineup is set, ` +
+        `${m.myProj.toFixed(1)} if you make the changes above.`));
+    }
+
+    const deal = el("div", "deal");
+    deal.appendChild(matchupSide("You", m.mine));
+    deal.appendChild(matchupSide(m.oppName, m.theirs));
+    panel.appendChild(deal);
+
+    if (m.oppHoles.length) {
+      const who = m.oppHoles
+        .map((e) => e.player ? `${e.player.n} (${benchReason(e.player)})` : `their ${SLOT_LABEL[e.slot] || e.slot} slot`)
+        .join(", ");
+      panel.appendChild(el("p", "note",
+        `${m.oppName}'s lineup has a hole: ${who}.`));
+    }
+
+    return panel;
+  }
+
   /* Above the starters table: what Sleeper has set vs. the best lineup this
    * roster supports, plus anything wrong with what's actually set. */
   function lineupBanner(lg) {
@@ -301,7 +387,7 @@ if (typeof document !== "undefined") {
   // Which tab is showing, kept across league switches and re-renders so
   // changing leagues doesn't bounce you back to the lineup.
   let ACTIVE_TAB = "lineup";
-  const TAB_NAMES = new Set(["lineup", "positions", "waivers", "trades"]);
+  const TAB_NAMES = new Set(["lineup", "matchup", "positions", "waivers", "trades"]);
   try {
     const saved = localStorage.getItem("activeTab");
     if (TAB_NAMES.has(saved)) ACTIVE_TAB = saved;
@@ -323,7 +409,7 @@ if (typeof document !== "undefined") {
       for (const key in panels) panels[key].hidden = key !== name;
     };
 
-    const tabs = [["lineup", "Lineup"], ["positions", "By position"],
+    const tabs = [["lineup", "Lineup"], ["matchup", "Matchup"], ["positions", "By position"],
                   ["waivers", "Waivers"], ["trades", "Trades"]];
     tabs.forEach(([name, label]) => {
       const b = el("button", "tab", label);
@@ -424,6 +510,9 @@ if (typeof document !== "undefined") {
       lineup.appendChild(table(bench.map((p) => playerRow(p))));
     }
 
+    // --- matchup panel: this week's opponent, projected score and holes -
+    const matchup = matchupPanel(lg);
+
     // --- positions panel: the whole roster, ranked within each position
     const positions = el("div", "panel");
     for (const pos of POS_ORDER) {
@@ -449,8 +538,9 @@ if (typeof document !== "undefined") {
     TRADES_PANEL = trades;
     loadTrades(lg, trades);
 
-    out.appendChild(tabBar({ lineup, positions, waivers, trades }));
+    out.appendChild(tabBar({ lineup, matchup, positions, waivers, trades }));
     out.appendChild(lineup);
+    out.appendChild(matchup);
     out.appendChild(positions);
     out.appendChild(waivers);
     out.appendChild(trades);

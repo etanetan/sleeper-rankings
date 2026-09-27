@@ -193,6 +193,21 @@ function createLoader({ storage, onStatus } = {}) {
     const rostered = new Set();
     for (const r of rosters) for (const pid of r.players || []) rostered.add(pid);
 
+    // Team names by roster_id (metadata.team_name, falling back to the
+    // Sleeper display name) - used below for the opponent's name, and kept
+    // on the view for the waiver drop/power-rankings displays. Independent
+    // of the matchup fetch below: a league with no live matchup yet (or one
+    // this call fails to reach) should still get names.
+    let names = {};
+    try {
+      const users = await fetchJson(`${SLEEPER}/league/${lg.league_id}/users`);
+      const nameByUserId = {};
+      (users || []).forEach((u) => {
+        nameByUserId[u.user_id] = (u.metadata && u.metadata.team_name) || u.display_name || "Team";
+      });
+      rosters.forEach((r) => { names[r.roster_id] = nameByUserId[r.owner_id] || `Team ${r.roster_id}`; });
+    } catch (e) { names = {}; }
+
     // What Sleeper actually has set for this week, compared with the best
     // lineup this roster supports. A locked starter stays put; a locked
     // bench player is dropped from consideration entirely, so the result is
@@ -202,9 +217,11 @@ function createLoader({ storage, onStatus } = {}) {
     let best = null;
     let locked = new Set();
     let checkedAt = null;
+    let matchups = null;
+    let mm = null;
     try {
-      const matchups = await fetchJson(`${SLEEPER}/league/${lg.league_id}/matchups/${data.week}`);
-      const mm = (matchups || []).find((m) => m.roster_id === mine.roster_id);
+      matchups = await fetchJson(`${SLEEPER}/league/${lg.league_id}/matchups/${data.week}`);
+      mm = (matchups || []).find((m) => m.roster_id === mine.roster_id);
       if (mm) {
         current = currentLineup(mm.starters, slots, roster);
         locked = lockedIds(roster, data.schedule, data.week);
@@ -217,7 +234,45 @@ function createLoader({ storage, onStatus } = {}) {
         check = lineupCheck(current, best.bySlot);
         checkedAt = Date.now();
       }
-    } catch (e) { current = null; check = null; best = null; locked = new Set(); checkedAt = null; }
+    } catch (e) {
+      current = null; check = null; best = null; locked = new Set(); checkedAt = null;
+      matchups = null; mm = null;
+    }
+
+    // This week's opponent: the other roster sharing `mm`'s matchup_id.
+    // Separate try/catch from the block above - a bad opponent roster or
+    // missing schedule shouldn't cost the user's own lineup check, which
+    // matters more. `matchup_id` is null for a bye week (playoffs) or a
+    // league that hasn't generated matchups yet, and there's simply no
+    // "other entry" in a one-team matchup either way.
+    let matchup = null;
+    try {
+      if (mm && mm.matchup_id != null) {
+        const opp = (matchups || []).find(
+          (m) => m.matchup_id === mm.matchup_id && m.roster_id !== mine.roster_id);
+        const oppRosterRaw = opp && rosters.find((r) => r.roster_id === opp.roster_id);
+        if (opp && oppRosterRaw) {
+          const oppRoster = buildRoster(oppRosterRaw.players, data.players, ranks, data.week);
+          const oppCurrent = currentLineup(opp.starters, slots, oppRoster);
+          const oppHoles = oppCurrent.filter((e) => !e.player || unavailable(e.player));
+          // Use the best lineup's total once the check flags a problem
+          // with what's actually set - the number a person would react to
+          // is "what I'd score if I fixed this", not the current shortfall.
+          const myProj = check && !check.ok
+            ? projectedTotal(best.bySlot) : projectedTotal(current);
+          const myProjAsSet = projectedTotal(current);
+          const oppProj = projectedTotal(oppCurrent);
+          matchup = {
+            oppName: names[opp.roster_id] || `Team ${opp.roster_id}`,
+            mine: current, theirs: oppCurrent,
+            myProj, myProjAsSet, oppProj,
+            win: winProb(myProj, oppProj),
+            myPts: mm.points || 0, oppPts: opp.points || 0,
+            oppHoles,
+          };
+        }
+      }
+    } catch (e) { matchup = null; }
 
     // Free agents who'd beat your weakest starter at a slot they can fill,
     // tagged with how many leagues have added them in the last day. Uses the
@@ -233,12 +288,12 @@ function createLoader({ storage, onStatus } = {}) {
       superflex: slots.includes("SUPER_FLEX"),
       trades: tradeWindow(lg, data.week),
       teRec: settings.bonus_rec_te || 0,
-      roster, source, rostered, waivers,
+      roster, source, rostered, waivers, names,
       // Every ranked player in the league, not just this user's roster - the
       // extension's content script uses this to badge free agents on the
       // Players page and opponents' rosters, not only the user's own team.
       pool,
-      current, check, best, locked, checkedAt,
+      current, check, best, locked, checkedAt, matchup,
       sleeperUrl: `https://sleeper.com/leagues/${lg.league_id}/team`,
     };
   }

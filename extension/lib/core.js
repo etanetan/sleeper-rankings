@@ -323,6 +323,14 @@ function lockedIds(roster, schedule, week) {
   return locked;
 }
 
+/* Sum of `player.pts` over a currentLineup-shaped array (one entry per
+ * slot, `{slot, player}`, player possibly null): an empty slot or a null
+ * projection counts 0. The lineup's total projected points. */
+function projectedTotal(entries) {
+  return entries.reduce(
+    (t, e) => t + (e.player && e.player.pts != null ? e.player.pts : 0), 0);
+}
+
 /* Compare the lineup Sleeper has set (`current`) with the best lineup this
  * roster supports (`best`) - both per-slot arrays shaped like
  * currentLineup's output, one entry per slot, player possibly null.
@@ -333,8 +341,6 @@ function lockedIds(roster, schedule, week) {
  * or a starter who's OUT/bye is a problem with the lineup Sleeper has set,
  * regardless of whether the set otherwise matches. */
 function lineupCheck(current, best) {
-  const sumPts = (arr) => arr.reduce(
-    (t, e) => t + (e.player && e.player.pts != null ? e.player.pts : 0), 0);
   const idSet = (arr) => arr.map((e) => e.player && e.player.id).filter(Boolean).sort();
 
   const empty = [];
@@ -359,7 +365,7 @@ function lineupCheck(current, best) {
                 (c.player && c.player.pts != null ? c.player.pts : 0);
       changes.push({ slot: c.slot || b.slot, out: c.player || null, in: b.player || null, gain: g });
     }
-    gain = sumPts(best) - sumPts(current);
+    gain = projectedTotal(best) - projectedTotal(current);
   }
 
   return { ok, changes, gain, empty, unavailable: unavailableList };
@@ -401,6 +407,39 @@ function waiverUpgrades(pool, rostered, best) {
   return out.slice(0, 5);
 }
 
+/* --- matchup: projected score and win chance ---------------------------- */
+
+/* Standard normal CDF via the Abramowitz-Stegun 7.1.26 erf approximation
+ * (max error ~1.5e-7) - good enough for a win-probability estimate, and
+ * avoids pulling in a math library for one function. */
+function erf(x) {
+  const sign = x < 0 ? -1 : 1;
+  const ax = Math.abs(x);
+  const p = 0.3275911;
+  const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741,
+        a4 = -1.453152027, a5 = 1.061405429;
+  const t = 1 / (1 + p * ax);
+  const y = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-ax * ax);
+  return sign * y;
+}
+function normalCdf(z) {
+  return 0.5 * (1 + erf(z / Math.SQRT2));
+}
+
+/* Rough win probability from both teams' projected totals - not a real
+ * simulation, just enough to turn "118.4 vs 104.2" into a number a person
+ * can react to. Each team's spread scales with its own projection (a
+ * bigger number has more that could go right or wrong), floored at 10 so a
+ * near-zero projection - a bye week, or before any projections load -
+ * isn't treated as a lock either way. The two spreads combine in
+ * quadrature, and the gap between the totals is measured in that combined
+ * spread and run through the normal CDF. */
+function winProb(mine, theirs) {
+  const sigma = (p) => Math.max(0.2 * p, 10);
+  const combined = Math.sqrt(sigma(mine) ** 2 + sigma(theirs) ** 2);
+  return normalCdf((mine - theirs) / combined);
+}
+
 /* --- trade research: shared with trades/engine.js ----------------------- */
 
 const ORDINAL = ["", "1st", "2nd", "3rd", "4th", "5th", "6th"];
@@ -433,6 +472,7 @@ if (typeof module !== "undefined") {
                     scoringLabel, scorePlayer,
                     rankPositions, consensusRanks,
                     pickLineup, currentLineup, lockedIds, lineupCheck, waiverUpgrades,
+                    projectedTotal, winProb,
                     posKey, flexKey, buildRoster, normStatus, tradeWindow,
                     SLOT_ELIGIBLE, SLOT_LABEL, SKIP_SLOTS, POS_ORDER, OUT_STATUSES,
                     ORDINAL, EVEN_PCT, isHttps, SECTIONS, sectionHeading, TRADE_FIELDS };

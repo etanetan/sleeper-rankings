@@ -40,6 +40,7 @@ select{flex:1 1 auto;min-width:0;padding:9px 12px;background:var(--card);color:v
 
 .lh{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;margin:22px 0 4px}
 .lh h2{font-size:18px;margin:0}
+.mu-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;margin:0 0 12px;font-size:15px}
 .chip{background:var(--chip);color:var(--dim);border-radius:999px;padding:2px 9px;
   font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase}
 .chip.fmt{color:var(--accent)}
