@@ -70,24 +70,38 @@ hours. Everything else is fetched fresh on each visit.
 ## Trades tab
 
 Every Tuesday a Claude routine researches trades for each league where trading
-is open, and the Trades tab shows them: who to give, who to get, and tapping a
-trade shows why, with sources.
+is open, and the Trades tab shows at least five per league: who to give, who to
+get, and tapping a trade shows why, with sources.
+
+**How trades are chosen: like a market.** A trade that's fair by market value
+is one the other manager will accept; the edge is knowing the market has a
+player mispriced.
+
+- **Sell high:** your players scoring well above their projections, or whose
+  market value just jumped, when their role doesn't support it.
+- **Buy low:** other teams' players scoring below projection, or whose value
+  just dropped, while they're still getting the snaps and targets.
+- **Never sell low:** your slumping players are never offered.
+- **Don't buy high:** other teams' players on a heater rank lower.
 
 **How a run works**
 
-1. `trades/engine.js candidates` pulls rosters from Sleeper and market values
-   from FantasyCalc, scaled to the league (redraft or dynasty, 1QB or
-   superflex, team count, PPR). It searches every 1-for-1 up to 2-for-2 with
-   every other team and keeps trades that are **fair** (within 10% after
-   discounting the extra piece in uneven deals) and **improve both starting
-   lineups**. Padded deals — a real trade plus an equal QB-for-QB wash — are
-   dropped.
-2. Claude reads those candidates and does the research: injuries, usage
-   trends, schedule, the week's expert trade value charts, and each
-   partner's record and needs. It keeps the best 3–5 and writes the reasons.
+1. `trades/engine.js candidates` pulls rosters from Sleeper, this season's
+   stats and past projections (scored with each league's settings) for points
+   per game against projection, snap share, target share and touches, and
+   market values and 30-day trends from FantasyCalc, scaled to the league.
+   It tags every player (sell high, hold, buy low, avoid), then searches every
+   1-for-1 up to 2-for-2 with every other team and keeps trades that are
+   **fair** (within 10% after discounting the extra piece in uneven deals)
+   and either carry an angle or clearly help both lineups.
+2. Claude researches the market first — the week's buy-low / sell-high
+   columns and trade value charts, usage reports, injuries — confirms or
+   overrides the tags, and re-runs the search with those calls. Then it
+   researches each trade and writes the reasons.
 3. `trades/engine.js finalize` merges the research back in. Numbers come from
-   the engine, never the write-up, and anything outside FantasyCalc's ±10%
-   is refused, however well it's argued.
+   the engine, never the write-up. It refuses anything outside FantasyCalc's
+   ±10%, fewer than five trades without a stated reason, and any trade that
+   sells one of your slumping players.
 4. The result is pushed to the `claude/trade-data` branch as
    `<league_id>.json`. The page reads it from raw.githubusercontent.com, so a
    run never touches the site.
@@ -100,8 +114,8 @@ opens Claude's routines page; tap **Run now** on *Sleeper trade research* and
 paste it. A static page can't start the run itself: the routine API doesn't
 accept browser calls, and its token can't be shipped in public code.
 
-**Network.** The routine needs to reach `api.sleeper.app` and
-`api.fantasycalc.com` (plus news sites for the research), so its cloud
+**Network.** The routine needs to reach `api.sleeper.app`, `api.sleeper.com`
+and `api.fantasycalc.com` (plus news sites for the research), so its cloud
 environment needs network access beyond the default **Trusted** list.
 
 ### Why FantasyCalc validates the trades

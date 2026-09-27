@@ -118,9 +118,9 @@ const teams = [
 const work = T.leagueCandidates({ league, teams, myRosterId: 1, slots, season: "2026", week: 4,
                                   valuesFetched: "2026-09-29T12:00:00Z" });
 check("candidates produced", work.candidates.length > 0, true);
-check("never more than two per partner",
+check("never more than three per partner",
   Object.values(work.candidates.reduce((a, x) => (a[x.partner.roster_id] = (a[x.partner.roster_id] || 0) + 1, a), {}))
-    .every((n) => n <= 2), true);
+    .every((n) => n <= 3), true);
 check("ids are unique", new Set(work.candidates.map((x) => x.id)).size, work.candidates.length);
 check("ids are stable", T.leagueCandidates({ league, teams, myRosterId: 1, slots, season: "2026",
   week: 4 }).candidates.map((x) => x.id), work.candidates.map((x) => x.id));
@@ -163,9 +163,89 @@ check("long-term statuses flagged from Sleeper's words",
 check("sidelined flag carried to the work file",
   T.teamPlayers(["a"], { a: { n: " A ", p: "RB", i: "PUP" } }, {}).map((p) => [p.n, p.longOut]), [["A", true]]);
 
+/* --- form: results against expectations ------------------------------- */
+check("weeks: mid-week counts only finished weeks",
+  T.completedWeeks(4, new Date("2026-09-26T16:00:00Z")), [1, 2, 3]);            // Saturday
+check("weeks: Tuesday counts the week just played",
+  T.completedWeeks(4, new Date("2026-09-29T14:00:00Z")), [1, 2, 3, 4]);         // Tuesday ET
+check("weeks: nothing before week 1 is over", T.completedWeeks(1, new Date("2026-09-12T16:00:00Z")), []);
+
+const scoring = { rec: 1, rec_yd: 0.1, rec_td: 6 };
+const wk = (stats, proj) => T.weekData(stats, proj);
+const w1 = wk([
+  { player_id: "x", team: "KC", stats: { gp: 1, off_snp: 60, tm_off_snp: 70, rec_tgt: 10, rec: 8, rec_yd: 100, rec_td: 1, rec_rz_tgt: 2 } },
+  { player_id: "y", team: "KC", stats: { gp: 1, off_snp: 30, tm_off_snp: 70, rec_tgt: 10, rec: 2, rec_yd: 10 } },
+], [{ player_id: "x", stats: { rec: 5, rec_yd: 60, rec_td: 0.5 } }, { player_id: "y", stats: { rec: 5, rec_yd: 50 } }]);
+const w2 = wk([{ player_id: "x", team: "KC", stats: { gp: 0 } }], []);
+check("team targets summed across players", w1.teamTgt.KC, 20);
+const fx = T.formFor("x", "WR", [w1, w2], scoring);
+check("form: games only where he played", fx.g, 1);
+check("form: points in this league's scoring", fx.ppg, 24);                 // 8 + 10 + 6
+check("form: projected points for the same games", fx.proj, 14);          // 5 + 6 + 3
+check("form: points against projection", fx.perf, 1.71);
+check("form: snap share", fx.snap, 86);
+check("form: target share", fx.tgtShare, 50);
+check("form: red-zone looks", fx.rz, 2);
+check("form: none for a player who hasn't played", T.formFor("z", "WR", [w1], scoring), null);
+
+check("trend as a share of the old value", T.trendPct({ v: 1100, trend: 100 }), 0.1);
+const tp = (o) => ({ id: "t", n: "T", p: "WR", v: 5000, trend: 0, ir: false, longOut: false,
+                     form: { g: 2, perf: 1, snap: 80, tgtShare: 20 }, ...o });
+check("yours, slumping: hold, never sold low", T.marketTag(tp({ form: { g: 2, perf: 0.6, snap: 80 } }), true), "hold");
+check("yours, value falling: hold", T.marketTag(tp({ trend: -700 }), true), "hold");
+check("yours, overperforming: sell high", T.marketTag(tp({ form: { g: 2, perf: 1.5, snap: 80 } }), true), "sell_high");
+check("yours, value rising: sell high", T.marketTag(tp({ trend: 600 }), true), "sell_high");
+check("yours, steady: no call", T.marketTag(tp({}), true), null);
+check("theirs, slumping but still used: buy low",
+  T.marketTag(tp({ form: { g: 2, perf: 0.6, snap: 85, tgtShare: 24 } }), false), "buy_low");
+check("theirs, slumping and lost his job: no call",
+  T.marketTag(tp({ form: { g: 2, perf: 0.6, snap: 30, tgtShare: 8 } }), false), null);
+check("theirs, slumping but hurt: no call",
+  T.marketTag(tp({ longOut: true, form: { g: 2, perf: 0.6, snap: 85, tgtShare: 24 } }), false), null);
+check("theirs, on a heater: avoid buying high", T.marketTag(tp({ form: { g: 2, perf: 1.6, snap: 80 } }), false), "avoid");
+check("a real jump on a real player counts", T.marketTag(tp({ v: 900, trend: 300 }), true), "sell_high");
+check("tiny values: a big percentage on a small number is noise",
+  T.marketTag(tp({ v: 400, trend: 300 }), true), null);
+check("tiny moves: under 250 points of movement doesn't count",
+  T.marketTag(tp({ v: 1500, trend: 240 }), true), null);
+check("RB usage counts touches", T.usageIntact({ p: "RB", form: { touches: 14, snap: 40 } }), true);
+check("QB usage needs the snaps", T.usageIntact({ p: "QB", form: { snap: 50 } }), false);
+
+{
+  const teamsT = [
+    { roster_id: 1, roster: [{ id: "a", n: "A", tag: null }, { id: "b", n: "B", tag: "hold" }] },
+    { roster_id: 2, roster: [{ id: "c", n: "C", tag: null }, { id: "d", n: "D", tag: "avoid" }] },
+  ];
+  const probs = T.applyTargets(teamsT, 1, { sell: ["a"], buy: ["c", "a"], neutral: ["d"], hold: ["zz"] });
+  check("research: sell and buy calls applied", [teamsT[0].roster[0].tag, teamsT[1].roster[0].tag], ["sell_high", "buy_low"]);
+  check("research: neutral clears a call", teamsT[1].roster[1].tag, null);
+  check("research: wrong-roster and unknown ids reported", probs.length, 2);
+}
+
+/* --- angles in the search ---------------------------------------------- */
+{
+  const tagged = (r, tags) => r.map((p) => ({ ...p, tag: tags[p.id] || null }));
+  const mine = tagged(me, { w2: "hold", w3: "sell_high" });
+  const theirs = tagged(b, { r4: "buy_low", r3: "avoid" });
+  const found = T.tradesWith(mine, theirs, slots, 12);
+  check("a slumping player of yours is never offered", found.some((x) => x.give.some((p) => p.id === "w2")), false);
+  check("sell-high and buy-low deals are found", found.some((x) => x.angle > 0), true);
+  const plain = T.tradesWith(me, b, slots, 12);
+  const sig = (x) => `${x.give.map((p) => p.id)}>${x.get.map((p) => p.id)}`;
+  const same = found.find((x) => sig(x) === "w3>r4");
+  const base = plain.find((x) => sig(x) === "w3>r4");
+  if (same && base) check("an angle ranks a deal higher", same.score > base.score, true);
+  // Same deals with only the peak tag set, so nothing else moves the score.
+  const peak = T.tradesWith(me, tagged(b, { r3: "avoid" }), slots, 12);
+  const bought = peak.find((x) => x.get.some((p) => p.id === "r3"));
+  const unbought = bought && plain.find((x) => sig(x) === sig(bought));
+  check("buying at the peak ranks lower", !!bought && !!unbought && bought.score < unbought.score, true);
+}
+
 /* --- finalize: the research has to clear the numbers ------------------- */
 const cid = work.candidates[0].id;
 const good = {
+  short_reason: "A one-trade test.",
   trades: [{
     candidate: cid, headline: "Turn WR depth into a starting RB", confidence: "high",
     summary: "Short version.",
@@ -211,6 +291,26 @@ const ok2 = JSON.parse(JSON.stringify(good));
 ok2.trades[0].why.you = ["Your RB2 improves; the U.S. Bank Stadium matchup is soft and yours to win."];
 check("second person and 'U.S.' are fine", T.finalize(work, ok2).errors, []);
 
+{
+  const need = Math.min(T.MIN_TRADES, work.candidates.length);
+  const make = (n) => ({ trades: work.candidates.slice(0, n).map((c) => ({ ...good.trades[0], candidate: c.id })) });
+  check("test league has enough candidates to need five", need, T.MIN_TRADES);
+  check("five trades pass without a reason", T.finalize(work, make(need)).errors, []);
+  check("fewer than five need a reason",
+    T.finalize(work, make(need - 1)).errors.some((e) => /at least 5/.test(e)), true);
+  const short = { ...make(need - 1), short_reason: "Only four fair deals exist." };
+  check("fewer than five with a reason pass", T.finalize(work, short).errors, []);
+  check("the reason is published", T.finalize(work, short).data.short_reason, "Only four fair deals exist.");
+  check("five or more carry no reason", T.finalize(work, make(need)).data.short_reason, null);
+  const many = { trades: Array.from({ length: T.MAX_TRADES + 1 },
+    (_, i) => ({ ...good.trades[0], candidate: work.candidates[i % work.candidates.length].id })) };
+  check("no more than eight", T.finalize(work, many).errors.some((e) => /best 8/.test(e)), true);
+  const held = JSON.parse(JSON.stringify(work));
+  held.candidates[0].give[0].tag = "hold";
+  check("selling a slumping player is refused",
+    T.finalize(held, good).errors.some((e) => /Don't sell low/.test(e)), true);
+}
+
 const dup = JSON.parse(JSON.stringify(good));
 dup.trades.push(dup.trades[0]);
 check("duplicate trade rejected", T.finalize(work, dup).errors.some((e) => /twice/.test(e)), true);
@@ -239,26 +339,50 @@ const fixtures = {
     { user_id: "u2", display_name: "bee" }, { user_id: "u3", display_name: "sea" }],
   [T.fcUrl(T.fcParams(league))]: fcRows,
 };
+for (const w of [1, 2, 3]) {
+  fixtures[T.statsUrl("2026", w)] = [];
+  fixtures[T.projUrl("2026", w)] = [];
+}
 const fxFile = path.join(tmp, "fixtures.json");
 fs.writeFileSync(fxFile, JSON.stringify(fixtures));
-const env = { ...process.env, TRADES_FIXTURES: fxFile };
+const env = { ...process.env, TRADES_FIXTURES: fxFile, TRADES_NOW: "2026-09-26T16:00:00Z" };
 const run = (...a) => execFileSync(process.execPath, ["trades/engine.js", ...a],
   { env, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
 
 const out = JSON.parse(run("candidates", "--user", "etanetan", "--out", path.join(tmp, "work")));
 check("cli: week read from Sleeper", out.week, 4);
+check("cli: form from the finished weeks", out.form_weeks, [1, 2, 3]);
 check("cli: closed league skipped with reason", out.leagues.find((l) => l.league_id === "L2").open, false);
 check("cli: open league has candidates", out.leagues.find((l) => l.league_id === "L1").candidates > 0, true);
 const cliWork = JSON.parse(fs.readFileSync(path.join(tmp, "work", "L1.json"), "utf8"));
 check("cli: partner named from team_name or display name",
   cliWork.candidates.every((x) => ["bee", "sea"].includes(x.partner.name)), true);
 check("cli: records carried", cliWork.me.record, "2-1");
+check("cli: market sheet written", Object.keys(cliWork.market).sort(), ["avoid", "buy_low", "hold", "sell_high", "weeks"]);
+check("cli: every candidate labelled", cliWork.candidates.every((x) => ["need", "sell-high", "buy-low", "sell-high + buy-low"].includes(x.kind)), true);
+
+{
+  // Research calls re-run the search for one league.
+  const tFile = path.join(tmp, "targets.json");
+  fs.writeFileSync(tFile, JSON.stringify({ sell: ["w3"], hold: ["w1"], buy: ["r4"] }));
+  run("candidates", "--user", "etanetan", "--league", "L1", "--targets", tFile, "--out", path.join(tmp, "work"));
+  const tw = JSON.parse(fs.readFileSync(path.join(tmp, "work", "L1.json"), "utf8"));
+  check("cli: targets applied", tw.targets_applied, true);
+  check("cli: held player never offered", tw.candidates.some((x) => x.give.some((p) => p.id === "w1")), false);
+  check("cli: research calls marked as research",
+    tw.market.sell_high.map((p) => [p.id, p.tagBy]), [["w3", "research"]]);
+  let needsLeague = false;
+  try { run("candidates", "--user", "etanetan", "--targets", tFile, "--out", path.join(tmp, "work")); }
+  catch (e) { needsLeague = /needs --league/.test(e.stderr); }
+  check("cli: targets need a league", needsLeague, true);
+  run("candidates", "--user", "etanetan", "--out", path.join(tmp, "work"));   // back to the plain search
+}
 
 const dataDir = path.join(tmp, "data");
 run("running", "--league", "L1", "--data", dataDir);
 check("cli: running status", JSON.parse(fs.readFileSync(path.join(dataDir, "L1.json"))).status, "running");
 const rFile = path.join(tmp, "research.json");
-fs.writeFileSync(rFile, JSON.stringify({ trades: [{ ...good.trades[0], candidate: cliWork.candidates[0].id }] }));
+fs.writeFileSync(rFile, JSON.stringify({ short_reason: "Test.", trades: [{ ...good.trades[0], candidate: cliWork.candidates[0].id }] }));
 run("finalize", "--league", "L1", "--research", rFile, "--data", dataDir, "--work", path.join(tmp, "work"));
 const final = JSON.parse(fs.readFileSync(path.join(dataDir, "L1.json")));
 check("cli: finalize writes ready", final.status, "ready");

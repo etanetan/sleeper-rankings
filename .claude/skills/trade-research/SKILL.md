@@ -1,6 +1,6 @@
 ---
 name: trade-research
-description: Research fair, win-win fantasy football trades for etanetan's Sleeper leagues and publish them to the site's Trades tab. Use for the weekly trade routine, or when asked to research trades for one league.
+description: Research fantasy football trades for etanetan's Sleeper leagues the way a trader works a market — sell high, buy low, never sell at the bottom — and publish at least 5 per league to the site's Trades tab. Use for the weekly trade routine, or when asked to research trades for one league.
 ---
 
 # Trade research
@@ -10,6 +10,29 @@ Trades tab reads one file per league, `<league_id>.json`, from the
 `claude/trade-data` branch of `etanetan/sleeper-rankings`. Code does the math
 (`trades/engine.js`); you do the research and the reasoning. Numbers in the
 published file always come from the engine, never from you.
+
+## How to think about trades
+
+Treat players like stocks. A fair trade by market value (FantasyCalc) is one
+the other manager will accept; the edge comes from knowing the market has a
+player mispriced.
+
+- **Sell high.** Trade away your players whose price is above what they'll
+  produce: scoring well over projection on touchdowns, long plays or
+  efficiency their role won't sustain, or about to lose work (a starter
+  returning, a tougher schedule).
+- **Buy low.** Go after other teams' players whose price is below what
+  they'll produce: scoring under projection while the role is intact or
+  growing (snaps, targets, carries, red-zone looks), with a fixable cause
+  (bad touchdown luck, early tough matchups, a QB change that's resolved, a
+  return from injury).
+- **Never sell low.** A player of yours who is slumping is at his lowest
+  price. Keep him. The only exception is a job that's gone for good (benched,
+  season over, traded into a bad role), and then the write-up must say so.
+- **Don't buy high.** Another team's player on a heater costs his peak price.
+- **Needs still matter.** A deal should also make sense for your lineup, and
+  the partner needs a reason to say yes: the hot names you send look great to
+  them right now.
 
 ## 0. Scope
 
@@ -27,27 +50,32 @@ git fetch origin claude/trade-data
 git worktree add -B claude/trade-data /tmp/trade-data FETCH_HEAD
 ```
 
-## 2. Candidates (the numbers)
+## 2. The numbers
 
 ```bash
 node trades/engine.js candidates --user etanetan --out trades/work            # all leagues
 node trades/engine.js candidates --user etanetan --league <id> --out trades/work # one league
 ```
 
-It prints each league with `open: true/false` (and why closed) and writes
-`trades/work/<league_id>.json` for open ones: the league format, your starters
-and bench with FantasyCalc values and 30-day trends, where you're thin or deep
-versus the league, and up to 12 candidate trades. Every candidate is already
-within 10% on FantasyCalc value (package-adjusted) and improves both starting
-lineups; each lists the partner's record and needs, who enters and leaves your
-lineup (`you.changes.in` / `out`), and who you'd drop for roster space.
-Players on IR, PUP or suspended are marked `sidelined`: they keep their trade
-value but never count as starters.
+It prints each league (`open: true/false`, and why closed) and writes
+`trades/work/<league_id>.json` for open ones:
+
+- `market`: the numbers' calls. `sell_high` and `hold` for your players,
+  `buy_low` and `avoid` for everyone else's (with owner). Each player carries
+  `form` — points per game against his projections for the same games
+  (`perf`, 1.0 = on projection), snap share, target share, touches, red-zone
+  looks — and `trendPct`, his FantasyCalc value change over 30 days.
+- `me`: your starters and bench; where you're `thin` or `deep`.
+- `league`: what FantasyCalc can't see (type, TE premium, scoring).
+- `candidates`: up to 20 trades, each fair within 10% on FantasyCalc value,
+  labelled `kind` (`sell-high`, `buy-low`, `sell-high + buy-low`, `need`),
+  with lineup changes, the partner's record and needs, and who you'd drop.
+  Your `hold` players are never in them.
 
 If it fails with a 403 / `host_not_allowed` / connection error, the
-environment's network policy is blocking `api.sleeper.app` or
-`api.fantasycalc.com`. Run step 7 for any league in scope you know the id of,
-then stop and report the exact blocked host.
+environment's network policy is blocking `api.sleeper.app`,
+`api.sleeper.com` or `api.fantasycalc.com`. Mark any league in scope you know
+the id of as failed (step 8), then stop and report the exact blocked host.
 
 ## 3. Mark leagues as running
 
@@ -58,46 +86,62 @@ node trades/engine.js running --league <id> --data /tmp/trade-data   # each open
 cd /tmp/trade-data && git add -A && git commit -qm "Researching trades" && git push -q origin claude/trade-data
 ```
 
-## 4. Research (the real work)
+## 4. Research the market first
 
-Read each league's work file. Then research with WebSearch (and WebFetch
-where the network allows):
+Before looking at any trade, decide who's a buy and who's a sell in each
+league. Start from `market`, then research with WebSearch (and WebFetch):
 
-- **This week's market:** the current weekly trade value charts
-  (e.g. "FantasyPros trade value chart week N 2026", "CBS trade values chart
-  week N", "Yahoo trade value chart week N"), buy-low / sell-high columns,
-  and the injury report.
-- **Every player in a deal you're considering:** injury and practice status,
-  role and usage over the last 2–3 weeks (snap share, target share, routes,
-  carries, red-zone work), depth chart changes, schedule and bye, and anything
-  from the last 72 hours (trades, suspensions, returns from IR). FantasyCalc
-  lags breaking news by a day or two; **news beats the value number.**
-- **The partner:** record and roster decide whether they're buying now or
-  building for later.
-- **What FantasyCalc can't see** — the work file's `league` block:
-  - `type: "dynasty"`: age and the next 2–3 seasons count, not just this one.
-  - `type: "keeper"`: valued as redraft; this season first, keeper value second.
-  - `te_premium` above 0: tight ends score more here than FantasyCalc's
-    numbers assume, so treat TEs as worth more than their value says.
-  - Draft picks aren't in the candidates. Don't propose adding one.
+- This week's **buy-low / sell-high** columns and **trade value charts**
+  (e.g. "buy low sell high week N 2026", "FantasyPros trade value chart week
+  N 2026", "CBS trade values week N"), plus snap-count and target-share
+  reports and the injury report.
+- For each player the numbers flagged, and anyone the columns name who's
+  rostered in the league: why is he hot or cold? Usage trend over 2–3 weeks,
+  touchdown luck, matchups so far and ahead, injuries, depth chart news from
+  the last 72 hours.
 
-Pick the **best 3–5** trades, across different partners where possible. Fewer
-is fine; zero is fine with a reason. Throw a candidate out when:
+Then confirm, reject or add calls. Write `trades/work/<league_id>.targets.json`
+using the player ids from the work file:
 
-- a player you'd get is newly hurt, demoted, or losing work;
-- a player you'd give is about to get a bigger role (that's selling low);
-- it leaves you short at a position once byes and injuries are counted;
-- the partner has no real reason to say yes.
+```json
+{
+  "sell":    ["<your player ids to sell high>"],
+  "hold":    ["<your player ids not to trade: slumping, or too good to sell>"],
+  "buy":     ["<other teams' player ids to buy low>"],
+  "avoid":   ["<other teams' player ids not to buy at the peak>"],
+  "neutral": ["<ids whose numbers call was wrong: no angle either way>"]
+}
+```
 
-Prefer clear need-for-surplus swaps, buying low on players whose usage is
-strong but results aren't there yet, and selling high on touchdown-driven or
-otherwise unsustainable production.
+Rules of thumb: a "hot" player with a huge, stable role (say a 35% target
+share) isn't a sell — hold him. A "cold" player who lost his job isn't a
+buy. A player of yours who is cold stays on `hold` unless his job is gone for
+good.
+
+## 5. Re-run the search with your calls
+
+```bash
+node trades/engine.js candidates --user etanetan --league <id> \
+  --targets trades/work/<id>.targets.json --out trades/work
+```
+
+It reports ids that aren't on the roster you said. The work file now has
+`targets_applied: true` and candidates built around your calls.
+
+## 6. Research each trade and pick at least five
+
+For every candidate you're considering, research both sides again: current
+injury and practice status, news from the last 72 hours, and whether the
+angle holds up. Then pick **at least 5 and at most 8** per league, across
+different partners where possible, leading with the strongest angles. If
+fewer than 5 candidates survive, re-run step 5 with more buy targets before
+settling; publish fewer only with a `short_reason`, which is shown on the
+page.
 
 **Each trade stands alone.** Judge every one against the roster as it is
-today. Never assume another suggested trade happened ("alongside the Hurts you
-just got" is wrong — he may never arrive).
+today. Never assume another suggested trade happened.
 
-## 5. Write the research file
+## 7. Write the research file
 
 `trades/work/<league_id>.research.json`:
 
@@ -106,26 +150,29 @@ just got" is wrong — he may never arrive).
   "trades": [
     {
       "candidate": "<id from the work file>",
-      "headline": "One line, 120 chars max: what the deal does for you",
+      "headline": "One line, 120 chars max: the angle and what it does for you",
       "summary": "One or two sentences.",
       "confidence": "high | medium | low",
       "why": {
-        "give": ["Why trading these players away is fine or smart"],
-        "get":  ["Why you want the players coming back"],
+        "give": ["Why this is the right time to sell these players"],
+        "get":  ["Why these players are cheap now and will produce"],
         "you":  ["How your team gets better: who starts now, which need it fills"],
-        "them": ["Why the partner says yes: their needs, surplus, record"]
+        "them": ["Why the partner says yes: their needs, what looks good to them"]
       },
       "risks": ["What could make this look bad in a month"],
       "sources": [{ "title": "Page title", "url": "https://..." }]
     }
   ],
-  "none_reason": null
+  "short_reason": null
 }
 ```
 
-Bullets: 2–4 per section, 25 words max each, concrete — snap %, targets,
-touches, FantasyCalc value and trend, ranks, matchups.
+Bullets: 2–4 per section, 25 words max each, concrete.
 
+- **Make the angle explicit.** For a sell-high, show the gap between results
+  and role (e.g. "3 TDs on 9 targets; 14% target share"). For a buy-low, show
+  the role behind the bad results (e.g. "91% snaps, 24% target share, 2 red-
+  zone looks, 0 TDs"). Use the `form` numbers and what you found.
 - **Write to Ethan as "you"/"your".** Never "I", "my", "we" or "our";
   finalize rejects it.
 - **Never invent a stat.** If you couldn't verify it, leave it out. Use the
@@ -138,20 +185,19 @@ touches, FantasyCalc value and trend, ranks, matchups.
 - Cite 2+ real pages you actually used, about the players in that trade (or
   the league-wide chart you relied on). Nothing unrelated.
 
-If no trade survives research, write `"trades": []` and a one-sentence
-`none_reason`.
-
-## 6. Finalize and publish
+## 8. Finalize and publish
 
 ```bash
 node trades/engine.js finalize --league <id> \
   --research trades/work/<id>.research.json --data /tmp/trade-data
 ```
 
-This is the check against FantasyCalc: it recomputes every trade's value
-from the market numbers and refuses anything outside ±10%, unknown
-candidates, empty sections, or sources without https links. On exit code 2,
-fix what it prints and run it again.
+This is the check against FantasyCalc and the rules: it recomputes every
+trade's value from the market numbers and refuses anything outside ±10%,
+fewer than 5 trades without a `short_reason`, more than 8, a slumping player
+of yours being sold, unknown candidates, empty sections, first-person
+wording, or sources without https links. On exit code 2, fix what it prints
+and run it again.
 
 ```bash
 cd /tmp/trade-data
@@ -162,9 +208,7 @@ git push -q origin claude/trade-data || { git pull -q --rebase origin claude/tra
 Only ever push `claude/trade-data`. Don't commit `trades/work/`, don't touch
 the site's code, don't push to `main` or `gh-pages`.
 
-## 7. If a league can't be finished
-
-Never leave a league on "running":
+If a league can't be finished, never leave it on "running":
 
 ```bash
 node trades/engine.js failed --league <id> --data /tmp/trade-data --reason "<one plain sentence>"
@@ -173,7 +217,7 @@ node trades/engine.js failed --league <id> --data /tmp/trade-data --reason "<one
 then commit and push as above. The site keeps showing the previous trades
 with that reason.
 
-## 8. Report
+## 9. Report
 
-Finish with a short summary per league: trades published (give → get, with
-whom) or why none, and anything that failed.
+Finish with a short summary per league: trades published (give → get, the
+angle, with whom), and anything that failed.

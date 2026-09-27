@@ -808,6 +808,37 @@ if (typeof document !== "undefined") {
     return "chip " + (Math.abs(v.diffPct) <= 0.03 ? "fmt" : v.diffPct > 0 ? "good" : "warn");
   }
 
+  // The market call behind each player in a deal. "hold" never reaches a
+  // published trade; "avoid" does when a deal is worth it anyway, and says so.
+  const TAGS = {
+    sell_high: ["SELL HIGH", "sell"],
+    buy_low: ["BUY LOW", "buy"],
+    avoid: ["AT PEAK", "peak"],
+  };
+
+  function tagChip(p) {
+    const t = TAGS[p.tag];
+    if (!t) return null;
+    const chip = el("span", `tag ${t[1]}`, t[0]);
+    if (p.tagBy === "research") chip.title = "Confirmed by research";
+    return chip;
+  }
+
+  /* The numbers behind the call: results against projection, market move,
+   * and the usage that says whether it lasts. */
+  function formLine(p) {
+    const f = p.form;
+    const bits = [];
+    if (f && f.g) bits.push(`${f.ppg} pts/g vs ${f.proj} projected`);
+    if (p.trendPct) {
+      bits.push(`value ${p.trendPct > 0 ? "▲" : "▼"}${Math.abs(Math.round(p.trendPct * 100))}% in 30 days`);
+    }
+    if (f && f.snap != null) bits.push(`${f.snap}% snaps`);
+    if (f && f.touches != null) bits.push(`${f.touches} touches/g`);
+    else if (f && f.tgtShare != null) bits.push(`${f.tgtShare}% of targets`);
+    return bits.join(" · ");
+  }
+
   function tradeList(lg, panel, data) {
     const box = el("div");
     const bar = el("div", "tr-bar");
@@ -854,6 +885,12 @@ if (typeof document !== "undefined") {
     }
 
     const trades = (data && data.trades) || [];
+    if (trades.length) {
+      box.appendChild(el("p", "tr-intro", "Sell high: your players scoring above expectations. " +
+        "Buy low: theirs scoring below it while still getting the ball. " +
+        "Your slumping players are never offered."));
+    }
+    if (trades.length && data.short_reason) box.appendChild(el("p", "note", data.short_reason));
     if (!trades.length) {
       if (data && data.none_reason) box.appendChild(el("p", "note", data.none_reason));
       else if (!data) {
@@ -873,6 +910,8 @@ if (typeof document !== "undefined") {
     players.forEach((p) => {
       const line = el("span", "tc-pl", p.n);
       line.appendChild(el("span", "meta", ` ${posLabel(p.p)}`));
+      const chip = tagChip(p);
+      if (chip) line.appendChild(chip);
       d.appendChild(line);
     });
     return d;
@@ -911,12 +950,13 @@ if (typeof document !== "undefined") {
       const nm = el("td", "nm", p.n);
       if (p.status) nm.appendChild(el("span", OUT_STATUSES.has(normStatus(p.status)) ? "out" : "q", normStatus(p.status)));
       nm.appendChild(el("span", "meta", ` ${posLabel(p.p)}${p.t ? " · " + p.t : ""}`));
+      const chip = tagChip(p);
+      if (chip) nm.appendChild(chip);
+      const line = formLine(p);
+      if (line) nm.appendChild(el("span", "form", line));
       tr.appendChild(nm);
       const v = el("td", "val", num(p.v));
-      v.title = "FantasyCalc value, with its 30-day change";
-      if (p.trend) {
-        v.appendChild(el("span", p.trend > 0 ? "up" : "down", ` ${p.trend > 0 ? "▲" : "▼"}${num(Math.abs(p.trend))}`));
-      }
+      v.title = "FantasyCalc value";
       tr.appendChild(v);
       return tr;
     });
