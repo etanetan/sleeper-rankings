@@ -111,20 +111,23 @@ check("IR players don't take a roster spot",
 const league = { league_id: "L1", name: "Test League", status: "in_season",
                  settings: { trade_deadline: 11, type: 0 }, scoring_settings: { rec: 1 },
                  roster_positions: slots.concat(["BN", "BN", "BN", "BN", "BN"]), total_rosters: 3 };
+// leagueCandidates takes these precomputed, the way cmdCandidates does.
+const rosterSizeOf = (lg) => (lg.roster_positions || []).filter((s) => s !== "IR" && s !== "TAXI").length;
 const teams = [
   { roster_id: 1, name: "Mine", user: "etanetan", record: "2-1", roster: me },
   { roster_id: 2, name: "Team B", user: "bee", record: "1-2", roster: b },
   { roster_id: 3, name: "Team C", user: "sea", record: "3-0", roster: c },
 ];
-const work = T.leagueCandidates({ league, teams, myRosterId: 1, slots, season: "2026", week: 4,
+const work = T.leagueCandidates({ league, teams, myRosterId: 1, slots, rosterSize: rosterSizeOf(league),
+                                  format: T.fcParams(league), season: "2026", week: 4,
                                   valuesFetched: "2026-09-29T12:00:00Z" });
 check("candidates produced", work.candidates.length > 0, true);
 check("never more than three per partner",
   Object.values(work.candidates.reduce((a, x) => (a[x.partner.roster_id] = (a[x.partner.roster_id] || 0) + 1, a), {}))
     .every((n) => n <= 3), true);
 check("ids are unique", new Set(work.candidates.map((x) => x.id)).size, work.candidates.length);
-check("ids are stable", T.leagueCandidates({ league, teams, myRosterId: 1, slots, season: "2026",
-  week: 4 }).candidates.map((x) => x.id), work.candidates.map((x) => x.id));
+check("ids are stable", T.leagueCandidates({ league, teams, myRosterId: 1, slots, rosterSize: rosterSizeOf(league),
+  format: T.fcParams(league), season: "2026", week: 4 }).candidates.map((x) => x.id), work.candidates.map((x) => x.id));
 check("my thin spots include RB", work.me.thin.includes("RB"), true);
 check("partner needs carried", Array.isArray(work.candidates[0].partner.thin), true);
 check("format recorded", work.format.ppr, 1);
@@ -260,7 +263,8 @@ check("QB usage needs the snaps", T.usageIntact({ p: "QB", form: { snap: 50 } })
     { roster_id: 2, name: "Team B", user: "bee", record: "1-2", roster: b.map((p) => ({ ...p })).concat([theirCold]) },
     { roster_id: 3, name: "Team C", user: "sea", record: "3-0", roster: c.map((p) => ({ ...p })) },
   ];
-  const tagWork = T.leagueCandidates({ league, teams: untaggedTeams, myRosterId: 1, slots, season: "2026",
+  const tagWork = T.leagueCandidates({ league, teams: untaggedTeams, myRosterId: 1, slots,
+    rosterSize: rosterSizeOf(league), format: T.fcParams(league), season: "2026",
     week: 4, valuesFetched: "2026-09-29T12:00:00Z" });
   check("leagueCandidates tags a hot player of yours as sell_high",
     untaggedTeams[0].roster.find((p) => p.id === "hot1").tag, "sell_high");
@@ -542,6 +546,9 @@ check("cli: every candidate labelled", cliWork.candidates.every((x) => ["need", 
 }
 
 const dataDir = path.join(tmp, "data");
+check("cli: next picks the never-researched league first",
+  run("next", "--user", "etanetan", "--data", dataDir).trim(), "L1 Test League");
+
 run("running", "--league", "L1", "--data", dataDir);
 check("cli: running status", JSON.parse(fs.readFileSync(path.join(dataDir, "L1.json"))).status, "running");
 const rFile = path.join(tmp, "research.json");
@@ -550,6 +557,8 @@ run("finalize", "--league", "L1", "--research", rFile, "--data", dataDir, "--wor
 const final = JSON.parse(fs.readFileSync(path.join(dataDir, "L1.json")));
 check("cli: finalize writes ready", final.status, "ready");
 check("cli: one trade", final.trades.length, 1);
+check("cli: next moves on once a league is fresh",
+  run("next", "--user", "etanetan", "--data", dataDir).trim(), "L3 Dyn");
 
 fs.writeFileSync(rFile, JSON.stringify({ trades: [{ candidate: "nope" }] }));
 let rejected = false;

@@ -414,6 +414,12 @@ if (typeof document !== "undefined") {
     setStatus("Checking the NFL week…");
     const state = await json(`${SLEEPER}/state/nfl`);
     const season = state.season;
+    // Sleeper's own dashboard uses league_season for a user's league list: in
+    // the offseason, once leagues have renewed, it's ahead of `season` (which
+    // stays on the just-finished year until the new one kicks off). Dynasty
+    // leagues trade in the offseason, so using the wrong one would look up
+    // last year's league ids. Projections and stats stay on `season`.
+    const leagueSeason = state.league_season || state.season;
     const week = state.week || state.display_week || 1;
     $("#week").textContent = `Week ${week}`;
 
@@ -434,7 +440,7 @@ if (typeof document !== "undefined") {
     let rankings = null;
     try { rankings = await json("data/rankings.json"); } catch (e) { rankings = null; }
 
-    DATA = { season, week, players, projections, rankings,
+    DATA = { season, leagueSeason, week, players, projections, rankings,
              playersFetched: fetched, liveStatuses };
     const injAge = (Date.now() - fetched) / 36e5;
     let rankSrc = "Ranks from Sleeper projections, scored by each league's settings. ";
@@ -473,9 +479,9 @@ if (typeof document !== "undefined") {
       const user = await json(`${SLEEPER}/user/${encodeURIComponent(username)}`);
       if (!user || !user.user_id) return setStatus(`No Sleeper user named "${username}".`, true);
 
-      const leagues = await json(`${SLEEPER}/user/${user.user_id}/leagues/nfl/${data.season}`);
+      const leagues = await json(`${SLEEPER}/user/${user.user_id}/leagues/nfl/${data.leagueSeason}`);
       if (!leagues.length) {
-        return setStatus(`${username} has no NFL leagues for ${data.season}.`, true);
+        return setStatus(`${username} has no NFL leagues for ${data.leagueSeason}.`, true);
       }
 
       setStatus(`Loading ${leagues.length} league${leagues.length > 1 ? "s" : ""}…`);
