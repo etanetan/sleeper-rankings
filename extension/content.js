@@ -5,10 +5,10 @@
  * functions are already in scope) and needs the Sleeper username set once
  * from the side panel's first-run field (chrome.storage.sync).
  *
- * The pure id/class helpers are exported for Node tests; the DOM-watching
- * part below only runs on an actual sleeper.com page. If Sleeper's markup
- * doesn't match SELECTORS, this fails silently rather than breaking the
- * page - a missing badge is fine, a broken league page is not. */
+ * The pure id/class/text helpers are exported for Node tests; the
+ * DOM-watching part below only runs on an actual sleeper.com page. If
+ * Sleeper's markup doesn't match SELECTORS, this fails silently rather than
+ * breaking the page - a missing badge is fine, a broken league page is not. */
 
 /* A Sleeper avatar's aria-label reads like "player 4046, Josh Allen, QB". */
 function playerIdFromAria(label) {
@@ -36,8 +36,66 @@ function badgeClass(pid, ctx) {
   return "";
 }
 
+/* The readable status word for a badge tooltip: what Sleeper actually sent
+ * (`i`, e.g. "Questionable") when there is one - already a real word, not
+ * the short code core.js's `status` normalizes it to - falling back to that
+ * short code when Sleeper sent nothing but the player's still unavailable
+ * (a bye week alone has no `i`). `meta` is a pool/roster player object
+ * (buildRoster's shape: n, p, t, i, status, onBye, posRank, pts, ...). */
+function statusText(meta) {
+  if (meta.onBye) return "Bye";
+  const raw = (meta.i || "").trim();
+  if (raw) return raw;
+  return meta.status || "";
+}
+
+// What each badge color means, for the tooltip's last clause.
+const BADGE_REASON = {
+  "sr-start": "Start",
+  "sr-promote": "Bench → start",
+  "sr-demote": "Start → bench",
+  "sr-out": "Out",
+};
+
+/* The badge's hover tooltip, e.g. "WR8 · 14.2 proj pts ·
+ * Questionable · Start". Points and status are both optional; the
+ * color's reason is dropped when it would just repeat the status word
+ * (an OUT player whose badge reason is also "Out"). */
+function badgeTitle(meta, cls) {
+  const parts = [`${meta.p === "DEF" ? "DST" : meta.p}${meta.posRank}`];
+  if (meta.pts != null) parts.push(`${Math.round(meta.pts * 10) / 10} proj pts`);
+  const status = statusText(meta);
+  if (status) parts.push(status);
+  const reason = BADGE_REASON[cls];
+  if (reason && reason.toLowerCase() !== status.toLowerCase()) parts.push(reason);
+  return parts.join(" · ");
+}
+
+/* Walks up from a player avatar element until it finds the row that holds
+ * it: the ancestor whose parent has >=3 element children that each contain
+ * an avatar - a list of player rows looks like that no matter what Sleeper
+ * names its classes this week. `hasAvatar(el)` reports whether `el`
+ * contains an avatar - injected so this runs against hand-built fake nodes
+ * in tests (Node has no DOM) as well as the real page, where it's
+ * `el.querySelector(SELECTORS.ariaAvatar) || el.querySelector(SELECTORS.imgAvatar)`.
+ * Reads only `.parentElement`/`.children`. Capped at `maxDepth` levels
+ * (default 8) so an unrecognized page fails fast instead of climbing all
+ * the way to <body> and matching something meaningless. */
+function rowFor(el, hasAvatar, maxDepth) {
+  const cap = maxDepth == null ? 8 : maxDepth;
+  let node = el;
+  for (let i = 0; i < cap && node; i++) {
+    const parent = node.parentElement;
+    if (!parent) return null;
+    const siblings = Array.from(parent.children || []);
+    if (siblings.length >= 3 && siblings.every((s) => hasAvatar(s))) return node;
+    node = parent;
+  }
+  return null;
+}
+
 if (typeof module !== "undefined") {
-  module.exports = { playerIdFromAria, playerIdFromSrc, badgeClass };
+  module.exports = { playerIdFromAria, playerIdFromSrc, badgeClass, badgeTitle, rowFor };
 }
 
 if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.storage) {
@@ -51,7 +109,9 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
     // search page's row, since neither a live page nor another extension's
     // source turned up its real class name. querySelectorAll silently
     // ignores whichever guesses don't match, so this is zero-risk to try -
-    // but still needs checking against the real page and fixing from there.
+    // and sweep() below also falls back to rowFor() for any avatar these
+    // guesses miss, so a wrong guess costs nothing but still needs checking
+    // against the real page (alt+click the pill - see buildDebugDump below).
     const SELECTORS = {
       row: [".team-roster-item", ".player-row", ".players-table-row",
             ".search-player-row", ".player-list-item"].join(", "),
@@ -59,6 +119,11 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
       imgAvatar: 'img[src*="/players/"]',
       name: "[class*='playerName' i], [class*='player-name' i]",
     };
+
+    function hasAvatarEl(el) {
+      return !!(el.querySelector &&
+        (el.querySelector(SELECTORS.ariaAvatar) || el.querySelector(SELECTORS.imgAvatar)));
+    }
 
     const storage = {
       async getItem(key) {
@@ -121,6 +186,7 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
       const badge = document.createElement("span");
       badge.className = "sr-badge" + (cls ? ` ${cls}` : "");
       badge.textContent = `${meta.p === "DEF" ? "DST" : meta.p}${meta.posRank}`;
+      badge.title = badgeTitle(meta, cls);
 
       const nameEl = row.querySelector(SELECTORS.name);
       if (!nameEl) { row.appendChild(badge); return; }
@@ -153,19 +219,55 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
 
     function sweep() {
       if (!CTX) return;
-      document.querySelectorAll(SELECTORS.row).forEach((row) => decorate(row, findPlayerId(row)));
+      const rows = Array.from(document.querySelectorAll(SELECTORS.row));
+      rows.forEach((row) => decorate(row, findPlayerId(row)));
+
+      // Fallback for pages where SELECTORS.row's guessed classes don't
+      // match (the Players and matchup pages are unverified guesses - see
+      // docs/ROADMAP.md task 3c): walk up from any avatar SELECTORS.row
+      // missed instead of guessing yet another class name.
+      document.querySelectorAll(`${SELECTORS.ariaAvatar}, ${SELECTORS.imgAvatar}`).forEach((avatarEl) => {
+        if (rows.some((r) => r.contains(avatarEl))) return;
+        const row = rowFor(avatarEl, hasAvatarEl);
+        if (row) decorate(row, findPlayerId(row));
+      });
+    }
+
+    // Clears every badge and its row marker, so a redraw - a refresh after
+    // the lineup changed, or leaving the league - starts clean instead of
+    // leaving stale colors or having decorate() skip rows it thinks it
+    // already handled.
+    function resetBadges() {
+      document.querySelectorAll(".sr-badge").forEach((el) => el.remove());
+      document.querySelectorAll("[data-sr]").forEach((el) => delete el.dataset.sr);
     }
 
     // A small fixed pill is the only always-visible sign the extension is
     // doing anything on this page, so it shows a state whenever there's
     // context loaded - green when the lineup's already set, amber with the
     // pending changes otherwise - rather than only appearing for a warning.
+    // Alt+click copies a debug dump (see buildDebugDump) for pages whose
+    // layout we can't see ourselves.
     function showPill(check) {
       let pill = document.getElementById("sr-pill");
       if (!check) { if (pill) pill.remove(); return; }
       if (!pill) {
         pill = document.createElement("div");
         pill.id = "sr-pill";
+        pill.title = "Alt+click to copy debug info";
+        pill.addEventListener("click", (e) => {
+          if (!e.altKey) return;
+          e.preventDefault();
+          const dump = buildDebugDump();
+          console.log(dump);
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(dump).then(
+              () => flashPill(pill, "Copied debug info"),
+              () => flashPill(pill, "See console (copy failed)"));
+          } else {
+            flashPill(pill, "See console");
+          }
+        });
         document.body.appendChild(pill);
       }
       if (check.ok) {
@@ -179,7 +281,64 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
       }
     }
 
+    function flashPill(pill, msg) {
+      const prevText = pill.textContent;
+      const prevCls = pill.className;
+      pill.textContent = msg;
+      setTimeout(() => { pill.textContent = prevText; pill.className = prevCls; }, 1500);
+    }
+
+    // The tag/class chain from `fromRow` down to `toEl`, e.g.
+    // "div.team-roster-item > div.name-wrap > span.playerName". Only used
+    // for the debug dump below, so it's fine to build with a plain string
+    // rather than anything fancier.
+    function chainDown(fromRow, toEl) {
+      if (!toEl) return "(name element not found)";
+      const parts = [];
+      let node = toEl;
+      while (node) {
+        const cls = typeof node.className === "string" && node.className.trim()
+          ? `.${node.className.trim().split(/\s+/).slice(0, 2).join(".")}` : "";
+        parts.unshift(`${node.tagName.toLowerCase()}${cls}`);
+        if (node === fromRow) break;
+        node = node.parentElement;
+      }
+      return parts.join(" > ");
+    }
+
+    // A short text report on how this page's rows were found, for a page
+    // the developer can't see themselves (sleeper.com is behind the
+    // owner's own login) - alt+click the pill to copy it, then paste it
+    // into a session instead of guessing at SELECTORS from a screenshot.
+    function buildDebugDump() {
+      const lines = [`path: ${location.pathname}`];
+      const selectorRows = Array.from(document.querySelectorAll(SELECTORS.row));
+      lines.push(`SELECTORS.row matches: ${selectorRows.length}`);
+
+      const avatars = Array.from(
+        document.querySelectorAll(`${SELECTORS.ariaAvatar}, ${SELECTORS.imgAvatar}`));
+      const fallbackRows = new Set();
+      for (const av of avatars) {
+        if (selectorRows.some((r) => r.contains(av))) continue;
+        const row = rowFor(av, hasAvatarEl);
+        if (row) fallbackRows.add(row);
+      }
+      lines.push(`rowFor() fallback matches (avatars SELECTORS.row missed): ${fallbackRows.size}`);
+      lines.push(`avatars on page total: ${avatars.length}`);
+
+      const sample = selectorRows.length ? selectorRows : Array.from(fallbackRows);
+      lines.push("", "First 3 rows, tag/class chain from row to name element:");
+      sample.slice(0, 3).forEach((row, i) => {
+        const nameEl = row.querySelector(SELECTORS.name);
+        const pid = findPlayerId(row);
+        lines.push(`  row ${i + 1}: ${chainDown(row, nameEl || row)}`);
+        lines.push(`    player id found: ${pid || "(none)"}`);
+      });
+      return lines.join("\n");
+    }
+
     async function loadContext(leagueId) {
+      LAST_RELOAD = Date.now();
       try {
         const { sleeperUser } = await chrome.storage.sync.get("sleeperUser");
         if (!sleeperUser) return;   // no first-run username set yet
@@ -207,12 +366,30 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
         pool.forEach((p) => { players[p.id] = p; byNameKey[norm(p.n)] = p.id; });
 
         CTX = { startingIds, bestIds, outIds, players, byNameKey, check: view.check };
+        // Redraw from scratch, not just over whatever's already there - this
+        // runs again after the user edits their lineup on Sleeper itself
+        // (see maybeReload below), when the same rows are still on the page
+        // but need new colors, not a second badge next to the old one.
+        resetBadges();
         sweep();
         showPill(view.check);
 
         try { chrome.runtime.sendMessage({ type: "sr-league", id: String(lg.league_id) }); }
         catch (e) { /* no panel listening right now */ }
       } catch (e) { /* fail silently - a missing badge beats a broken page */ }
+    }
+
+    // Re-fetches and redraws the current league, but not more than once
+    // every 30s. Sleeper doesn't tell this extension when the user sets
+    // their lineup, so without this the pill and badge colors go stale
+    // until they navigate away and back; loadData() is cached, so a reload
+    // is only ~2 fresh API calls (rosters + matchups), not the full load.
+    let LAST_RELOAD = 0;
+    const RELOAD_MIN_INTERVAL_MS = 30000;
+    function maybeReload() {
+      if (!LEAGUE_ID) return;
+      if (Date.now() - LAST_RELOAD < RELOAD_MIN_INTERVAL_MS) return;
+      loadContext(LEAGUE_ID);
     }
 
     let LAST_PATH = null;
@@ -229,17 +406,31 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
       if (id === LEAGUE_ID) return;
       LEAGUE_ID = id;
       CTX = null;
-      document.querySelectorAll("[data-sr]").forEach((el) => delete el.dataset.sr);
+      resetBadges();
       const pill = document.getElementById("sr-pill");
       if (pill) pill.remove();
       if (id) loadContext(id);
     }
 
+    // Coming back to this tab is one of the two moments most likely to mean
+    // "I just set my lineup on Sleeper and tabbed back to check it".
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) maybeReload();
+    });
+
     const debouncedSweep = (() => {
       let t;
       return () => { clearTimeout(t); t = setTimeout(sweep, 400); };
     })();
-    new MutationObserver(debouncedSweep).observe(document.body, { childList: true, subtree: true });
+    // Separate from the sweep debounce above: sweeps are cheap and should
+    // run on every settle (new rows loading in, etc.), but a reload hits
+    // the API, so it's also gated by the 30s throttle in maybeReload.
+    const debouncedMaybeReload = (() => {
+      let t;
+      return () => { clearTimeout(t); t = setTimeout(maybeReload, 400); };
+    })();
+    new MutationObserver(() => { debouncedSweep(); debouncedMaybeReload(); })
+      .observe(document.body, { childList: true, subtree: true });
 
     // Sleeper is a client-routed SPA: the URL changes without a full page
     // load, so there's no navigation event to listen for - poll instead.

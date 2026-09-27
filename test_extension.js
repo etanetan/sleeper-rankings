@@ -92,5 +92,71 @@ check("out overrides starting and best",
       C.badgeClass("1", { startingIds: started, bestIds: best, outIds: new Set(["1"]) }), "sr-out");
 check("neither starting nor best -> no badge", C.badgeClass("9", { startingIds: started, bestIds: best }), "");
 
+// --- badge tooltips (task 3a) ----------------------------------------------
+check("healthy starter tooltip: rank, points, reason",
+      C.badgeTitle({ p: "WR", posRank: 8, pts: 14.23 }, "sr-start"),
+      "WR8 · 14.2 proj pts · Start");
+check("bench -> start promote reason",
+      C.badgeTitle({ p: "RB", posRank: 3, pts: 9.5 }, "sr-promote"),
+      "RB3 · 9.5 proj pts · Bench → start");
+check("start -> bench demote reason",
+      C.badgeTitle({ p: "TE", posRank: 12, pts: 4 }, "sr-demote"),
+      "TE12 · 4 proj pts · Start → bench");
+check("DEF shows as DST", C.badgeTitle({ p: "DEF", posRank: 5, pts: 7 }, ""), "DST5 · 7 proj pts");
+check("no badge color -> no reason clause",
+      C.badgeTitle({ p: "K", posRank: 1, pts: 6 }, ""), "K1 · 6 proj pts");
+check("no projection omits the points segment", C.badgeTitle({ p: "K", posRank: 1, pts: null }, ""), "K1");
+check("readable status word wins over the short code",
+      C.badgeTitle({ p: "WR", posRank: 8, pts: 14.2, i: "Questionable", status: "Q" }, ""),
+      "WR8 · 14.2 proj pts · Questionable");
+check("bye week has no Sleeper status text, so it reads Bye",
+      C.badgeTitle({ p: "RB", posRank: 20, pts: 0, onBye: true }, "sr-out"),
+      "RB20 · 0 proj pts · Bye · Out");
+check("an OUT status doesn't repeat itself as both the status and the reason",
+      C.badgeTitle({ p: "QB", posRank: 4, pts: 0, i: "Out", status: "OUT" }, "sr-out"),
+      "QB4 · 0 proj pts · Out");
+check("falls back to the short status code when Sleeper sent no readable text",
+      C.badgeTitle({ p: "WR", posRank: 9, pts: 2, i: "", status: "IR" }, "sr-out"),
+      "WR9 · 2 proj pts · IR · Out");
+
+// --- selector-free row detection (task 3c) ---------------------------------
+// Fake DOM nodes: only .parentElement and .children are ever read, so a
+// plain object graph stands in for real Elements. `_hasAvatar` is the fake
+// stand-in for "el.querySelector(...) finds an avatar in here".
+function fakeRow(hasAvatar) {
+  const leaf = { parentElement: null, children: [] };
+  const wrap = { parentElement: null, children: [leaf] };
+  leaf.parentElement = wrap;
+  const row = { parentElement: null, children: [wrap], _hasAvatar: hasAvatar };
+  wrap.parentElement = row;
+  return { row, leaf };
+}
+const hasAvatar = (el) => !!el._hasAvatar;
+
+const rowA = fakeRow(true), rowB = fakeRow(true), rowC = fakeRow(true);
+const list = { parentElement: null, children: [rowA.row, rowB.row, rowC.row] };
+for (const r of [rowA, rowB, rowC]) r.row.parentElement = list;
+check("rowFor climbs from an avatar up to the row when >=3 siblings all have one",
+      C.rowFor(rowB.leaf, hasAvatar) === rowB.row, true);
+
+const rowD = fakeRow(true), rowE = fakeRow(true);
+const shortList = { parentElement: null, children: [rowD.row, rowE.row] };
+rowD.row.parentElement = shortList; rowE.row.parentElement = shortList;
+check("rowFor finds nothing with fewer than 3 avatar siblings", C.rowFor(rowD.leaf, hasAvatar), null);
+
+const rowF = fakeRow(true), rowG = fakeRow(false), rowH = fakeRow(true);
+const mixedList = { parentElement: null, children: [rowF.row, rowG.row, rowH.row] };
+for (const r of [rowF, rowG, rowH]) r.row.parentElement = mixedList;
+check("rowFor requires every sibling to have an avatar, not just most of them",
+      C.rowFor(rowF.leaf, hasAvatar), null);
+
+check("rowFor returns null instead of throwing when it runs out of ancestors",
+      C.rowFor({ parentElement: null, children: [] }, hasAvatar), null);
+
+check("a maxDepth too small for the real match returns null",
+      C.rowFor(rowB.leaf, hasAvatar, 2), null);
+check("raising maxDepth reaches that same match",
+      C.rowFor(rowB.leaf, hasAvatar, 3) === rowB.row, true);
+
 console.log(`\n${pass}/${pass + fail} passed`);
 process.exit(fail ? 1 : 0);

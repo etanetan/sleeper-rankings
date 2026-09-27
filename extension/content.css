@@ -9,7 +9,7 @@
 .sr-badge.sr-promote{background:#d97706}
 .sr-badge.sr-demote,.sr-badge.sr-out{background:#dc2626}
 
-#sr-pill{position:fixed;right:16px;bottom:16px;z-index:2147483647;
+#sr-pill{position:fixed;right:16px;bottom:16px;z-index:2147483647;cursor:pointer;
   background:#d97706;color:#fff;font:700 13px/1 ui-sans-serif,system-ui,sans-serif;
   padding:10px 14px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
 #sr-pill.sr-ok{background:#16a34a}
