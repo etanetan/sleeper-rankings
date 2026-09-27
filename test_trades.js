@@ -202,6 +202,11 @@ check("theirs, slumping and lost his job: no call",
   T.marketTag(tp({ form: { g: 2, perf: 0.6, snap: 30, tgtShare: 8 } }), false), null);
 check("theirs, slumping but hurt: no call",
   T.marketTag(tp({ longOut: true, form: { g: 2, perf: 0.6, snap: 85, tgtShare: 24 } }), false), null);
+check("yours, hot but on IR: no sell-high call",
+  T.marketTag(tp({ ir: true, form: { g: 2, perf: 1.6, snap: 80 } }), true), null);
+check("yours, on IR with a falling price: held",
+  T.marketTag(tp({ longOut: true, trend: -900 }), true), "hold");
+check("theirs, hot but hurt: no call", T.marketTag(tp({ longOut: true, form: { g: 2, perf: 1.6, snap: 80 } }), false), null);
 check("theirs, on a heater: avoid buying high", T.marketTag(tp({ form: { g: 2, perf: 1.6, snap: 80 } }), false), "avoid");
 check("a real jump on a real player counts", T.marketTag(tp({ v: 900, trend: 300 }), true), "sell_high");
 check("tiny values: a big percentage on a small number is noise",

@@ -350,6 +350,9 @@ function marketTag(p, mine) {
     Math.abs(tp) >= TREND_MOVE;
   const cold = (perf != null && perf <= COLD_PERF) || (moved && tp < 0);
   const hot = (perf != null && perf >= HOT_PERF) || (moved && tp > 0);
+  // An injured player's hot weeks are behind him and nobody buys them now:
+  // yours are held if their price is falling, otherwise no call either way.
+  if (sidelined(p)) return mine && cold ? "hold" : null;
   if (mine) return cold ? "hold" : hot ? "sell_high" : null;
   if (cold && !hot && usageIntact(p) && !sidelined(p)) return "buy_low";
   if (hot && !cold) return "avoid";
@@ -1114,6 +1117,7 @@ async function cmdNext(a) {
   const season = state.league_season || state.season;
   const week = state.week || state.display_week || 1;
   const who = await getJSON(`${SLEEPER}/user/${encodeURIComponent(user)}`);
+  if (!who || !who.user_id) throw new Error(`No Sleeper user "${user}"`);
   const leagues = await getJSON(`${SLEEPER}/user/${who.user_id}/leagues/nfl/${season}`);
   const open = leagues.filter((l) => tradeWindow(l, week).open);
   const files = {};
