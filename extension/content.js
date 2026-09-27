@@ -95,7 +95,12 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
       const badge = document.createElement("span");
       badge.className = "sr-badge" + (cls ? ` ${cls}` : "");
       badge.textContent = `${meta.p === "DEF" ? "DST" : meta.p}${meta.posRank}`;
-      row.appendChild(badge);
+      // Anchor to the name, not the row: the row is one of Sleeper's own
+      // fixed-column layouts (avatar / name / own% / start% / pts), and
+      // appending there as an extra child shifts every column after it. The
+      // name element just wraps text, so a badge flows inline after it.
+      const anchor = row.querySelector(SELECTORS.name) || row;
+      anchor.appendChild(badge);
     }
 
     function sweep() {
@@ -103,17 +108,27 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
       document.querySelectorAll(SELECTORS.row).forEach((row) => decorate(row, findPlayerId(row)));
     }
 
+    // A small fixed pill is the only always-visible sign the extension is
+    // doing anything on this page, so it shows a state whenever there's
+    // context loaded - green when the lineup's already set, amber with the
+    // pending changes otherwise - rather than only appearing for a warning.
     function showPill(check) {
       let pill = document.getElementById("sr-pill");
-      if (!check || check.ok) { if (pill) pill.remove(); return; }
+      if (!check) { if (pill) pill.remove(); return; }
       if (!pill) {
         pill = document.createElement("div");
         pill.id = "sr-pill";
         document.body.appendChild(pill);
       }
-      const n = check.changes.length;
-      const gain = Math.round(check.gain * 10) / 10;
-      pill.textContent = `${n} change${n === 1 ? "" : "s"} · ${gain > 0 ? "+" : ""}${gain}`;
+      if (check.ok) {
+        pill.className = "sr-ok";
+        pill.textContent = "✓ Lineup set";
+      } else {
+        pill.className = "";
+        const n = check.changes.length;
+        const gain = Math.round(check.gain * 10) / 10;
+        pill.textContent = `${n} change${n === 1 ? "" : "s"} · ${gain > 0 ? "+" : ""}${gain}`;
+      }
     }
 
     async function loadContext(leagueId) {

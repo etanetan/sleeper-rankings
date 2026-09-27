@@ -1,10 +1,15 @@
-.sr-badge{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;
-  font:600 11px/1.7 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-  background:#efefe9;color:#6b6b63;vertical-align:middle}
-.sr-badge.sr-start{background:#dcfce7;color:#15803d}
-.sr-badge.sr-promote{background:#fef3c7;color:#b45309}
-.sr-badge.sr-demote,.sr-badge.sr-out{background:#fee2e2;color:#b91c1c}
+/* Solid, saturated fills with white text - Sleeper's own UI is almost
+ * always dark, and the pale pastel-on-light palette the site itself uses
+ * nearly disappears against it. These are tuned for legibility there. */
+.sr-badge{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:999px;
+  font:700 12px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  letter-spacing:.02em;white-space:nowrap;vertical-align:middle;
+  background:#52525b;color:#fff;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.sr-badge.sr-start{background:#16a34a}
+.sr-badge.sr-promote{background:#d97706}
+.sr-badge.sr-demote,.sr-badge.sr-out{background:#dc2626}
 
 #sr-pill{position:fixed;right:16px;bottom:16px;z-index:2147483647;
-  background:#b45309;color:#fff;font:600 13px/1 ui-sans-serif,system-ui,sans-serif;
-  padding:10px 14px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+  background:#d97706;color:#fff;font:700 13px/1 ui-sans-serif,system-ui,sans-serif;
+  padding:10px 14px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+#sr-pill.sr-ok{background:#16a34a}
