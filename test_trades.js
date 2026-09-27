@@ -5,6 +5,7 @@ const os = require("os");
 const path = require("path");
 const { execFileSync } = require("child_process");
 const T = require("./trades/engine.js");
+const A = require("./app.js");
 const results = [];
 
 function check(label, got, want) {
@@ -110,20 +111,23 @@ check("IR players don't take a roster spot",
 const league = { league_id: "L1", name: "Test League", status: "in_season",
                  settings: { trade_deadline: 11, type: 0 }, scoring_settings: { rec: 1 },
                  roster_positions: slots.concat(["BN", "BN", "BN", "BN", "BN"]), total_rosters: 3 };
+// leagueCandidates takes these precomputed, the way cmdCandidates does.
+const rosterSizeOf = (lg) => (lg.roster_positions || []).filter((s) => s !== "IR" && s !== "TAXI").length;
 const teams = [
   { roster_id: 1, name: "Mine", user: "etanetan", record: "2-1", roster: me },
   { roster_id: 2, name: "Team B", user: "bee", record: "1-2", roster: b },
   { roster_id: 3, name: "Team C", user: "sea", record: "3-0", roster: c },
 ];
-const work = T.leagueCandidates({ league, teams, myRosterId: 1, slots, season: "2026", week: 4,
+const work = T.leagueCandidates({ league, teams, myRosterId: 1, slots, rosterSize: rosterSizeOf(league),
+                                  format: T.fcParams(league), season: "2026", week: 4,
                                   valuesFetched: "2026-09-29T12:00:00Z" });
 check("candidates produced", work.candidates.length > 0, true);
 check("never more than three per partner",
   Object.values(work.candidates.reduce((a, x) => (a[x.partner.roster_id] = (a[x.partner.roster_id] || 0) + 1, a), {}))
     .every((n) => n <= 3), true);
 check("ids are unique", new Set(work.candidates.map((x) => x.id)).size, work.candidates.length);
-check("ids are stable", T.leagueCandidates({ league, teams, myRosterId: 1, slots, season: "2026",
-  week: 4 }).candidates.map((x) => x.id), work.candidates.map((x) => x.id));
+check("ids are stable", T.leagueCandidates({ league, teams, myRosterId: 1, slots, rosterSize: rosterSizeOf(league),
+  format: T.fcParams(league), season: "2026", week: 4 }).candidates.map((x) => x.id), work.candidates.map((x) => x.id));
 check("my thin spots include RB", work.me.thin.includes("RB"), true);
 check("partner needs carried", Array.isArray(work.candidates[0].partner.thin), true);
 check("format recorded", work.format.ppr, 1);
@@ -249,6 +253,41 @@ check("QB usage needs the snaps", T.usageIntact({ p: "QB", form: { snap: 50 } })
   check("buying at the peak ranks lower", !!bought && !!unbought && bought.score < unbought.score, true);
 }
 
+/* --- leagueCandidates tags on its own when the caller hasn't ----------- */
+{
+  const hot = tp({ id: "hot1", n: "Hot-Mine", form: { g: 2, perf: 1.5, snap: 80 } });
+  const cold = tp({ id: "cold1", n: "Cold-Mine", form: { g: 2, perf: 0.6, snap: 80 } });
+  const theirCold = tp({ id: "cold2", n: "Cold-Theirs", form: { g: 2, perf: 0.6, snap: 85, tgtShare: 24 } });
+  const untaggedTeams = [
+    { roster_id: 1, name: "Mine", user: "etanetan", record: "2-1", roster: me.map((p) => ({ ...p })).concat([hot, cold]) },
+    { roster_id: 2, name: "Team B", user: "bee", record: "1-2", roster: b.map((p) => ({ ...p })).concat([theirCold]) },
+    { roster_id: 3, name: "Team C", user: "sea", record: "3-0", roster: c.map((p) => ({ ...p })) },
+  ];
+  const tagWork = T.leagueCandidates({ league, teams: untaggedTeams, myRosterId: 1, slots,
+    rosterSize: rosterSizeOf(league), format: T.fcParams(league), season: "2026",
+    week: 4, valuesFetched: "2026-09-29T12:00:00Z" });
+  check("leagueCandidates tags a hot player of yours as sell_high",
+    untaggedTeams[0].roster.find((p) => p.id === "hot1").tag, "sell_high");
+  check("leagueCandidates tags a cold player of yours as hold",
+    untaggedTeams[0].roster.find((p) => p.id === "cold1").tag, "hold");
+  check("leagueCandidates tags a cold, still-used player of theirs as buy_low",
+    untaggedTeams[1].roster.find((p) => p.id === "cold2").tag, "buy_low");
+  check("a hot player of yours shows up as a give",
+    tagWork.candidates.some((x) => x.give.some((p) => p.id === "hot1")), true);
+  check("a cold (hold) player of yours never does",
+    tagWork.candidates.every((x) => !x.give.some((p) => p.id === "cold1")), true);
+  check("kind spelling matches the tags",
+    tagWork.candidates.every((x) => ["need", "sell_high", "buy_low", "sell_high+buy_low"].includes(x.kind)), true);
+}
+
+/* --- offerable ----------------------------------------------------------- */
+check("offerable: a hold player isn't", T.offerable({ tag: "hold" }), false);
+check("offerable: anything else is", T.offerable({ tag: "sell_high" }), true);
+check("offerable: no tag at all is fine", T.offerable({ tag: null }), true);
+
+check("tagTeams reports an id on no roster", T.tagTeams([{ roster_id: 1, roster: [] }], 1,
+  { sell: ["ghost"] }), ["ghost isn't on any roster in this league"]);
+
 /* --- draft picks --------------------------------------------------------- */
 const fcPickRows = [
   { player: { sleeperId: "FP_2027_early_0", name: "2027 1st (Early)", position: "PICK" }, value: 4800, trend30Day: 300 },
@@ -352,6 +391,14 @@ check("numbers come from the candidates, not the research",
   ok.data.trades[0].value.giveAdj, work.candidates[0].value.giveAdj);
 check("status ready", ok.data.status, "ready");
 check("unreviewed research says so", ok.data.review, { checked: false });
+check("a published trade has exactly the fields the page reads",
+  Object.keys(ok.data.trades[0]).sort(), A.TRADE_FIELDS.slice().sort());
+check("the work-only fields (kind, picks) aren't published",
+  ["kind", "picks"].some((k) => k in ok.data.trades[0]), false);
+check("them keeps only gainPct, not before/after/changes/drop",
+  Object.keys(ok.data.trades[0].them), ["gainPct"]);
+check("you keeps gainPct, changes and drop, not before/after",
+  Object.keys(ok.data.trades[0].you).sort(), ["changes", "drop", "gainPct"]);
 check("experts section required", T.finalize(work, { ...good, trades: [{ ...good.trades[0],
   why: { ...good.trades[0].why, experts: [] } }] }).errors.some((e) => /why.experts/.test(e)), true);
 check("a second agent's review is published",
@@ -479,7 +526,7 @@ check("cli: partner named from team_name or display name",
   cliWork.candidates.every((x) => ["bee", "sea"].includes(x.partner.name)), true);
 check("cli: records carried", cliWork.me.record, "2-1");
 check("cli: market sheet written", Object.keys(cliWork.market).sort(), ["avoid", "buy_low", "hold", "sell_high", "weeks"]);
-check("cli: every candidate labelled", cliWork.candidates.every((x) => ["need", "sell-high", "buy-low", "sell-high + buy-low"].includes(x.kind)), true);
+check("cli: every candidate labelled", cliWork.candidates.every((x) => ["need", "sell_high", "buy_low", "sell_high+buy_low"].includes(x.kind)), true);
 
 {
   // Research calls re-run the search for one league.
@@ -499,6 +546,9 @@ check("cli: every candidate labelled", cliWork.candidates.every((x) => ["need", 
 }
 
 const dataDir = path.join(tmp, "data");
+check("cli: next picks the never-researched league first",
+  run("next", "--user", "etanetan", "--data", dataDir).trim(), "L1 Test League");
+
 run("running", "--league", "L1", "--data", dataDir);
 check("cli: running status", JSON.parse(fs.readFileSync(path.join(dataDir, "L1.json"))).status, "running");
 const rFile = path.join(tmp, "research.json");
@@ -507,6 +557,8 @@ run("finalize", "--league", "L1", "--research", rFile, "--data", dataDir, "--wor
 const final = JSON.parse(fs.readFileSync(path.join(dataDir, "L1.json")));
 check("cli: finalize writes ready", final.status, "ready");
 check("cli: one trade", final.trades.length, 1);
+check("cli: next moves on once a league is fresh",
+  run("next", "--user", "etanetan", "--data", dataDir).trim(), "L3 Dyn");
 
 fs.writeFileSync(rFile, JSON.stringify({ trades: [{ candidate: "nope" }] }));
 let rejected = false;

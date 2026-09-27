@@ -87,7 +87,7 @@ for f in build.STATIC_FILES:
 # A deploy that changes only app.js or style.css can go unseen behind a
 # browser cache unless the HTML references a versioned URL.
 html = open("index.html").read()
-for asset in ("app.js", "style.css"):
+for asset in ("app.js", "research.js", "style.css"):
     m = re.search(re.escape(asset) + r"\?v=(\w+)", html)
     check(f"{asset} referenced with a version", bool(m), True)
     if m:
@@ -105,7 +105,7 @@ import glob
 
 # The workflow lives at .github/workflows/ once it's active, and at the repo
 # root before then; scan whichever exists rather than assuming a path.
-scanned = ["build.py", "probe.py", "app.js", "index.html"]
+scanned = ["build.py", "probe.py", "app.js", "research.js", "index.html"]
 scanned += glob.glob(".github/workflows/*.yml") + glob.glob(".github/workflows/*.yaml")
 if os.path.exists("workflow.yml"):
     scanned.append("workflow.yml")

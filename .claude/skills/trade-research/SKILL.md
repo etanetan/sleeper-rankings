@@ -96,7 +96,7 @@ closed there). `brief` prints it compactly — read that. It holds:
 - `me`: your starters and bench; where you're `thin` or `deep`.
 - `league`: what FantasyCalc can't see (type, TE premium, scoring).
 - `candidates`: up to 20 trades, each fair within 10% on FantasyCalc value,
-  labelled `kind` (`sell-high`, `buy-low`, `sell-high + buy-low`, `need`),
+  labelled `kind` (`sell_high`, `buy_low`, `sell_high+buy_low`, `need`),
   with lineup changes, the partner's record and needs, and who you'd drop.
   Your `hold` players are never in them. `picks: true` marks deals that
   include draft picks.
@@ -177,7 +177,8 @@ angle holds up. Then pick **at least 5 and at most 8** per league, across
 different partners where possible, leading with the strongest angles. If
 fewer than 5 candidates survive, re-run step 5 with more buy targets before
 settling; publish fewer only with a `short_reason`, which is shown on the
-page.
+page. That applies down to zero: if nothing fair survives, publish no trades
+with a `short_reason` explaining why, rather than leaving the league silent.
 
 **Each trade stands alone.** Judge every one against the roster as it is
 today. Never assume another suggested trade happened.
@@ -266,12 +267,9 @@ node trades/engine.js finalize --league <id> \
   --research trades/work/<id>.research.json --data /tmp/trade-data
 ```
 
-This is the check against FantasyCalc and the rules: it recomputes every
-trade's value from the market numbers and refuses anything outside ±10%,
-fewer than 5 trades without a `short_reason`, more than 8, a slumping player
-of yours being sold, unknown candidates, empty sections (including
-`experts`), first-person wording, or sources without https links. On exit
-code 2, fix what it prints and run it again.
+This is the check against FantasyCalc and the rules. `finalize` names
+anything it rejects; fix what it prints and run it again. On exit code 2,
+nothing was published.
 
 ```bash
 cd /tmp/trade-data

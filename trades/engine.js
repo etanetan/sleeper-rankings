@@ -21,7 +21,9 @@
 
 const fs = require("fs");
 const path = require("path");
-const { SLOT_ELIGIBLE, tradeWindow, normStatus, scorePlayer } = require("../app.js");
+const { SLOT_ELIGIBLE, tradeWindow, normStatus, scorePlayer,
+        ORDINAL, EVEN_PCT, isHttps, SECTIONS } = require("../app.js");
+const { MIN_TRADES, markRunning, markFailed, reasonFor, pickNext } = require("../research.js");
 
 const SLEEPER = "https://api.sleeper.app/v1";
 const STATS = "https://api.sleeper.com/stats/nfl";
@@ -64,7 +66,6 @@ const TAG_MIN_VALUE = 300;
 // ranking, and how much buying a player at his peak costs.
 const ANGLE_BONUS = 0.03;
 const AVOID_PENALTY = 0.03;
-const MIN_TRADES = 5;
 const MAX_TRADES = 8;
 
 // Draft picks, in dynasty leagues where FantasyCalc prices them. Each side
@@ -72,7 +73,6 @@ const MAX_TRADES = 8;
 // team's strength: they're next year's players, not this week's.
 const PICK_POOL = 4;
 const PICK_WEIGHT = 0.15;
-const ORDINAL = ["", "1st", "2nd", "3rd", "4th", "5th", "6th"];
 // Out for weeks, not days: these players can't help a lineup now, whatever
 // they're worth on the market. A one-week "Out" still counts.
 const LONG_OUT = new Set(["IR", "PUP", "SUS", "NA", "DNR"]);
@@ -198,7 +198,7 @@ function fairness(giveVals, getVals) {
   return {
     give, get, giveAdj, getAdj, diffPct,
     fair: Math.abs(diffPct) <= FAIR_PCT,
-    verdict: Math.abs(diffPct) <= 0.03 ? "Even"
+    verdict: Math.abs(diffPct) <= EVEN_PCT ? "Even"
       : diffPct > 0 ? "Slightly in your favor" : "You pay a little more",
   };
 }
@@ -354,10 +354,14 @@ function marketTag(p, mine) {
   // yours are held if their price is falling, otherwise no call either way.
   if (sidelined(p)) return mine && cold ? "hold" : null;
   if (mine) return cold ? "hold" : hot ? "sell_high" : null;
-  if (cold && !hot && usageIntact(p) && !sidelined(p)) return "buy_low";
+  if (cold && !hot && usageIntact(p)) return "buy_low";
   if (hot && !cold) return "avoid";
   return null;
 }
+
+/* Whether a player can be offered in a trade: never one of yours that's
+ * slumping (that would be selling at the low). */
+const offerable = (p) => p.tag !== "hold";
 
 /* Research's calls replace the numbers': `sell` and `hold` (not for trade,
  * slumping or simply too good to sell) for your players, `buy` and `avoid`
@@ -387,6 +391,16 @@ function applyTargets(teams, myRosterId, targets) {
   set(targets.avoid, "avoid", false);
   set(targets.neutral, null, null);
   return problems;
+}
+
+/* Tag every rostered player with the numbers' market call, then let
+ * research's targets confirm, reject or extend it. Returns any problems
+ * with the targets (an id that isn't on the roster it's supposed to be). */
+function tagTeams(teams, myRosterId, targets) {
+  for (const t of teams) {
+    for (const p of t.roster) if (!p.isPick) p.tag = marketTag(p, t.roster_id === myRosterId);
+  }
+  return applyTargets(teams, myRosterId, targets);
 }
 
 /* --------------------------------------------------------------- picks */
@@ -518,7 +532,7 @@ function tradesWith(me, them, slots, rosterSize, opts) {
     const allPicks = r.filter((p) => p.isPick && p.v > 0).sort(byV);
     const picks = allPicks.slice(0, PICK_POOL)
       .concat(allPicks.filter((p, i) => i >= PICK_POOL && p.tag === keep));
-    return top.concat(extra, picks).filter((p) => p.tag !== "hold");
+    return top.concat(extra, picks).filter(offerable);
   };
   const myPkgs = combos(pool(me, "sell_high"), MAX_PIECES);
   const theirPkgs = combos(pool(them, "buy_low"), MAX_PIECES);
@@ -644,9 +658,9 @@ function leagueNotes(league) {
  * research step has real choices rather than twelve versions of one deal. */
 function leagueCandidates(ctx, opts) {
   const limit = (opts && opts.limit) || 20;
-  const { league, teams, myRosterId, slots } = ctx;
+  const { league, teams, myRosterId, slots, rosterSize, format } = ctx;
+  if (ctx.targets || ctx.tagged !== true) tagTeams(teams, myRosterId, ctx.targets);
   const me = teams.find((t) => t.roster_id === myRosterId);
-  const rosterSize = (league.roster_positions || []).filter((s) => s !== "IR" && s !== "TAXI").length;
   const profile = positionProfile(teams, slots);
 
   const search = (relaxed) => {
@@ -683,7 +697,7 @@ function leagueCandidates(ctx, opts) {
     const buys = c.get.filter((p) => p.tag === "buy_low").length;
     picked.push({
       id: hashId(`${league.league_id}:${giveKey}>${getKey}`),
-      kind: sells && buys ? "sell-high + buy-low" : sells ? "sell-high" : buys ? "buy-low" : "need",
+      kind: sells && buys ? "sell_high+buy_low" : sells ? "sell_high" : buys ? "buy_low" : "need",
       picks: c.give.concat(c.get).some((p) => p.isPick),
       partner: {
         roster_id: pk, name: c.partner.name, user: c.partner.user,
@@ -710,11 +724,11 @@ function leagueCandidates(ctx, opts) {
     league_name: league.name,
     season: ctx.season, week: ctx.week,
     window: tradeWindow(league, ctx.week),
-    format: fcParams(league),
+    format,
     // What FantasyCalc can't see, for the research step to weigh by hand.
     league: leagueNotes(league),
     values_source: { name: "FantasyCalc", url: "https://fantasycalc.com",
-                     api: fcUrl(fcParams(league)), fetched: ctx.valuesFetched },
+                     api: fcUrl(format), fetched: ctx.valuesFetched },
     me: {
       roster_id: myRosterId, name: me.name, record: me.record,
       thin: profile[myRosterId].thin, deep: profile[myRosterId].deep,
@@ -739,9 +753,6 @@ function leagueCandidates(ctx, opts) {
 
 /* ------------------------------------------------------------ finalize */
 
-// "experts" is the week's news and what fantasy analysts are saying about the
-// players involved: current sentiment is part of every call.
-const SECTIONS = ["give", "get", "you", "them", "experts"];
 // The page talks to the manager: "you", never "I" or "we".
 const FIRST_PERSON = /(^|[^\w'’])(I|I'm|I’m|I've|I’ve|I'd|I’d|[Mm]y|[Mm]ine|[Ww]e|[Ww]e're|[Ww]e’re|[Oo]ur|[Oo]urs|[Uu]s)(?=$|[^\w'’])/;
 
@@ -758,8 +769,8 @@ function finalize(work, research, now) {
   // Ethan wants at least five to choose from. Fewer only when there aren't
   // five fair candidates, or with a stated reason he'll see on the page.
   const need = Math.min(MIN_TRADES, (work.candidates || []).length);
-  const shortReason = research && (research.short_reason || research.none_reason);
-  if (list.length < need && !shortReason) {
+  const reasonGiven = research && (research.short_reason || research.none_reason);
+  if (list.length < need && !reasonGiven) {
     errors.push(`${list.length} trade(s); publish at least ${need} ` +
       `(there are ${(work.candidates || []).length} candidates), or give a short_reason.`);
   }
@@ -782,7 +793,7 @@ function finalize(work, research, now) {
     const sources = r.sources || [];
     if (!sources.length) errors.push(`${where}: cite at least one source.`);
     sources.forEach((s, j) => {
-      if (!s || !/^https:\/\//.test(s.url || "") || !s.title) {
+      if (!s || !isHttps(s.url) || !s.title) {
         errors.push(`${where}: sources[${j}] needs a title and an https url.`);
       }
     });
@@ -798,14 +809,16 @@ function finalize(work, research, now) {
       errors.push(`${where}: confidence must be high, medium or low.`);
     }
     for (const p of c.give) {
-      if (p.tag === "hold") errors.push(`${where}: gives ${p.n}, who's slumping (hold). Don't sell low.`);
+      if (!offerable(p)) errors.push(`${where}: gives ${p.n}, who's slumping (hold). Don't sell low.`);
     }
     // Re-validate against the market rather than trusting the file.
     const f = fairness(c.give.map((p) => p.v), c.get.map((p) => p.v));
     if (!f.fair) errors.push(`${where}: not fair by FantasyCalc (${Math.round(f.diffPct * 100)}%).`);
 
     trades.push({
-      ...c, value: f,
+      id: c.id, partner: c.partner, give: c.give, get: c.get, value: f,
+      you: { gainPct: c.you.gainPct, changes: c.you.changes, drop: c.you.drop },
+      them: { gainPct: c.them.gainPct },
       headline: r.headline, summary: r.summary || "",
       confidence: r.confidence || "medium",
       why: { give: why.give, get: why.get, you: why.you, them: why.them, experts: why.experts },
@@ -829,8 +842,7 @@ function finalize(work, research, now) {
       values_source: work.values_source,
       me: { name: work.me.name, record: work.me.record, thin: work.me.thin, deep: work.me.deep },
       trades,
-      none_reason: trades.length ? null : (research && research.none_reason) || null,
-      short_reason: trades.length && trades.length < MIN_TRADES ? shortReason || null : null,
+      short_reason: reasonFor(research, trades.length),
       // A second agent audited the research before it was published.
       review: research && research.review && research.review.checked
         ? { checked: true, notes: (research.review.notes || []).filter((n) => typeof n === "string").slice(0, 20) }
@@ -902,9 +914,15 @@ function brief(work) {
 
 /* ----------------------------------------------------------------- cli */
 
+let _fixtures = null;
+function loadFixtures() {
+  if (!_fixtures) _fixtures = JSON.parse(fs.readFileSync(process.env.TRADES_FIXTURES, "utf8"));
+  return _fixtures;
+}
+
 async function getJSON(url) {
   if (process.env.TRADES_FIXTURES) {
-    const map = JSON.parse(fs.readFileSync(process.env.TRADES_FIXTURES, "utf8"));
+    const map = loadFixtures();
     if (!(url in map)) throw new Error(`no fixture for ${url}`);
     return map[url];
   }
@@ -957,15 +975,63 @@ async function rookieDrafts(league) {
   return out;
 }
 
-async function cmdCandidates(a) {
-  const user = a.user || "etanetan";
-  const outDir = a.out || path.join(__dirname, "work");
+/* Season, week, the Sleeper user, and their leagues for this season: the
+ * bootstrap every command starts from. */
+async function userLeagues(user) {
   const state = await getJSON(`${SLEEPER}/state/nfl`);
   const season = state.league_season || state.season;
   const week = state.week || state.display_week || 1;
   const who = await getJSON(`${SLEEPER}/user/${encodeURIComponent(user)}`);
   if (!who || !who.user_id) throw new Error(`No Sleeper user "${user}"`);
-  let leagues = await getJSON(`${SLEEPER}/user/${who.user_id}/leagues/nfl/${season}`);
+  const leagues = await getJSON(`${SLEEPER}/user/${who.user_id}/leagues/nfl/${season}`);
+  return { season, week, who, leagues };
+}
+
+/* Every roster as a team: who owns it, its record, and its tradeable
+ * players. */
+function buildTeams(rosters, users, players, values, forms) {
+  const userById = {};
+  for (const u of users || []) userById[u.user_id] = u;
+  return rosters.map((r) => {
+    const u = userById[r.owner_id] || {};
+    const st = r.settings || {};
+    return {
+      roster_id: r.roster_id,
+      user: u.display_name || null,
+      name: ((u.metadata && u.metadata.team_name) || u.display_name || `Team ${r.roster_id}`).trim(),
+      record: `${st.wins || 0}-${st.losses || 0}${st.ties ? `-${st.ties}` : ""}`,
+      roster: teamPlayers(r.players, players, values, r.taxi, r.reserve, forms),
+    };
+  });
+}
+
+/* Dynasty leagues only: add every future pick to its current owner's roster
+ * (mutating `teams`) so it can be part of a trade, and summarize what this
+ * league's own past drafts have produced. Returns the draft history, or
+ * null in a redraft or keeper league. */
+async function attachPicks(league, teams, slots, season, values, valueRows) {
+  if ((league.settings || {}).type !== 2) return null;
+  const traded = await getJSON(`${SLEEPER}/league/${league.league_id}/traded_picks`);
+  const pickValues = pickValueMap(valueRows);
+  const nameOf = {};
+  for (const t of teams) nameOf[t.roster_id] = t.name;
+  const assets = pickAssets({
+    season, rounds: Number((league.settings || {}).draft_rounds) || 4,
+    rosterIds: teams.map((t) => t.roster_id), traded, pickValues,
+    slotOf: projectedSlots(teams, slots), nameOf,
+  });
+  for (const a of assets) {
+    const t = teams.find((x) => x.roster_id === a.holder);
+    if (t) t.roster.push(a);
+  }
+  return summarizeDrafts(await rookieDrafts(league), values, pickValues, Number(season) + 1);
+}
+
+async function cmdCandidates(a) {
+  const user = a.user || "etanetan";
+  const outDir = a.out || path.join(__dirname, "work");
+  const { season, week, who, leagues: allLeagues } = await userLeagues(user);
+  let leagues = allLeagues;
   if (a.league) {
     const q = String(a.league).toLowerCase();
     leagues = leagues.filter((l) => l.league_id === a.league || (l.name || "").toLowerCase() === q);
@@ -1009,7 +1075,8 @@ async function cmdCandidates(a) {
     const mine = rosters.find((r) => r.owner_id === who.user_id || (r.co_owners || []).includes(who.user_id));
     if (!mine) { summary.push({ league_id: league.league_id, name: league.name, open: false, reason: "No roster of yours here." }); continue; }
 
-    const url = fcUrl(fcParams(league));
+    const format = fcParams(league);
+    const url = fcUrl(format);
     if (!valuesCache[url]) valuesCache[url] = { rows: await getJSON(url), fetched: new Date().toISOString() };
     const values = valueMap(valuesCache[url].rows);
 
@@ -1022,47 +1089,16 @@ async function cmdCandidates(a) {
       }
     }
 
-    const userById = {};
-    for (const u of users || []) userById[u.user_id] = u;
-    const teams = rosters.map((r) => {
-      const u = userById[r.owner_id] || {};
-      const st = r.settings || {};
-      return {
-        roster_id: r.roster_id,
-        user: u.display_name || null,
-        name: ((u.metadata && u.metadata.team_name) || u.display_name || `Team ${r.roster_id}`).trim(),
-        record: `${st.wins || 0}-${st.losses || 0}${st.ties ? `-${st.ties}` : ""}`,
-        roster: teamPlayers(r.players, players, values, r.taxi, r.reserve, forms),
-      };
-    });
+    const teams = buildTeams(rosters, users, players, values, forms);
     const slots = (league.roster_positions || []).filter((s) => !SKIP_SLOTS.has(s));
-    let draftHist = null;
-    if ((league.settings || {}).type === 2) {
-      // Dynasty: add every future pick to its current owner's roster, and
-      // look back at what this league's own drafts produced.
-      const traded = await getJSON(`${SLEEPER}/league/${league.league_id}/traded_picks`);
-      const pickValues = pickValueMap(valuesCache[url].rows);
-      const nameOf = {};
-      for (const t of teams) nameOf[t.roster_id] = t.name;
-      const assets = pickAssets({
-        season, rounds: Number((league.settings || {}).draft_rounds) || 4,
-        rosterIds: teams.map((t) => t.roster_id), traded, pickValues,
-        slotOf: projectedSlots(teams, slots), nameOf,
-      });
-      for (const a of assets) {
-        const t = teams.find((x) => x.roster_id === a.holder);
-        if (t) t.roster.push(a);
-      }
-      draftHist = summarizeDrafts(await rookieDrafts(league), values, pickValues, Number(season) + 1);
-    }
-    for (const t of teams) {
-      for (const p of t.roster) if (!p.isPick) p.tag = marketTag(p, t.roster_id === mine.roster_id);
-    }
-    const problems = applyTargets(teams, mine.roster_id, targets);
+    const rosterSize = (league.roster_positions || []).filter((s) => s !== "IR" && s !== "TAXI").length;
+    const draftHist = await attachPicks(league, teams, slots, season, values, valuesCache[url].rows);
+
+    const problems = tagTeams(teams, mine.roster_id, targets);
     if (problems.length) console.error(`Targets for ${league.name}:\n  - ${problems.join("\n  - ")}`);
-    const work = leagueCandidates({ league, teams, myRosterId: mine.roster_id, slots, season, week,
-                                    weeks, valuesFetched: valuesCache[url].fetched,
-                                    targetsApplied: !!targets, draftHistory: draftHist });
+    const work = leagueCandidates({ league, teams, myRosterId: mine.roster_id, slots, rosterSize, format,
+                                    season, week, weeks, valuesFetched: valuesCache[url].fetched,
+                                    targetsApplied: !!targets, draftHistory: draftHist, tagged: true });
     fs.writeFileSync(path.join(outDir, `${league.league_id}.json`), JSON.stringify(work, null, 2));
     const kinds = {};
     for (const c of work.candidates) kinds[c.kind] = (kinds[c.kind] || 0) + 1;
@@ -1093,32 +1129,10 @@ function cmdBrief(a) {
   console.log(brief(work));
 }
 
-/* Which league a scheduled run should research: the open league whose
- * published research is oldest, skipping any another run is working on.
- * Runs are spread through the day so each fits a usage window; once every
- * league is fresh (under 20 hours old) there's nothing to do. */
-function pickNext(open, files, now) {
-  const t = now.getTime();
-  let best = null;
-  for (const lg of open) {
-    const f = files[lg.league_id] || {};
-    if (f.status === "running" && f.started && t - Date.parse(f.started) < 3 * 3600e3) continue;
-    const age = f.generated ? t - Date.parse(f.generated) : Infinity;
-    if (age < 20 * 3600e3) continue;
-    if (!best || age > best.age) best = { league_id: lg.league_id, name: lg.name, age };
-  }
-  return best;
-}
-
 async function cmdNext(a) {
   if (!a.data) throw new Error("--data is required");
   const user = a.user || "etanetan";
-  const state = await getJSON(`${SLEEPER}/state/nfl`);
-  const season = state.league_season || state.season;
-  const week = state.week || state.display_week || 1;
-  const who = await getJSON(`${SLEEPER}/user/${encodeURIComponent(user)}`);
-  if (!who || !who.user_id) throw new Error(`No Sleeper user "${user}"`);
-  const leagues = await getJSON(`${SLEEPER}/user/${who.user_id}/leagues/nfl/${season}`);
+  const { week, leagues } = await userLeagues(user);
   const open = leagues.filter((l) => tradeWindow(l, week).open);
   const files = {};
   for (const l of open) files[l.league_id] = readJSON(path.join(a.data, `${l.league_id}.json`));
@@ -1130,23 +1144,19 @@ async function cmdNext(a) {
 /* Mark a league as being researched, keeping last week's trades visible. */
 function cmdRunning(a) {
   const file = dataFile(a);
-  const prev = readJSON(file) || { version: 1, league_id: a.league, trades: [] };
-  prev.status = "running";
-  prev.started = new Date().toISOString();
-  delete prev.error;
+  const now = process.env.TRADES_NOW ? new Date(process.env.TRADES_NOW) : new Date();
+  const next = markRunning(readJSON(file), a.league, now);
   fs.mkdirSync(a.data, { recursive: true });
-  fs.writeFileSync(file, JSON.stringify(prev, null, 2));
+  fs.writeFileSync(file, JSON.stringify(next, null, 2));
   console.log(`${file}: running`);
 }
 
 function cmdFailed(a) {
   const file = dataFile(a);
-  const prev = readJSON(file) || { version: 1, league_id: a.league, trades: [] };
-  prev.status = "ready";
-  prev.error = { at: new Date().toISOString(), reason: a.reason || "Research didn't finish." };
-  delete prev.started;
-  fs.writeFileSync(file, JSON.stringify(prev, null, 2));
-  console.log(`${file}: failed (${prev.error.reason})`);
+  const now = process.env.TRADES_NOW ? new Date(process.env.TRADES_NOW) : new Date();
+  const next = markFailed(readJSON(file), a.league, a.reason, now);
+  fs.writeFileSync(file, JSON.stringify(next, null, 2));
+  console.log(`${file}: failed (${next.error.reason})`);
 }
 
 function cmdFinalize(a) {
@@ -1193,6 +1203,7 @@ if (require.main === module) {
 
 module.exports = { tradeWindow, fcParams, fcUrl, valueMap, teamPlayers, lineup, strength, leagueNotes,
                    completedWeeks, weekData, formFor, trendPct, usageIntact, marketTag, applyTargets,
+                   tagTeams, offerable,
                    statsUrl, projUrl, MIN_TRADES, MAX_TRADES,
                    pickValueMap, futurePickSeasons, projectedSlots, pickAssets, summarizeDrafts,
                    brief, pickNext,

@@ -269,13 +269,41 @@ function tradeWindow(league, week) {
   return { open: true, deadline: deadline && deadline !== 99 ? deadline : null };
 }
 
+/* --- trade research: shared with trades/engine.js ----------------------- */
+
+const ORDINAL = ["", "1st", "2nd", "3rd", "4th", "5th", "6th"];
+// A trade within this much of dead even, by value, reads as "Even" rather
+// than favoring either side.
+const EVEN_PCT = 0.03;
+const isHttps = (url) => /^https:\/\//.test(url || "");
+
+// "experts" is the week's news and what fantasy analysts are saying about
+// the players involved: current sentiment is part of every published trade.
+const SECTIONS = ["give", "get", "you", "them", "experts"];
+// The page's heading for each why-section.
+function sectionHeading(key, t) {
+  switch (key) {
+    case "give": return `Why trade ${t.give.map((p) => p.n).join(" + ")}`;
+    case "get": return `Why get ${t.get.map((p) => p.n).join(" + ")}`;
+    case "you": return "How it helps your team";
+    case "them": return `Why ${t.partner.name} says yes`;
+    case "experts": return "What analysts and the news say";
+    default: return key;
+  }
+}
+// The exact shape of a published trade: what finalize writes, and all the
+// page reads.
+const TRADE_FIELDS = ["id", "partner", "give", "get", "value", "you", "them",
+                       "headline", "summary", "confidence", "why", "risks", "sources"];
+
 if (typeof module !== "undefined") {
   module.exports = { norm, trimPlayers, statusFromRow, unavailable, benchReason,
                     scoringLabel, scorePlayer,
                     rankPositions, consensusRanks,
                     pickLineup,
                     posKey, flexKey, buildRoster, normStatus, tradeWindow,
-                    SLOT_ELIGIBLE, OUT_STATUSES };
+                    SLOT_ELIGIBLE, OUT_STATUSES,
+                    ORDINAL, EVEN_PCT, isHttps, SECTIONS, sectionHeading, TRADE_FIELDS };
 }
 
 /* ------------------------------------------------------------------- ui */
@@ -386,6 +414,12 @@ if (typeof document !== "undefined") {
     setStatus("Checking the NFL week…");
     const state = await json(`${SLEEPER}/state/nfl`);
     const season = state.season;
+    // Sleeper's own dashboard uses league_season for a user's league list: in
+    // the offseason, once leagues have renewed, it's ahead of `season` (which
+    // stays on the just-finished year until the new one kicks off). Dynasty
+    // leagues trade in the offseason, so using the wrong one would look up
+    // last year's league ids. Projections and stats stay on `season`.
+    const leagueSeason = state.league_season || state.season;
     const week = state.week || state.display_week || 1;
     $("#week").textContent = `Week ${week}`;
 
@@ -406,7 +440,7 @@ if (typeof document !== "undefined") {
     let rankings = null;
     try { rankings = await json("data/rankings.json"); } catch (e) { rankings = null; }
 
-    DATA = { season, week, players, projections, rankings,
+    DATA = { season, leagueSeason, week, players, projections, rankings,
              playersFetched: fetched, liveStatuses };
     const injAge = (Date.now() - fetched) / 36e5;
     let rankSrc = "Ranks from Sleeper projections, scored by each league's settings. ";
@@ -445,9 +479,9 @@ if (typeof document !== "undefined") {
       const user = await json(`${SLEEPER}/user/${encodeURIComponent(username)}`);
       if (!user || !user.user_id) return setStatus(`No Sleeper user named "${username}".`, true);
 
-      const leagues = await json(`${SLEEPER}/user/${user.user_id}/leagues/nfl/${data.season}`);
+      const leagues = await json(`${SLEEPER}/user/${user.user_id}/leagues/nfl/${data.leagueSeason}`);
       if (!leagues.length) {
-        return setStatus(`${username} has no NFL leagues for ${data.season}.`, true);
+        return setStatus(`${username} has no NFL leagues for ${data.leagueSeason}.`, true);
       }
 
       setStatus(`Loading ${leagues.length} league${leagues.length > 1 ? "s" : ""}…`);
@@ -698,7 +732,6 @@ if (typeof document !== "undefined") {
     "https://raw.githubusercontent.com/etanetan/sleeper-rankings/refs/heads/claude/trade-data";
   const ROUTINES_URL = "https://claude.ai/code/routines";
   const ROUTINE_NAME = "Sleeper trade research";
-  const RUN_STALE_MS = 3 * 3600 * 1000;
   const _trades = new Map();   // league id -> { at, data }
   let CURRENT = null;
   let TRADES_PANEL = null;
@@ -799,13 +832,12 @@ if (typeof document !== "undefined") {
   }
 
   const posLabel = (p) => (p === "DEF" ? "DST" : p);
-  const names = (ps) => ps.map((p) => p.n).join(" + ");
   const signed = (n) => `${n > 0 ? "+" : ""}${n}`;
   const num = (n) => Math.round(n || 0).toLocaleString();
 
   function verdictClass(v) {
     if (!v) return "chip";
-    return "chip " + (Math.abs(v.diffPct) <= 0.03 ? "fmt" : v.diffPct > 0 ? "good" : "warn");
+    return "chip " + (Math.abs(v.diffPct) <= EVEN_PCT ? "fmt" : v.diffPct > 0 ? "good" : "warn");
   }
 
   // The market call behind each player in a deal. "hold" never reaches a
@@ -840,11 +872,11 @@ if (typeof document !== "undefined") {
   }
 
   function tradeList(lg, panel, data) {
+    const v = tradesView(data, Date.now(), readRequests()[lg.id]);
     const box = el("div");
     const bar = el("div", "tr-bar");
-    bar.appendChild(el("span", "meta", data && data.generated
-      ? `Researched ${fmtWhen(data.generated)} · week ${data.week}` +
-        (data.review && data.review.checked ? " · double-checked" : "")
+    bar.appendChild(el("span", "meta", v.generated
+      ? `Researched ${fmtWhen(v.generated)} · week ${v.week}` + (v.reviewed ? " · double-checked" : "")
       : "No research for this league yet"));
     const btn = el("button", "ghost small", "Research new trades");
     btn.type = "button";
@@ -860,48 +892,39 @@ if (typeof document !== "undefined") {
       box.appendChild(el("p", "note warn", `${lg.trades.reason} No new trade ideas for this league.`));
     }
 
-    const started = data && data.status === "running" && data.started ? new Date(data.started) : null;
-    if (started && Date.now() - started.getTime() < RUN_STALE_MS) {
-      const n = el("p", "note", `Researching new trades now (started ${fmtWhen(data.started)}). ` +
+    if (v.running === "fresh") {
+      const n = el("p", "note", `Researching new trades now (started ${fmtWhen(v.started)}). ` +
         `Check back in 15–30 minutes. `);
       const again = el("a", null, "Check again");
       again.href = "#";
       again.addEventListener("click", (e) => { e.preventDefault(); loadTrades(lg, panel, true); });
       n.appendChild(again);
       box.appendChild(n);
-    } else if (started) {
-      box.appendChild(el("p", "note warn", `The research run started ${fmtWhen(data.started)} ` +
+    } else if (v.running === "stale") {
+      box.appendChild(el("p", "note warn", `The research run started ${fmtWhen(v.started)} ` +
         `never finished. Tap Research new trades to try again.`));
-    } else {
-      const asked = readRequests()[lg.id];
-      const done = data && data.generated ? new Date(data.generated).getTime() : 0;
-      if (asked && asked > done && Date.now() - asked < RUN_STALE_MS) {
-        box.appendChild(el("p", "note", `You asked for new research at ` +
-          `${fmtWhen(new Date(asked).toISOString())}. It shows up here once the run starts.`));
-      }
+    } else if (v.requested) {
+      box.appendChild(el("p", "note", `You asked for new research at ` +
+        `${fmtWhen(new Date(v.requested).toISOString())}. It shows up here once the run starts.`));
     }
-    if (data && data.error) {
-      box.appendChild(el("p", "note warn", `The last run failed (${fmtWhen(data.error.at)}): ` +
-        `${data.error.reason} Showing the trades from before.`));
+    if (v.error) {
+      box.appendChild(el("p", "note warn", `The last run failed (${fmtWhen(v.error.at)}): ` +
+        `${v.error.reason} Showing the trades from before.`));
     }
 
-    const trades = (data && data.trades) || [];
-    if (trades.length) {
+    if (v.trades.length) {
       box.appendChild(el("p", "tr-intro", "Sell high: your players scoring above expectations. " +
         "Buy low: theirs scoring below it while still getting the ball. " +
         "Your slumping players are never offered."));
     }
-    if (trades.length && data.short_reason) box.appendChild(el("p", "note", data.short_reason));
-    if (!trades.length) {
-      if (data && data.none_reason) box.appendChild(el("p", "note", data.none_reason));
-      else if (!data) {
-        box.appendChild(el("p", "none", lg.trades.open
-          ? "Trade ideas are researched every Tuesday. Want some now? Tap Research new trades."
-          : "Nothing to show."));
-      }
+    if (v.reason) box.appendChild(el("p", "note", v.reason));
+    if (v.empty && !v.reason && !data) {
+      box.appendChild(el("p", "none", lg.trades.open
+        ? "Trade ideas are researched every Tuesday. Want some now? Tap Research new trades."
+        : "Nothing to show."));
     }
-    trades.forEach((t) => box.appendChild(tradeCard(t, () => openTrade(t.id))));
-    if (trades.length) box.appendChild(credit(data));
+    v.trades.forEach((t) => box.appendChild(tradeCard(t, () => openTrade(t.id))));
+    if (v.trades.length) box.appendChild(credit(data));
     return box;
   }
 
@@ -950,6 +973,7 @@ if (typeof document !== "undefined") {
       const tr = el("tr");
       const nm = el("td", "nm", p.n);
       if (p.status) nm.appendChild(el("span", OUT_STATUSES.has(normStatus(p.status)) ? "out" : "q", normStatus(p.status)));
+      else if (p.sidelined) nm.appendChild(el("span", "out", "IR"));
       nm.appendChild(el("span", "meta", ` ${posLabel(p.p)}${p.t ? " · " + p.t : ""}`));
       const chip = tagChip(p);
       if (chip) nm.appendChild(chip);
@@ -975,10 +999,11 @@ if (typeof document !== "undefined") {
   }
 
   function credit(data) {
+    const url = (data && data.values_source && data.values_source.url) || "https://fantasycalc.com";
     const p = el("p", "credit");
     p.appendChild(document.createTextNode("Trade values from "));
     const a = el("a", null, "FantasyCalc");
-    a.href = "https://fantasycalc.com";
+    a.href = url;
     a.target = "_blank";
     a.rel = "noopener noreferrer";
     p.appendChild(a);
@@ -992,7 +1017,7 @@ if (typeof document !== "undefined") {
   function pickCheck(pk, hist) {
     const r = hist && (hist.rounds || []).find((x) => x.round === pk.round);
     if (!r || r.median == null) return "";
-    const rd = ["", "1st", "2nd", "3rd", "4th", "5th"][pk.round] || `${pk.round}th`;
+    const rd = ORDINAL[pk.round] || `${pk.round}th`;
     const yrs = (hist.seasons || []).slice().sort();
     const span = yrs.length > 1 ? `${yrs[0]}–${yrs[yrs.length - 1]}` : yrs[0] || "past";
     const verdict = pk.v > r.median * 1.2 ? "the market pays more than they've been worth here"
@@ -1061,11 +1086,11 @@ if (typeof document !== "undefined") {
     }
 
     const why = t.why || {};
-    box.appendChild(bullets(`Why trade ${names(t.give)}`, why.give || []));
-    box.appendChild(bullets(`Why get ${names(t.get)}`, why.get || []));
-    box.appendChild(bullets("How it helps your team", why.you || []));
-    box.appendChild(bullets(`Why ${t.partner.name} says yes`, why.them || []));
-    if ((why.experts || []).length) box.appendChild(bullets("What analysts and the news say", why.experts));
+    SECTIONS.forEach((k) => {
+      const items = why[k] || [];
+      if (k === "experts" && !items.length) return;
+      box.appendChild(bullets(sectionHeading(k, t), items));
+    });
     if ((t.risks || []).length) box.appendChild(bullets("Risks", t.risks));
 
     if ((t.sources || []).length) {
@@ -1073,7 +1098,7 @@ if (typeof document !== "undefined") {
       sec.appendChild(el("h3", null, "Sources"));
       const ul = el("ul");
       t.sources.forEach((s) => {
-        if (!/^https:\/\//.test(s.url || "")) return;
+        if (!isHttps(s.url)) return;
         const li = el("li");
         const a = el("a", null, s.title || s.url);
         a.href = s.url;

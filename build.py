@@ -24,7 +24,7 @@ import requests
 
 OUT_DIR = os.environ.get("OUTPUT_DIR", "site")
 STATIC_DIR = os.environ.get("STATIC_DIR", ".")
-STATIC_FILES = ("index.html", "app.js", "style.css")
+STATIC_FILES = ("index.html", "app.js", "research.js", "style.css")
 
 SLEEPER = "https://api.sleeper.app/v1"
 FP_API = "https://api.fantasypros.com/public/v2/json/nfl"
