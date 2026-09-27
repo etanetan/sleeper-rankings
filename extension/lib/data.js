@@ -108,7 +108,23 @@ function createLoader({ storage, onStatus } = {}) {
     return result;
   }
 
-  function clearRanksCache() { _ranksCache.clear(); }
+  function clearRanksCache() { _ranksCache.clear(); _prevRanksCache.clear(); }
+
+  // Same idea, for last week's projections (recap()'s hindsight/what-the-
+  // tool-picked comparison) - a separate cache since it's ranking a
+  // different projections set under the same settings key, not a
+  // second lookup into _ranksCache above. No consensus overlay: a build's
+  // published rankings are for the live week, not a stale one.
+  const _prevRanksCache = new Map();
+
+  function prevRanksFor(data, settings) {
+    if (!data.prevWeekProjections) return null;
+    const key = JSON.stringify(settings || {});
+    if (_prevRanksCache.has(key)) return _prevRanksCache.get(key);
+    const ranks = rankPositions(data.prevWeekProjections, data.players, settings);
+    _prevRanksCache.set(key, ranks);
+    return ranks;
+  }
 
   /* The season's shared data: the player list, this week's projections
    * (scored per-league later, by ranksFor), consensus rankings if a build
@@ -206,13 +222,17 @@ function createLoader({ storage, onStatus } = {}) {
     for (const r of rosters) for (const pid of r.players || []) rostered.add(pid);
 
     // Team names (for the opponent's name below, and kept on the view for
-    // the waiver drop/power-rankings displays) and this week's matchups
-    // (for the lineup check below and the opponent's) - two independent
-    // calls, so fired together rather than one after the other; each is
-    // still tolerated failing on its own.
-    const [usersResult, matchupsResult] = await Promise.allSettled([
+    // the waiver drop/power-rankings displays), this week's matchups (for
+    // the lineup check below and the opponent's) and last week's matchups
+    // (for the recap further down) - three independent calls, so fired
+    // together rather than one after another; each is still tolerated
+    // failing on its own.
+    const [usersResult, matchupsResult, prevMatchupsResult] = await Promise.allSettled([
       fetchJson(`${SLEEPER}/league/${lg.league_id}/users`),
       fetchJson(`${SLEEPER}/league/${lg.league_id}/matchups/${data.week}`),
+      data.prevWeek >= 1
+        ? fetchJson(`${SLEEPER}/league/${lg.league_id}/matchups/${data.prevWeek}`)
+        : Promise.resolve(null),
     ]);
 
     let names = {};
@@ -312,19 +332,20 @@ function createLoader({ storage, onStatus } = {}) {
     } catch (e) { upcoming = []; }
 
     // Last week's recap: how the tool's picks would have done against
-    // what actually happened (core.js's recap()). Own try/catch, same
-    // reasoning as the blocks above - a bad response for one extra call
-    // shouldn't cost the rest of the view. Skipped before week 2 (no
-    // prior week) or if the last league fetch is disabled.
+    // what actually happened (core.js's recap()), using the matchups
+    // fetched in the Promise.allSettled batch above. Own try/catch, same
+    // reasoning as the blocks above - a bad response shouldn't cost the
+    // rest of the view. Skipped before week 2 (no prior week).
     let weekRecap = null;
     if (data.prevWeekProjections && data.prevWeek >= 1) {
       try {
-        const prevMatchups = await fetchJson(
-          `${SLEEPER}/league/${lg.league_id}/matchups/${data.prevWeek}`);
-        const prevEntry = (prevMatchups || []).find((m) => m.roster_id === mine.roster_id);
+        if (prevMatchupsResult.status !== "fulfilled") throw prevMatchupsResult.reason;
+        const prevEntry = (prevMatchupsResult.value || []).find((m) => m.roster_id === mine.roster_id);
         if (prevEntry) {
-          const prevRanks = rankPositions(data.prevWeekProjections, data.players, settings);
-          weekRecap = { ...recap(prevEntry, slots, data.players, prevRanks), week: data.prevWeek };
+          const prevRanks = prevRanksFor(data, settings);
+          if (prevRanks) {
+            weekRecap = { ...recap(prevEntry, slots, data.players, prevRanks), week: data.prevWeek };
+          }
         }
       } catch (e) { weekRecap = null; }
     }
@@ -347,6 +368,6 @@ function createLoader({ storage, onStatus } = {}) {
 
   return {
     json: fetchJson, loadPlayers, forgetPlayers, loadProjections, loadData,
-    ranksFor, clearRanksCache, fetchUser, fetchLeagues, buildLeagueView,
+    ranksFor, prevRanksFor, clearRanksCache, fetchUser, fetchLeagues, buildLeagueView,
   };
 }
