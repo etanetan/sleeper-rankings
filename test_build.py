@@ -123,10 +123,18 @@ client = open("app.js").read()
 check("client never names the key variable", "FANTASYPROS_API_KEY" in client, False)
 check("client never requests a fantasypros host",
       bool(re.search(r"https?://[a-z0-9.\-]*fantasypros", client, re.I)), False)
-check("client only calls sleeper hosts",
+# Fetched: Sleeper, and this repo's trade-data branch. Linked, never fetched:
+# claude.ai (to start a research run) and fantasycalc.com (attribution).
+check("client only reaches known hosts",
       sorted({re.sub(r"^https?://", "", u)
               for u in re.findall(r'https?://[a-z0-9.\-]+', client)}),
-      ["api.sleeper.app", "api.sleeper.com"])
+      ["api.sleeper.app", "api.sleeper.com", "claude.ai", "fantasycalc.com",
+       "raw.githubusercontent.com"])
+check("trade data read from this repo's claude/trade-data branch",
+      re.findall(r'https://raw\.githubusercontent\.com/[^"]+', client),
+      ["https://raw.githubusercontent.com/etanetan/sleeper-rankings/refs/heads/claude/trade-data"])
+check("client never sends anything to claude.ai",
+      bool(re.search(r"fetch\([^)]*claude\.ai|ROUTINES_URL\s*\)", client)), False)
 
 print(f"\n{sum(results)}/{len(results)} passed")
 sys.exit(0 if all(results) else 1)

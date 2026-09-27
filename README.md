@@ -1,7 +1,7 @@
 # sleeper-rankings
 
 Enter a Sleeper username, pick a league, see this week's positional ranks for
-your roster and the lineup they imply.
+your roster, the lineup they imply, and researched trade ideas.
 
 **→ [etanetan.github.io/sleeper-rankings](https://etanetan.github.io/sleeper-rankings)**
 
@@ -67,6 +67,59 @@ IDs into names. Sleeper asks callers not to pull it more than once a day, so the
 page trims it to the fantasy positions and keeps it in `localStorage` for 20
 hours. Everything else is fetched fresh on each visit.
 
+## Trades tab
+
+Every Tuesday a Claude routine researches trades for each league where trading
+is open, and the Trades tab shows them: who to give, who to get, and tapping a
+trade shows why, with sources.
+
+**How a run works**
+
+1. `trades/engine.js candidates` pulls rosters from Sleeper and market values
+   from FantasyCalc, scaled to the league (redraft or dynasty, 1QB or
+   superflex, team count, PPR). It searches every 1-for-1 up to 2-for-2 with
+   every other team and keeps trades that are **fair** (within 10% after
+   discounting the extra piece in uneven deals) and **improve both starting
+   lineups**. Padded deals — a real trade plus an equal QB-for-QB wash — are
+   dropped.
+2. Claude reads those candidates and does the research: injuries, usage
+   trends, schedule, the week's expert trade value charts, and each
+   partner's record and needs. It keeps the best 3–5 and writes the reasons.
+3. `trades/engine.js finalize` merges the research back in. Numbers come from
+   the engine, never the write-up, and anything outside FantasyCalc's ±10%
+   is refused, however well it's argued.
+4. The result is pushed to the `claude/trade-data` branch as
+   `<league_id>.json`. The page reads it from raw.githubusercontent.com, so a
+   run never touches the site.
+
+The instructions Claude follows are in
+[`.claude/skills/trade-research/SKILL.md`](.claude/skills/trade-research/SKILL.md).
+
+**On demand.** *Research new trades* copies a request naming the league and
+opens Claude's routines page; tap **Run now** on *Sleeper trade research* and
+paste it. A static page can't start the run itself: the routine API doesn't
+accept browser calls, and its token can't be shipped in public code.
+
+**Network.** The routine needs to reach `api.sleeper.app` and
+`api.fantasycalc.com` (plus news sites for the research), so its cloud
+environment needs network access beyond the default **Trusted** list.
+
+### Why FantasyCalc validates the trades
+
+| Calculator | Values come from | Redraft in season | Adjusts for format | Machine access |
+|---|---|---|---|---|
+| **FantasyCalc** | Millions of real trades in real leagues | Yes, daily | Redraft/dynasty, 1QB/SF, PPR, team count | Documented API, keyed by Sleeper ID |
+| KeepTradeCut | Crowd "keep/trade/cut" votes | Yes (dynasty first) | 1QB/SF, TEP | None; terms forbid scraping |
+| FantasyPros | Expert consensus + weekly trade value chart | Yes | Scoring | API free tier caps at 10 players per position |
+| Draft Sharks | Their own projections | Yes | Custom scoring | None; full values paywalled |
+| PFN, RotoTrade, Fantasy Draft Pros | In-house analyst or model values | Yes | Varies | None |
+| CBS / Yahoo weekly charts | One analyst's weekly article | Yes | PPR / non-PPR | Articles only |
+
+FantasyCalc is the only one that is market-based, scaled to each league, and
+usable without breaking anyone's terms. Its terms ask for non-commercial use,
+at most daily fetches and a visible link, which the Trades tab carries. The
+expert charts are still used, as research inputs rather than as the scale.
+
 ## FantasyPros consensus rankings (tried, not in use)
 
 **Currently disabled.** The plan available to this project returns only the top
@@ -112,6 +165,7 @@ unranked, so `test_norm_parity.py` runs both over the same names and compares.
 ## Tests
 
 ```bash
-node test_app.js      # 84 assertions: name matching, scoring, ranking, lineups
-python3 test_build.py # 23 assertions: the optional build, hosts, secret hygiene
+node test_app.js      # name matching, scoring, ranking, lineups
+node test_trades.js   # trade windows, fairness, candidate search, finalize gate
+python3 test_build.py # the optional build, hosts, secret hygiene
 ```

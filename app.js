@@ -252,12 +252,29 @@ function pickLineup(roster, slots) {
   return { starters, bench: avail };
 }
 
+/* Whether trading is possible in this league right now, and if not, why. */
+function tradeWindow(league, week) {
+  const s = (league && league.settings) || {};
+  const status = league && league.status;
+  if (s.disable_trades === 1) return { open: false, reason: "Trades are turned off in this league." };
+  if (status === "pre_draft" || status === "drafting") {
+    return { open: false, reason: "The draft hasn't finished yet." };
+  }
+  if (status === "complete") return { open: false, reason: "This league's season is over." };
+  const deadline = s.trade_deadline;
+  // Sleeper stores 99 when there is no deadline.
+  if (deadline && deadline !== 99 && Number(week) > Number(deadline)) {
+    return { open: false, reason: `The trade deadline (week ${deadline}) has passed.`, deadline };
+  }
+  return { open: true, deadline: deadline && deadline !== 99 ? deadline : null };
+}
+
 if (typeof module !== "undefined") {
   module.exports = { norm, trimPlayers, statusFromRow, unavailable, benchReason,
                     scoringLabel, scorePlayer,
                     rankPositions, consensusRanks,
                     pickLineup,
-                    posKey, flexKey, buildRoster, normStatus,
+                    posKey, flexKey, buildRoster, normStatus, tradeWindow,
                     SLOT_ELIGIBLE, OUT_STATUSES };
 }
 
@@ -451,6 +468,7 @@ if (typeof document !== "undefined") {
           name: lg.name, id: lg.league_id, slots,
           label: scoringLabel(settings),
           superflex: slots.includes("SUPER_FLEX"),
+          trades: tradeWindow(lg, data.week),
           teRec: settings.bonus_rec_te || 0,
           roster: buildRoster(mine.players, data.players, ranks, data.week),
           source,
@@ -532,7 +550,7 @@ if (typeof document !== "undefined") {
   let ACTIVE_TAB = "lineup";
   try {
     const saved = localStorage.getItem("activeTab");
-    if (saved === "lineup" || saved === "positions") ACTIVE_TAB = saved;
+    if (saved === "lineup" || saved === "positions" || saved === "trades") ACTIVE_TAB = saved;
   } catch (e) { /* private mode */ }
 
   function tabBar(panels) {
@@ -551,7 +569,7 @@ if (typeof document !== "undefined") {
       for (const key in panels) panels[key].hidden = key !== name;
     };
 
-    [["lineup", "Lineup"], ["positions", "By position"]].forEach(([name, label]) => {
+    [["lineup", "Lineup"], ["positions", "By position"], ["trades", "Trades"]].forEach(([name, label]) => {
       const b = el("button", "tab", label);
       b.type = "button";
       b.dataset.tab = name;
@@ -580,6 +598,8 @@ if (typeof document !== "undefined") {
     const out = $("#results");
     out.innerHTML = "";
     if (!lg) return;
+    if (CURRENT && CURRENT !== lg) closeTradeQuietly();
+    CURRENT = lg;
 
     const head = el("div", "lh");
     head.appendChild(el("h2", null, lg.name));
@@ -643,9 +663,409 @@ if (typeof document !== "undefined") {
       positions.appendChild(table(grp.map((p) => playerRow(p))));
     }
 
-    out.appendChild(tabBar({ lineup, positions }));
+    // --- trades panel: filled in when the research file arrives
+    const trades = el("div", "panel");
+    TRADES_PANEL = trades;
+    loadTrades(lg, trades);
+
+    out.appendChild(tabBar({ lineup, positions, trades }));
     out.appendChild(lineup);
     out.appendChild(positions);
+    out.appendChild(trades);
+  }
+
+  async function refresh() {
+    setStatus("Refreshing player and injury data…");
+    try {
+      localStorage.removeItem(PLAYERS_KEY);
+    } catch (e) { /* private mode */ }
+    DATA = null;
+    _ranksCache.clear();
+    _trades.clear();
+    await go($("#username").value);
+  }
+
+  function ageText(hours) {
+    return hours < 36 ? `${Math.round(hours)}h` : `${Math.round(hours / 24)} days`;
+  }
+
+  /* ------------------------------------------------------------ trades */
+
+  // Trade research is written by a scheduled Claude routine to its own branch,
+  // so a run never touches the site itself. raw.githubusercontent serves it
+  // with open CORS and a five-minute cache.
+  const TRADE_DATA =
+    "https://raw.githubusercontent.com/etanetan/sleeper-rankings/refs/heads/claude/trade-data";
+  const ROUTINES_URL = "https://claude.ai/code/routines";
+  const ROUTINE_NAME = "Sleeper trade research";
+  const RUN_STALE_MS = 3 * 3600 * 1000;
+  const _trades = new Map();   // league id -> { at, data }
+  let CURRENT = null;
+  let TRADES_PANEL = null;
+  let OPEN_TRADE = null;
+  {
+    const m = /^#trade-([\w-]+)$/.exec(location.hash);
+    if (m) { OPEN_TRADE = m[1]; ACTIVE_TAB = "trades"; }
+  }
+
+  async function fetchTrades(id, force) {
+    const hit = _trades.get(id);
+    if (!force && hit && Date.now() - hit.at < 5 * 60 * 1000) return hit.data;
+    const r = await fetch(`${TRADE_DATA}/${encodeURIComponent(id)}.json`, { cache: "no-store" });
+    if (r.status === 404) {
+      _trades.set(id, { at: Date.now(), data: null });
+      return null;
+    }
+    if (!r.ok) throw new Error(`the research file returned ${r.status}`);
+    const data = await r.json();
+    _trades.set(id, { at: Date.now(), data });
+    return data;
+  }
+
+  async function loadTrades(lg, panel, force) {
+    panel.innerHTML = "";
+    panel.appendChild(el("p", "none", "Loading trade ideas…"));
+    let data;
+    try {
+      data = await fetchTrades(lg.id, force);
+    } catch (e) {
+      if (CURRENT !== lg) return;
+      panel.innerHTML = "";
+      panel.appendChild(el("p", "note warn", `Couldn't load trade research: ${e.message}.`));
+      return;
+    }
+    if (CURRENT !== lg || TRADES_PANEL !== panel) return;   // switched leagues meanwhile
+    drawTrades(lg, panel, data);
+  }
+
+  function drawTrades(lg, panel, data) {
+    panel.innerHTML = "";
+    const trade = OPEN_TRADE && data && (data.trades || []).find((t) => t.id === OPEN_TRADE);
+    panel.appendChild(trade ? tradeDetail(lg, data, trade) : tradeList(lg, panel, data));
+  }
+
+  function redrawTrades() {
+    if (!CURRENT || !TRADES_PANEL) return;
+    const hit = _trades.get(CURRENT.id);
+    if (hit) drawTrades(CURRENT, TRADES_PANEL, hit.data);
+  }
+
+  function openTrade(id) {
+    OPEN_TRADE = id;
+    try { history.pushState({ trade: id }, "", `#trade-${id}`); } catch (e) { /* sandboxed */ }
+    redrawTrades();
+    const tabs = document.querySelector(".tabs");
+    if (tabs && tabs.getBoundingClientRect().top < 0) tabs.scrollIntoView({ block: "start" });
+  }
+
+  function closeTrade() {
+    if (history.state && history.state.trade) { history.back(); return; }   // popstate redraws
+    closeTradeQuietly();
+    redrawTrades();
+  }
+
+  function closeTradeQuietly() {
+    OPEN_TRADE = null;
+    if (/^#trade-/.test(location.hash)) {
+      try { history.replaceState(null, "", location.pathname + location.search); } catch (e) { /* sandboxed */ }
+    }
+  }
+
+  window.addEventListener("popstate", (e) => {
+    OPEN_TRADE = (e.state && e.state.trade) || null;
+    redrawTrades();
+  });
+
+  function fmtWhen(iso) {
+    const d = new Date(iso);
+    if (isNaN(d)) return "";
+    const old = Date.now() - d.getTime() > 6 * 864e5;
+    return d.toLocaleString([], old
+      ? { month: "short", day: "numeric" }
+      : { weekday: "short", hour: "numeric", minute: "2-digit" });
+  }
+
+  function readRequests() {
+    try { return JSON.parse(localStorage.getItem("tradeRequests") || "{}") || {}; }
+    catch (e) { return {}; }
+  }
+
+  function markRequested(id) {
+    try {
+      const m = readRequests();
+      m[id] = Date.now();
+      localStorage.setItem("tradeRequests", JSON.stringify(m));
+    } catch (e) { /* private mode */ }
+  }
+
+  const posLabel = (p) => (p === "DEF" ? "DST" : p);
+  const names = (ps) => ps.map((p) => p.n).join(" + ");
+  const signed = (n) => `${n > 0 ? "+" : ""}${n}`;
+  const num = (n) => Math.round(n || 0).toLocaleString();
+
+  function verdictClass(v) {
+    if (!v) return "chip";
+    return "chip " + (Math.abs(v.diffPct) <= 0.03 ? "fmt" : v.diffPct > 0 ? "good" : "warn");
+  }
+
+  function tradeList(lg, panel, data) {
+    const box = el("div");
+    const bar = el("div", "tr-bar");
+    bar.appendChild(el("span", "meta", data && data.generated
+      ? `Researched ${fmtWhen(data.generated)} · week ${data.week}`
+      : "No research for this league yet"));
+    const btn = el("button", "ghost small", "Research new trades");
+    btn.type = "button";
+    if (!lg.trades.open) { btn.disabled = true; btn.title = lg.trades.reason; }
+    bar.appendChild(btn);
+    box.appendChild(bar);
+
+    const reqSlot = el("div");
+    box.appendChild(reqSlot);
+    btn.addEventListener("click", () => requestResearch(lg, reqSlot));
+
+    if (!lg.trades.open) {
+      box.appendChild(el("p", "note warn", `${lg.trades.reason} No new trade ideas for this league.`));
+    }
+
+    const started = data && data.status === "running" && data.started ? new Date(data.started) : null;
+    if (started && Date.now() - started.getTime() < RUN_STALE_MS) {
+      const n = el("p", "note", `Researching new trades now (started ${fmtWhen(data.started)}). ` +
+        `Check back in 15–30 minutes. `);
+      const again = el("a", null, "Check again");
+      again.href = "#";
+      again.addEventListener("click", (e) => { e.preventDefault(); loadTrades(lg, panel, true); });
+      n.appendChild(again);
+      box.appendChild(n);
+    } else if (started) {
+      box.appendChild(el("p", "note warn", `The research run started ${fmtWhen(data.started)} ` +
+        `never finished. Tap Research new trades to try again.`));
+    } else {
+      const asked = readRequests()[lg.id];
+      const done = data && data.generated ? new Date(data.generated).getTime() : 0;
+      if (asked && asked > done && Date.now() - asked < RUN_STALE_MS) {
+        box.appendChild(el("p", "note", `You asked for new research at ` +
+          `${fmtWhen(new Date(asked).toISOString())}. It shows up here once the run starts.`));
+      }
+    }
+    if (data && data.error) {
+      box.appendChild(el("p", "note warn", `The last run failed (${fmtWhen(data.error.at)}): ` +
+        `${data.error.reason} Showing the trades from before.`));
+    }
+
+    const trades = (data && data.trades) || [];
+    if (!trades.length) {
+      if (data && data.none_reason) box.appendChild(el("p", "note", data.none_reason));
+      else if (!data) {
+        box.appendChild(el("p", "none", lg.trades.open
+          ? "Trade ideas are researched every Tuesday. Want some now? Tap Research new trades."
+          : "Nothing to show."));
+      }
+    }
+    trades.forEach((t) => box.appendChild(tradeCard(t, () => openTrade(t.id))));
+    if (trades.length) box.appendChild(credit(data));
+    return box;
+  }
+
+  function sideSummary(label, players) {
+    const d = el("span", "tc-side");
+    d.appendChild(el("span", "tc-label", label));
+    players.forEach((p) => {
+      const line = el("span", "tc-pl", p.n);
+      line.appendChild(el("span", "meta", ` ${posLabel(p.p)}`));
+      d.appendChild(line);
+    });
+    return d;
+  }
+
+  function tradeCard(t, onOpen) {
+    const b = el("button", "tcard");
+    b.type = "button";
+    const top = el("span", "tc-top");
+    top.appendChild(el("span", "tc-who", `with ${t.partner.name}`));
+    if (t.partner.record) top.appendChild(el("span", "meta", t.partner.record));
+    top.appendChild(el("span", verdictClass(t.value), t.value.verdict));
+    b.appendChild(top);
+    const deal = el("span", "tc-deal");
+    deal.appendChild(sideSummary("Give", t.give));
+    const arrow = el("span", "tc-arrow", "→");
+    arrow.setAttribute("aria-hidden", "true");
+    deal.appendChild(arrow);
+    deal.appendChild(sideSummary("Get", t.get));
+    b.appendChild(deal);
+    b.appendChild(el("span", "tc-head", t.headline));
+    const foot = el("span", "tc-foot");
+    foot.appendChild(el("span", null, `Your lineup ${signed(t.you.gainPct)}%`));
+    foot.appendChild(el("span", null, `Theirs ${signed(t.them.gainPct)}%`));
+    foot.appendChild(el("span", "tc-more", "Why ›"));
+    b.appendChild(foot);
+    b.addEventListener("click", onOpen);
+    return b;
+  }
+
+  function dealTable(label, players) {
+    const wrap = el("div", "deal-side");
+    wrap.appendChild(el("h4", null, label));
+    const rows = players.map((p) => {
+      const tr = el("tr");
+      const nm = el("td", "nm", p.n);
+      if (p.status) nm.appendChild(el("span", OUT_STATUSES.has(normStatus(p.status)) ? "out" : "q", normStatus(p.status)));
+      nm.appendChild(el("span", "meta", ` ${posLabel(p.p)}${p.t ? " · " + p.t : ""}`));
+      tr.appendChild(nm);
+      const v = el("td", "val", num(p.v));
+      v.title = "FantasyCalc value, with its 30-day change";
+      if (p.trend) {
+        v.appendChild(el("span", p.trend > 0 ? "up" : "down", ` ${p.trend > 0 ? "▲" : "▼"}${num(Math.abs(p.trend))}`));
+      }
+      tr.appendChild(v);
+      return tr;
+    });
+    wrap.appendChild(table(rows));
+    return wrap;
+  }
+
+  function bullets(title, items) {
+    const sec = el("section", "why");
+    sec.appendChild(el("h3", null, title));
+    const ul = el("ul");
+    items.forEach((t) => ul.appendChild(el("li", null, t)));
+    sec.appendChild(ul);
+    return sec;
+  }
+
+  function credit(data) {
+    const p = el("p", "credit");
+    p.appendChild(document.createTextNode("Trade values from "));
+    const a = el("a", null, "FantasyCalc");
+    a.href = "https://fantasycalc.com";
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    p.appendChild(a);
+    p.appendChild(document.createTextNode(", built from real trades in leagues like yours. " +
+      "Research and reasoning by Claude."));
+    return p;
+  }
+
+  function tradeDetail(lg, data, t) {
+    const box = el("div", "tdetail");
+    const back = el("button", "ghost small back", "‹ All trades");
+    back.type = "button";
+    back.addEventListener("click", closeTrade);
+    box.appendChild(back);
+
+    box.appendChild(el("h2", "td-title", t.headline));
+    const who = el("p", "td-who");
+    who.appendChild(document.createTextNode(`with ${t.partner.name}` +
+      `${t.partner.record ? ` (${t.partner.record})` : ""} `));
+    who.appendChild(el("span", "chip", `${t.confidence} confidence`));
+    box.appendChild(who);
+    if (t.summary) box.appendChild(el("p", "td-sum", t.summary));
+
+    const deal = el("div", "deal");
+    deal.appendChild(dealTable("You give", t.give));
+    deal.appendChild(dealTable("You get", t.get));
+    box.appendChild(deal);
+
+    const v = t.value;
+    const pct = Math.round(Math.abs(v.diffPct) * 100);
+    const check = el("p", "vcheck");
+    check.appendChild(el("span", verdictClass(v), v.verdict));
+    let txt = ` FantasyCalc: you give ${num(v.give)}, you get ${num(v.get)}`;
+    if (!pct) txt += ". Dead even.";
+    else if (t.give.length !== t.get.length) {
+      txt += `. ${v.diffPct > 0 ? "You come" : "They come"} out ${pct}% ahead once the ` +
+        `extra player is discounted for the roster spot.`;
+    } else txt += ` (${v.diffPct > 0 ? "+" : "−"}${pct}% for you).`;
+    check.appendChild(document.createTextNode(txt));
+    box.appendChild(check);
+
+    const impact = el("p", "impact");
+    impact.textContent = `Starting lineup value: yours ${signed(t.you.gainPct)}%, ` +
+      `${t.partner.name}'s ${signed(t.them.gainPct)}%.`;
+    box.appendChild(impact);
+    const ch = t.you.changes || {};
+    const changes = [];
+    if ((ch.in || []).length) {
+      changes.push(`Starts for you: ${ch.in.map((c) => `${c.n} (${SLOT_LABEL[c.slot] || c.slot})`).join(", ")}`);
+    }
+    if ((ch.out || []).length) changes.push(`Leaves your lineup: ${ch.out.map((c) => c.n).join(", ")}`);
+    if (t.you.drop) changes.push(`You'd drop ${t.you.drop.n} to make room.`);
+    if (changes.length) {
+      const ul = el("ul", "changes");
+      changes.forEach((c) => ul.appendChild(el("li", null, c)));
+      box.appendChild(ul);
+    }
+
+    const why = t.why || {};
+    box.appendChild(bullets(`Why trade ${names(t.give)}`, why.give || []));
+    box.appendChild(bullets(`Why get ${names(t.get)}`, why.get || []));
+    box.appendChild(bullets("How it helps your team", why.you || []));
+    box.appendChild(bullets(`Why ${t.partner.name} says yes`, why.them || []));
+    if ((t.risks || []).length) box.appendChild(bullets("Risks", t.risks));
+
+    if ((t.sources || []).length) {
+      const sec = el("section", "why sources");
+      sec.appendChild(el("h3", null, "Sources"));
+      const ul = el("ul");
+      t.sources.forEach((s) => {
+        if (!/^https:\/\//.test(s.url || "")) return;
+        const li = el("li");
+        const a = el("a", null, s.title || s.url);
+        a.href = s.url;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
+      sec.appendChild(ul);
+      box.appendChild(sec);
+    }
+
+    const back2 = el("button", "ghost small back", "‹ All trades");
+    back2.type = "button";
+    back2.addEventListener("click", closeTrade);
+    box.appendChild(back2);
+    box.appendChild(credit(data));
+    return box;
+  }
+
+  /* A static page can't start a Claude run by itself (the routine API
+   * doesn't allow browser calls, and its token can't live in public code),
+   * so hand the request to Claude: copy it, then open the routine. */
+  function requestResearch(lg, slot) {
+    const text = `Research new trades for my Sleeper league "${lg.name}" (league_id ${lg.id}).`;
+    slot.innerHTML = "";
+    const box = el("div", "note req");
+    const msg = el("p", null, "Copying the request…");
+    box.appendChild(msg);
+    const steps = el("ol");
+    [`Open Claude below and tap “${ROUTINE_NAME}”.`, "Tap Run now, paste, and run it.",
+     "Come back in 15–30 minutes. New trades land here."]
+      .forEach((s) => steps.appendChild(el("li", null, s)));
+    box.appendChild(steps);
+    const field = el("input", "req-text");
+    field.readOnly = true;
+    field.value = text;
+    field.setAttribute("aria-label", "Research request");
+    field.addEventListener("focus", () => field.select());
+    box.appendChild(field);
+    const go = el("a", "btn", "Open Claude ↗");
+    go.href = ROUTINES_URL;
+    go.target = "_blank";
+    go.rel = "noopener noreferrer";
+    box.appendChild(go);
+    slot.appendChild(box);
+    markRequested(lg.id);
+
+    const done = (ok) => {
+      msg.textContent = ok ? "✓ Request copied." : "Copy this request:";
+      if (!ok) { field.focus(); field.select(); }
+    };
+    try {
+      navigator.clipboard.writeText(text).then(() => done(true), () => done(false));
+    } catch (e) {
+      done(false);
+    }
   }
 
   window.addEventListener("DOMContentLoaded", () => {
