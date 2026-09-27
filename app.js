@@ -843,7 +843,8 @@ if (typeof document !== "undefined") {
     const box = el("div");
     const bar = el("div", "tr-bar");
     bar.appendChild(el("span", "meta", data && data.generated
-      ? `Researched ${fmtWhen(data.generated)} · week ${data.week}`
+      ? `Researched ${fmtWhen(data.generated)} · week ${data.week}` +
+        (data.review && data.review.checked ? " · double-checked" : "")
       : "No research for this league yet"));
     const btn = el("button", "ghost small", "Research new trades");
     btn.type = "button";
@@ -986,6 +987,20 @@ if (typeof document !== "undefined") {
     return p;
   }
 
+  /* One line comparing a pick's market price with what picks in the same
+   * round have become in this league's own past drafts. */
+  function pickCheck(pk, hist) {
+    const r = hist && (hist.rounds || []).find((x) => x.round === pk.round);
+    if (!r || r.median == null) return "";
+    const rd = ["", "1st", "2nd", "3rd", "4th", "5th"][pk.round] || `${pk.round}th`;
+    const yrs = (hist.seasons || []).slice().sort();
+    const span = yrs.length > 1 ? `${yrs[0]}–${yrs[yrs.length - 1]}` : yrs[0] || "past";
+    const verdict = pk.v > r.median * 1.2 ? "the market pays more than they've been worth here"
+      : pk.v < r.median * 0.8 ? "they've been worth more here than the market pays" : "about what the market pays";
+    return `${pk.n} (${num(pk.v)}): ${rd}-round picks in this league's ${span} drafts are worth a median ` +
+      `${num(r.median)} today, and ${r.busts}% are worth almost nothing: ${verdict}.`;
+  }
+
   function tradeDetail(lg, data, t) {
     const box = el("div", "tdetail");
     const back = el("button", "ghost small back", "‹ All trades");
@@ -1039,11 +1054,18 @@ if (typeof document !== "undefined") {
       box.appendChild(ul);
     }
 
+    // What picks in this deal have actually turned into in this league.
+    for (const pk of t.give.concat(t.get).filter((p) => p.isPick)) {
+      const line = pickCheck(pk, data && data.draft_history);
+      if (line) box.appendChild(el("p", "note pickcheck", line));
+    }
+
     const why = t.why || {};
     box.appendChild(bullets(`Why trade ${names(t.give)}`, why.give || []));
     box.appendChild(bullets(`Why get ${names(t.get)}`, why.get || []));
     box.appendChild(bullets("How it helps your team", why.you || []));
     box.appendChild(bullets(`Why ${t.partner.name} says yes`, why.them || []));
+    if ((why.experts || []).length) box.appendChild(bullets("What analysts and the news say", why.experts));
     if ((t.risks || []).length) box.appendChild(bullets("Risks", t.risks));
 
     if ((t.sources || []).length) {

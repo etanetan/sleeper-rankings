@@ -208,6 +208,8 @@ check("tiny values: a big percentage on a small number is noise",
   T.marketTag(tp({ v: 400, trend: 300 }), true), null);
 check("tiny moves: under 250 points of movement doesn't count",
   T.marketTag(tp({ v: 1500, trend: 240 }), true), null);
+check("players worth almost nothing get no call",
+  T.marketTag(tp({ v: 200, form: { g: 2, perf: 2.1, snap: 70 } }), true), null);
 check("RB usage counts touches", T.usageIntact({ p: "RB", form: { touches: 14, snap: 40 } }), true);
 check("QB usage needs the snaps", T.usageIntact({ p: "QB", form: { snap: 50 } }), false);
 
@@ -242,6 +244,64 @@ check("QB usage needs the snaps", T.usageIntact({ p: "QB", form: { snap: 50 } })
   check("buying at the peak ranks lower", !!bought && !!unbought && bought.score < unbought.score, true);
 }
 
+/* --- draft picks --------------------------------------------------------- */
+const fcPickRows = [
+  { player: { sleeperId: "FP_2027_early_0", name: "2027 1st (Early)", position: "PICK" }, value: 4800, trend30Day: 300 },
+  { player: { sleeperId: "FP_2027_mid_0", name: "2027 1st (Mid)", position: "PICK" }, value: 3200, trend30Day: 200 },
+  { player: { sleeperId: "FP_2027_late_0", name: "2027 1st (Late)", position: "PICK" }, value: 2400, trend30Day: 100 },
+  { player: { sleeperId: "FP_2027_1", name: "2027 1st", position: "PICK" }, value: 3000, trend30Day: 150 },
+  { player: { sleeperId: "FP_2028_1", name: "2028 1st", position: "PICK" }, value: 2200, trend30Day: 50 },
+  { player: { sleeperId: "FP_2027_mid_1", name: "2027 2nd (Mid)", position: "PICK" }, value: 1600, trend30Day: 0 },
+  { player: { sleeperId: "FP_2028_2", name: "2028 2nd", position: "PICK" }, value: 1300, trend30Day: 0 },
+  { player: { sleeperId: "4046", name: "Not A Pick", position: "QB" }, value: 5000 },
+];
+const pv = T.pickValueMap(fcPickRows);
+check("pick prices keyed by FantasyCalc's pick ids", [pv.FP_2027_mid_0.v, pv.FP_2028_2.v, pv["4046"]], [3200, 1300, undefined]);
+check("next year is always tradeable", T.futurePickSeasons("2026", []), [2027]);
+check("as far out as the league has traded", T.futurePickSeasons("2026", [{ season: "2029" }, { season: "2026" }]), [2027, 2028, 2029]);
+check("never past three years", T.futurePickSeasons("2026", [{ season: "2031" }]), [2027, 2028, 2029]);
+{
+  const teamsP = [
+    { roster_id: 1, roster: [P("a1", "QB", 9000), P("a2", "RB", 9000)] },
+    { roster_id: 2, roster: [P("b1", "QB", 1000), P("b2", "RB", 1000)] },
+    { roster_id: 3, roster: [P("c1", "QB", 5000), P("c2", "RB", 5000)] },
+  ];
+  check("weakest roster picks early, strongest late", T.projectedSlots(teamsP, slots), { 1: "late", 2: "early", 3: "mid" });
+  const assets = T.pickAssets({
+    season: "2026", rounds: 2, rosterIds: [1, 2, 3], pickValues: pv,
+    traded: [{ season: "2027", round: 1, roster_id: 2, owner_id: 1 }, { season: "2028", round: 2, roster_id: 3, owner_id: 2 }],
+    slotOf: { 1: "late", 2: "early", 3: "mid" }, nameOf: { 1: "Mine", 2: "Bee", 3: "Sea" },
+  });
+  const byId = Object.fromEntries(assets.map((a) => [a.id, a]));
+  check("a traded pick belongs to its new owner", byId.pick_2027_1_2.holder, 1);
+  check("and says where it came from", byId.pick_2027_1_2.t, "via Bee");
+  check("own picks say so", byId.pick_2027_1_1.t, "own");
+  check("next year's pick priced by projected slot", [byId.pick_2027_1_2.n, byId.pick_2027_1_2.v], ["2027 1st (Early)", 4800]);
+  check("later years priced by round", [byId.pick_2028_1_3.n, byId.pick_2028_1_3.v], ["2028 1st", 2200]);
+  check("slot falls back to the round price", byId.pick_2027_2_1, undefined);   // no 2027 late 2nd or generic 2nd priced
+  check("rounds the market doesn't price are left out", assets.every((a) => a.v > 0), true);
+
+  const withPicks = me.concat([{ ...byId.pick_2027_1_2 }]);
+  check("picks never start", T.lineup(withPicks, slots).starters.some((x) => x.player.isPick), false);
+  check("picks don't sit on the bench list", T.lineup(withPicks, slots).bench.some((x) => x.isPick), false);
+  check("picks count a little toward strength",
+    T.strength(withPicks, slots) - T.strength(me, slots), Math.round(0.15 * 4800));
+  const found = T.tradesWith(withPicks, b, slots, 12);
+  check("picks can be part of a trade", found.some((x) => x.give.some((p) => p.isPick)), true);
+}
+
+check("draft history: what each round turned into", T.summarizeDrafts([
+  { season: "2025", teams: 3, picks: [
+    { round: 1, draft_slot: 1, player_id: "h1", metadata: { first_name: "Hit", last_name: "One", position: "RB" } },
+    { round: 1, draft_slot: 2, player_id: "h2", metadata: { first_name: "Hit", last_name: "Two", position: "WR" } },
+    { round: 1, draft_slot: 3, player_id: "bust", metadata: { first_name: "Bust", last_name: "Three", position: "WR" } },
+  ] }], { h1: { v: 6000 }, h2: { v: 3000 }, bust: { v: 100 } }, pv, 2027).rounds[0],
+  { round: 1, n: 3, median: 3000, early: 6000, mid: 3000, late: 100, busts: 33,
+    best: [{ name: "Hit One", pos: "RB", season: "2025", pick: "1.01", v: 6000 },
+           { name: "Hit Two", pos: "WR", season: "2025", pick: "1.02", v: 3000 },
+           { name: "Bust Three", pos: "WR", season: "2025", pick: "1.03", v: 100 }],
+    market: { early: 4800, mid: 3200, late: 2400, any: 3000 } });
+
 /* --- finalize: the research has to clear the numbers ------------------- */
 const cid = work.candidates[0].id;
 const good = {
@@ -250,7 +310,8 @@ const good = {
     candidate: cid, headline: "Turn WR depth into a starting RB", confidence: "high",
     summary: "Short version.",
     why: { give: ["Fourth WR rarely starts."], get: ["Bell-cow role."],
-           you: ["RB2 goes from a 900 to a starter."], them: ["They start one real WR."] },
+           you: ["RB2 goes from a 900 to a starter."], them: ["They start one real WR."],
+           experts: ["Analysts rank him a top-10 back rest of season."] },
     risks: ["RB injury rates."],
     sources: [{ title: "News", url: "https://example.com/a" }],
   }],
@@ -260,6 +321,12 @@ check("valid research passes", ok.errors, []);
 check("numbers come from the candidates, not the research",
   ok.data.trades[0].value.giveAdj, work.candidates[0].value.giveAdj);
 check("status ready", ok.data.status, "ready");
+check("unreviewed research says so", ok.data.review, { checked: false });
+check("experts section required", T.finalize(work, { ...good, trades: [{ ...good.trades[0],
+  why: { ...good.trades[0].why, experts: [] } }] }).errors.some((e) => /why.experts/.test(e)), true);
+check("a second agent's review is published",
+  T.finalize(work, { ...good, review: { checked: true, notes: ["Fixed a snap share."] } }).data.review,
+  { checked: true, notes: ["Fixed a snap share."] });
 check("timestamp written", ok.data.generated, "2026-09-29T13:00:00.000Z");
 
 const bad = JSON.parse(JSON.stringify(good));
@@ -339,6 +406,21 @@ const fixtures = {
     { user_id: "u2", display_name: "bee" }, { user_id: "u3", display_name: "sea" }],
   [T.fcUrl(T.fcParams(league))]: fcRows,
 };
+// A dynasty version of the same league, to exercise picks and draft history.
+const dyn = { ...league, league_id: "L3", name: "Dyn", season: "2026", settings: { trade_deadline: 11, type: 2, draft_rounds: 2 },
+              draft_id: "D2", previous_league_id: "L3old" };
+fixtures[`${S}/user/u1/leagues/nfl/2026`].push(dyn);
+fixtures[`${S}/league/L3/rosters`] = fixtures[`${S}/league/L1/rosters`];
+fixtures[`${S}/league/L3/users`] = fixtures[`${S}/league/L1/users`];
+fixtures[`${S}/league/L3/traded_picks`] = [{ season: "2027", round: 1, roster_id: 2, owner_id: 1, previous_owner_id: 2 }];
+fixtures[`${S}/league/L3/drafts`] = [
+  { draft_id: "200", status: "complete", settings: { rounds: 2 } },    // the main rookie draft
+  { draft_id: "300", status: "complete", settings: { rounds: 2 } },    // a later side draft
+];
+fixtures[`${S}/draft/200/picks`] = [{ round: 1, draft_slot: 1, player_id: "r3", metadata: { first_name: "RB", last_name: "r3", position: "RB" } }];
+fixtures[`${S}/league/L3old`] = { league_id: "L3old", season: "2025", total_rosters: 3, previous_league_id: null };
+fixtures[`${S}/league/L3old/drafts`] = [{ draft_id: "100", status: "complete", settings: { rounds: 30 } }];  // startup: skipped
+fixtures[T.fcUrl(T.fcParams(dyn))] = fcRows.concat(fcPickRows);
 for (const w of [1, 2, 3]) {
   fixtures[T.statsUrl("2026", w)] = [];
   fixtures[T.projUrl("2026", w)] = [];
@@ -352,6 +434,14 @@ const run = (...a) => execFileSync(process.execPath, ["trades/engine.js", ...a],
 const out = JSON.parse(run("candidates", "--user", "etanetan", "--out", path.join(tmp, "work")));
 check("cli: week read from Sleeper", out.week, 4);
 check("cli: form from the finished weeks", out.form_weeks, [1, 2, 3]);
+{
+  const dw = JSON.parse(fs.readFileSync(path.join(tmp, "work", "L3.json"), "utf8"));
+  check("cli: your own 1st and the 1st traded to you are both yours",
+    ["pick_2027_1_1", "pick_2027_1_2"].every((id) => dw.me.picks.some((p) => p.id === id)), true);
+  check("cli: another team's own 1st stays theirs", dw.me.picks.some((p) => p.id === "pick_2027_1_3"), false);
+  check("cli: draft history from the main rookie draft only", dw.draft_history.seasons, ["2026"]);
+  check("cli: redraft leagues have no picks", JSON.parse(fs.readFileSync(path.join(tmp, "work", "L1.json"), "utf8")).me.picks, []);
+}
 check("cli: closed league skipped with reason", out.leagues.find((l) => l.league_id === "L2").open, false);
 check("cli: open league has candidates", out.leagues.find((l) => l.league_id === "L1").candidates > 0, true);
 const cliWork = JSON.parse(fs.readFileSync(path.join(tmp, "work", "L1.json"), "utf8"));

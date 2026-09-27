@@ -33,6 +33,16 @@ player mispriced.
 - **Needs still matter.** A deal should also make sense for your lineup, and
   the partner needs a reason to say yes: the hot names you send look great to
   them right now.
+- **Picks are currency too (dynasty).** Future picks are priced by
+  FantasyCalc and can be part of any deal. `draft_history` shows what this
+  league's own picks have turned into: a round whose picks here are worth far
+  less than the market pays (lots of busts) is one to sell; a round that has
+  paid off better than its price is one to buy. Picks don't help this week's
+  lineup, so a contender spends them on players, a rebuilder collects them.
+- **News and sentiment move prices.** What's happened this week and what
+  analysts and sharp players are saying drive the market. A buy-low only
+  works if the bad news is already priced in; a sell-high only works before
+  the market catches on.
 
 ## 0. Scope
 
@@ -70,7 +80,13 @@ It prints each league (`open: true/false`, and why closed) and writes
 - `candidates`: up to 20 trades, each fair within 10% on FantasyCalc value,
   labelled `kind` (`sell-high`, `buy-low`, `sell-high + buy-low`, `need`),
   with lineup changes, the partner's record and needs, and who you'd drop.
-  Your `hold` players are never in them.
+  Your `hold` players are never in them. `picks: true` marks deals that
+  include draft picks.
+- Dynasty leagues only: `me.picks` (every future pick you own, including ones
+  traded to you, priced by projected slot for next year) and
+  `draft_history` (by round: what this league's past rookie picks are worth
+  today — median, early/mid/late, share that busted, best hits — next to the
+  market price). Keeper and redraft leagues trade players only.
 
 If it fails with a 403 / `host_not_allowed` / connection error, the
 environment's network policy is blocking `api.sleeper.app`,
@@ -99,6 +115,13 @@ league. Start from `market`, then research with WebSearch (and WebFetch):
   rostered in the league: why is he hot or cold? Usage trend over 2–3 weeks,
   touchdown luck, matchups so far and ahead, injuries, depth chart news from
   the last 72 hours.
+- **Sentiment:** what fantasy analysts and sharp players are saying about
+  him this week — rankings moving up or down (e.g. FantasyPros ECR), expert
+  buy/sell and start/sit calls, what well-known analysts and podcasts
+  (FantasyPros, Fantasy Footballers, Underdog, ETR, PFF, The Athletic) are
+  saying — and which way his FantasyCalc value is trending.
+- Dynasty: read `draft_history` against the market prices. Say which pick
+  rounds this league overpays or underpays for, and use it.
 
 Then confirm, reject or add calls. Write `trades/work/<league_id>.targets.json`
 using the player ids from the work file:
@@ -116,7 +139,7 @@ using the player ids from the work file:
 Rules of thumb: a "hot" player with a huge, stable role (say a 35% target
 share) isn't a sell — hold him. A "cold" player who lost his job isn't a
 buy. A player of yours who is cold stays on `hold` unless his job is gone for
-good.
+good. Pick ids (`pick_2027_1_4`) work in `sell` and `buy` too.
 
 ## 5. Re-run the search with your calls
 
@@ -157,13 +180,15 @@ today. Never assume another suggested trade happened.
         "give": ["Why this is the right time to sell these players"],
         "get":  ["Why these players are cheap now and will produce"],
         "you":  ["How your team gets better: who starts now, which need it fills"],
-        "them": ["Why the partner says yes: their needs, what looks good to them"]
+        "them": ["Why the partner says yes: their needs, what looks good to them"],
+        "experts": ["This week's news and what analysts are saying about the key players"]
       },
       "risks": ["What could make this look bad in a month"],
       "sources": [{ "title": "Page title", "url": "https://..." }]
     }
   ],
-  "short_reason": null
+  "short_reason": null,
+  "review": { "checked": true, "notes": ["What the reviewer caught and what you changed"] }
 }
 ```
 
@@ -184,6 +209,35 @@ Bullets: 2–4 per section, 25 words max each, concrete.
 - No shorthand: "FantasyCalc value 1,201" and "QB5", not "v1201" or "PR5".
 - Cite 2+ real pages you actually used, about the players in that trade (or
   the league-wide chart you relied on). Nothing unrelated.
+- `experts` is required: 1–3 bullets on current news and analyst sentiment
+  for the key players, each backed by a source, dated if it's older than a
+  few days.
+- When a pick is in the deal, say what `draft_history` shows for its round.
+
+## 7b. Review with a second agent
+
+Before finalizing, have another agent check your work. Use the Agent tool to
+start a reviewer, giving it the paths of the work file and the research file
+and this brief:
+
+> You are reviewing fantasy football trade suggestions before they're
+> published. For every trade in the research file: (1) re-check each factual
+> claim — stats, injuries, depth charts, dates, quotes — with fresh web
+> searches and the cited sources; (2) check the angle against the work file:
+> a sell-high player must be outproducing his role, a buy-low player must
+> still have his role, nobody slumping on Ethan's roster may be sold; (3)
+> check pick claims against `draft_history` and the FantasyCalc prices in the
+> work file; (4) check that each trade stands alone and that "how it helps
+> your team" matches `you.changes`; (5) flag stale news presented as current,
+> vague bullets, and anything a sharp fantasy player would call a bad trade.
+> Return, per trade: keep, fix (with the exact corrections) or drop (with
+> why), plus anything missing.
+
+Apply what it finds: correct or remove wrong claims, drop trades it rightly
+rejects and replace them from the candidates (still at least five), then set
+`review.checked` to true and list what changed in `review.notes` (short,
+plain sentences). If the reviewer can't run, set `checked` to false and say
+why in `notes`.
 
 ## 8. Finalize and publish
 
@@ -195,9 +249,9 @@ node trades/engine.js finalize --league <id> \
 This is the check against FantasyCalc and the rules: it recomputes every
 trade's value from the market numbers and refuses anything outside ±10%,
 fewer than 5 trades without a `short_reason`, more than 8, a slumping player
-of yours being sold, unknown candidates, empty sections, first-person
-wording, or sources without https links. On exit code 2, fix what it prints
-and run it again.
+of yours being sold, unknown candidates, empty sections (including
+`experts`), first-person wording, or sources without https links. On exit
+code 2, fix what it prints and run it again.
 
 ```bash
 cd /tmp/trade-data

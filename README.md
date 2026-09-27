@@ -83,6 +83,14 @@ player mispriced.
   just dropped, while they're still getting the snaps and targets.
 - **Never sell low:** your slumping players are never offered.
 - **Don't buy high:** other teams' players on a heater rank lower.
+- **Picks count (dynasty):** future picks trade like players, priced by
+  FantasyCalc by projected slot. Each league's own past rookie drafts show
+  what its picks actually turned into, so the research can sell the rounds
+  that league overpays for and buy the ones it underprices.
+- **News and sentiment:** every trade says what this week's news and fantasy
+  analysts say about the players in it.
+- **Double-checked:** before anything is published, a second agent re-checks
+  every claim and trade, and what it caught is recorded.
 
 **How a run works**
 

@@ -56,12 +56,21 @@ const HOT_PERF = 1.25;
 const TREND_MOVE = 0.1;
 const TREND_MIN_ABS = 250;
 const TREND_MIN_VALUE = 500;
+// Below this a player is a throw-in at most; calling him a buy or a sell is noise.
+const TAG_MIN_VALUE = 300;
 // How much an angle (each sell-high given, each buy-low received) is worth in
 // ranking, and how much buying a player at his peak costs.
 const ANGLE_BONUS = 0.03;
 const AVOID_PENALTY = 0.03;
 const MIN_TRADES = 5;
 const MAX_TRADES = 8;
+
+// Draft picks, in dynasty leagues where FantasyCalc prices them. Each side
+// considers its few most valuable picks, and picks count a little toward a
+// team's strength: they're next year's players, not this week's.
+const PICK_POOL = 4;
+const PICK_WEIGHT = 0.15;
+const ORDINAL = ["", "1st", "2nd", "3rd", "4th", "5th", "6th"];
 // Out for weeks, not days: these players can't help a lineup now, whatever
 // they're worth on the market. A one-week "Out" still counts.
 const LONG_OUT = new Set(["IR", "PUP", "SUS", "NA", "DNR"]);
@@ -137,7 +146,7 @@ const sidelined = (p) => p.ir || p.longOut;
  * lineup, so a flex doesn't steal the only eligible TE. Sidelined players
  * never start: a slot with no healthy option stays empty. */
 function lineup(roster, slots) {
-  const avail = roster.filter((p) => !p.taxi && !sidelined(p));
+  const avail = roster.filter((p) => !p.isPick && !p.taxi && !sidelined(p));
   const order = slots.map((s, i) => i)
     .sort((a, b) => (SLOT_ELIGIBLE[slots[a]] || []).length - (SLOT_ELIGIBLE[slots[b]] || []).length);
   const picked = [];
@@ -154,16 +163,18 @@ function lineup(roster, slots) {
   }
   const starters = [];
   slots.forEach((s, i) => { if (picked[i]) starters.push({ slot: s, player: picked[i] }); });
-  return { starters, bench: avail.concat(roster.filter((p) => p.taxi || sidelined(p))) };
+  return { starters, bench: avail.concat(roster.filter((p) => !p.isPick && (p.taxi || sidelined(p)))) };
 }
 
-/* One number for how good a roster is: starters, plus a little for depth. */
+/* One number for how good a roster is: starters, plus a little for depth and
+ * for draft picks. */
 function strength(roster, slots) {
   const { starters, bench } = lineup(roster, slots);
   const s = starters.reduce((a, x) => a + x.player.v, 0);
   const depth = bench.filter((p) => !p.taxi && !sidelined(p)).map((p) => p.v)
     .sort((a, b) => b - a).slice(0, BENCH_DEPTH).reduce((a, v) => a + v, 0);
-  return Math.round(s + BENCH_WEIGHT * depth);
+  const picks = roster.filter((p) => p.isPick).reduce((a, p) => a + p.v, 0);
+  return Math.round(s + BENCH_WEIGHT * depth + PICK_WEIGHT * picks);
 }
 
 function packageValue(vals) {
@@ -220,7 +231,7 @@ function lineupChanges(before, after) {
 
 /* Who gets cut when a trade brings in more players than it sends out. */
 function dropFor(rosterAfter, rosterSize) {
-  const active = rosterAfter.filter((p) => !p.taxi && !p.ir);
+  const active = rosterAfter.filter((p) => !p.isPick && !p.taxi && !p.ir);
   if (!rosterSize || active.length <= rosterSize) return null;
   const cut = active.slice().sort((a, b) => a.v - b.v)[0];
   return cut ? { id: cut.id, n: cut.n, p: cut.p, v: cut.v } : null;
@@ -235,7 +246,9 @@ function hashId(s) {
 const slim = (p) => ({ id: p.id, n: p.n, p: p.p, t: p.t, v: p.v, pr: p.pr, trend: p.trend,
                        trendPct: trendPct(p), status: p.status || null, sidelined: sidelined(p),
                        tag: p.tag || null, tagBy: p.tag ? p.tagBy || "numbers" : null,
-                       form: p.form || null });
+                       form: p.form || null,
+                       ...(p.isPick ? { isPick: true, season: p.season, round: p.round,
+                                        slot: p.slot, from: p.from } : {}) });
 
 /* ---------------------------------------------------------------- form */
 
@@ -328,6 +341,7 @@ function usageIntact(p) {
  * Theirs: "buy_low" when cold but still getting the ball, "avoid" when hot
  * (buying at the peak). */
 function marketTag(p, mine) {
+  if ((p.v || 0) < TAG_MIN_VALUE) return null;
   const perf = p.form && p.form.perf;
   const tp = trendPct(p);
   const moved = (p.v || 0) >= TREND_MIN_VALUE && Math.abs(p.trend || 0) >= TREND_MIN_ABS &&
@@ -370,6 +384,120 @@ function applyTargets(teams, myRosterId, targets) {
   return problems;
 }
 
+/* --------------------------------------------------------------- picks */
+
+/* FantasyCalc prices picks under ids like "FP_2027_early_0" (season,
+ * projected slot, 0-based round) for next year and "FP_2028_2" (season,
+ * 1-based round) for any pick in a round. */
+function pickValueMap(rows) {
+  const out = {};
+  for (const r of rows || []) {
+    const pl = r.player || {};
+    if (String(pl.position || "").toUpperCase() !== "PICK" || !pl.sleeperId) continue;
+    out[String(pl.sleeperId)] = { v: Math.round(r.value || 0), trend: Math.round(r.trend30Day || 0) };
+  }
+  return out;
+}
+
+/* Future drafts whose picks can be traded: next year, and as far out as this
+ * league has already traded picks (Sleeper allows up to three years). */
+function futurePickSeasons(season, traded) {
+  const now = Number(season);
+  const seen = (traded || []).map((t) => Number(t.season)).filter((y) => y > now);
+  const last = Math.min(now + 3, Math.max(now + 1, ...seen));
+  const out = [];
+  for (let y = now + 1; y <= last; y++) out.push(y);
+  return out;
+}
+
+/* Next year's draft slot for each team's own pick, from how strong its roster
+ * is today: the weakest third pick early, the strongest late. */
+function projectedSlots(teams, slots) {
+  const ranked = teams.map((t) => [t.roster_id, strength(t.roster.filter((p) => !p.isPick), slots)])
+    .sort((a, b) => a[1] - b[1]);
+  const out = {};
+  ranked.forEach(([rid], i) => {
+    out[rid] = i < ranked.length / 3 ? "early" : i < (2 * ranked.length) / 3 ? "mid" : "late";
+  });
+  return out;
+}
+
+/* Every future pick in the league and who owns it now, priced by FantasyCalc.
+ * Rounds or years the market doesn't price are left out. */
+function pickAssets({ season, rounds, rosterIds, traded, pickValues, slotOf, nameOf }) {
+  const seasons = futurePickSeasons(season, traded);
+  const owner = {};
+  for (const y of seasons) {
+    for (let r = 1; r <= rounds; r++) for (const rid of rosterIds) owner[`${y}:${r}:${rid}`] = rid;
+  }
+  for (const t of traded || []) {
+    const key = `${Number(t.season)}:${t.round}:${t.roster_id}`;
+    if (key in owner) owner[key] = t.owner_id;
+  }
+  const next = Number(season) + 1;
+  const out = [];
+  for (const key in owner) {
+    const [y, r, orig] = key.split(":").map(Number);
+    const slot = y === next ? slotOf[orig] : null;
+    const exact = slot ? pickValues[`FP_${y}_${slot}_${r - 1}`] : null;
+    const price = exact || pickValues[`FP_${y}_${r}`];
+    if (!price || !price.v) continue;
+    const holder = owner[key];
+    out.push({
+      id: `pick_${y}_${r}_${orig}`, isPick: true, season: y, round: r, from: orig,
+      slot: exact ? slot : null, holder,
+      n: `${y} ${ORDINAL[r] || `${r}th`}${exact ? ` (${slot[0].toUpperCase()}${slot.slice(1)})` : ""}`,
+      p: "PICK", t: orig === holder ? "own" : `via ${nameOf[orig] || `Team ${orig}`}`,
+      v: price.v, trend: price.trend, pr: null, status: null,
+      taxi: false, ir: false, longOut: false, form: null, tag: null,
+    });
+  }
+  return out;
+}
+
+/* What this league's own rookie drafts turned into: every pick from past
+ * drafts, valued today, by round and by where in the round. Tells research
+ * whether picks here have been worth more or less than the market's price. */
+function summarizeDrafts(seasons, values, pickValues, nextSeason) {
+  const byRound = {};
+  for (const s of seasons) {
+    const teams = Number(s.teams) || 12;
+    for (const pk of s.picks || []) {
+      const slot = Number(pk.draft_slot) || 0;
+      const md = pk.metadata || {};
+      (byRound[pk.round] = byRound[pk.round] || []).push({
+        v: (values[String(pk.player_id)] || {}).v || 0,
+        third: slot <= teams / 3 ? "early" : slot <= (2 * teams) / 3 ? "mid" : "late",
+        season: s.season, pick: `${pk.round}.${String(slot).padStart(2, "0")}`,
+        name: `${md.first_name || ""} ${md.last_name || ""}`.trim(), pos: md.position || null,
+      });
+    }
+  }
+  const median = (xs) => {
+    if (!xs.length) return null;
+    const a = xs.slice().sort((x, y) => x - y);
+    const m = a.length >> 1;
+    return a.length % 2 ? a[m] : Math.round((a[m - 1] + a[m]) / 2);
+  };
+  const price = (key) => ((pickValues || {})[key] || {}).v || null;
+  const rounds = Object.keys(byRound).map(Number).sort((a, b) => a - b).map((r) => {
+    const ps = byRound[r];
+    const of = (third) => median(ps.filter((x) => x.third === third).map((x) => x.v));
+    return {
+      round: r, n: ps.length, median: median(ps.map((x) => x.v)),
+      early: of("early"), mid: of("mid"), late: of("late"),
+      busts: Math.round((ps.filter((x) => x.v < 500).length / ps.length) * 100),
+      best: ps.slice().sort((a, b) => b.v - a.v).slice(0, 3)
+        .map((x) => ({ name: x.name, pos: x.pos, season: x.season, pick: x.pick, v: x.v })),
+      market: {
+        early: price(`FP_${nextSeason}_early_${r - 1}`), mid: price(`FP_${nextSeason}_mid_${r - 1}`),
+        late: price(`FP_${nextSeason}_late_${r - 1}`), any: price(`FP_${nextSeason}_${r}`),
+      },
+    };
+  });
+  return { seasons: seasons.map((s) => s.season), rounds };
+}
+
 /* Every fair trade with one partner that makes both starting lineups better,
  * best first. `me` and `them` are roster arrays from teamPlayers. */
 function tradesWith(me, them, slots, rosterSize, opts) {
@@ -377,10 +505,15 @@ function tradesWith(me, them, slots, rosterSize, opts) {
   // Top of each roster by value, plus every player with an angle, so a
   // buy-low target further down a deep roster isn't missed. Your "hold"
   // players are never offered: that would be selling at the low.
+  const byV = (a, b) => b.v - a.v;
   const pool = (r, keep) => {
-    const top = r.filter((p) => p.v > 0).sort((a, b) => b.v - a.v).slice(0, POOL_SIZE);
-    const extra = r.filter((p) => p.v > 0 && p.tag === keep && !top.includes(p));
-    return top.concat(extra).filter((p) => p.tag !== "hold");
+    const players = r.filter((p) => !p.isPick && p.v > 0).sort(byV);
+    const top = players.slice(0, POOL_SIZE);
+    const extra = players.filter((p) => p.tag === keep && !top.includes(p));
+    const allPicks = r.filter((p) => p.isPick && p.v > 0).sort(byV);
+    const picks = allPicks.slice(0, PICK_POOL)
+      .concat(allPicks.filter((p, i) => i >= PICK_POOL && p.tag === keep));
+    return top.concat(extra, picks).filter((p) => p.tag !== "hold");
   };
   const myPkgs = combos(pool(me, "sell_high"), MAX_PIECES);
   const theirPkgs = combos(pool(them, "buy_low"), MAX_PIECES);
@@ -496,6 +629,9 @@ function leagueNotes(league) {
     starters: slots.filter((x) => !SKIP_SLOTS.has(x)),
     taxi_slots: Number(s.taxi_slots || 0),
     trade_deadline: s.trade_deadline && s.trade_deadline !== 99 ? s.trade_deadline : null,
+    picks: s.type === 2 ? "Future rookie picks are tradeable and priced by FantasyCalc."
+      : s.type === 1 ? "Keeper-league picks aren't priced by any market, so trades here use players only."
+      : "Redraft league: no future picks.",
   };
 }
 
@@ -543,6 +679,7 @@ function leagueCandidates(ctx, opts) {
     picked.push({
       id: hashId(`${league.league_id}:${giveKey}>${getKey}`),
       kind: sells && buys ? "sell-high + buy-low" : sells ? "sell-high" : buys ? "buy-low" : "need",
+      picks: c.give.concat(c.get).some((p) => p.isPick),
       partner: {
         roster_id: pk, name: c.partner.name, user: c.partner.user,
         record: c.partner.record, thin: profile[pk].thin, deep: profile[pk].deep,
@@ -579,7 +716,9 @@ function leagueCandidates(ctx, opts) {
       vsLeague: profile[myRosterId].vsLeague,
       starters: starters.map((s) => ({ slot: s.slot, ...slim(s.player) })),
       bench: bench.map(slim),
+      picks: me.roster.filter((p) => p.isPick).sort((a, b) => a.season - b.season || a.round - b.round).map(slim),
     },
+    draft_history: ctx.draftHistory || null,
     // The numbers' market calls, for research to confirm, reject or extend.
     market: {
       weeks: ctx.weeks || [],
@@ -595,7 +734,9 @@ function leagueCandidates(ctx, opts) {
 
 /* ------------------------------------------------------------ finalize */
 
-const SECTIONS = ["give", "get", "you", "them"];
+// "experts" is the week's news and what fantasy analysts are saying about the
+// players involved: current sentiment is part of every call.
+const SECTIONS = ["give", "get", "you", "them", "experts"];
 // The page talks to the manager: "you", never "I" or "we".
 const FIRST_PERSON = /(^|[^\w'’])(I|I'm|I’m|I've|I’ve|I'd|I’d|[Mm]y|[Mm]ine|[Ww]e|[Ww]e're|[Ww]e’re|[Oo]ur|[Oo]urs|[Uu]s)(?=$|[^\w'’])/;
 
@@ -662,7 +803,7 @@ function finalize(work, research, now) {
       ...c, value: f,
       headline: r.headline, summary: r.summary || "",
       confidence: r.confidence || "medium",
-      why: { give: why.give, get: why.get, you: why.you, them: why.them },
+      why: { give: why.give, get: why.get, you: why.you, them: why.them, experts: why.experts },
       risks: r.risks || [], sources,
     });
   });
@@ -685,6 +826,11 @@ function finalize(work, research, now) {
       trades,
       none_reason: trades.length ? null : (research && research.none_reason) || null,
       short_reason: trades.length && trades.length < MIN_TRADES ? shortReason || null : null,
+      // A second agent audited the research before it was published.
+      review: research && research.review && research.review.checked
+        ? { checked: true, notes: (research.review.notes || []).filter((n) => typeof n === "string").slice(0, 20) }
+        : { checked: false },
+      draft_history: work.draft_history || null,
     },
   };
 }
@@ -722,6 +868,28 @@ function args(argv) {
 function trimName(meta) {
   if (meta.position === "DEF") return `${meta.first_name || ""} ${meta.last_name || ""}`.trim();
   return meta.full_name || `${meta.first_name || ""} ${meta.last_name || ""}`.trim();
+}
+
+/* This league's rookie drafts, this season and up to three before it. A
+ * league can run more than one draft a season; the main one is the first
+ * created. Startup drafts (many rounds) aren't rookie drafts. */
+async function rookieDrafts(league) {
+  const out = [];
+  let lg = league;
+  for (let hop = 0; lg && hop < 4; hop++) {
+    const drafts = (await getJSON(`${SLEEPER}/league/${lg.league_id}/drafts`)) || [];
+    const main = drafts
+      .filter((d) => d.status === "complete" && Number((d.settings || {}).rounds) <= 5)
+      .sort((x, y) => (BigInt(x.draft_id) < BigInt(y.draft_id) ? -1 : 1))[0];
+    if (main) {
+      out.push({ season: lg.season, teams: Number(lg.total_rosters) || 12,
+                 picks: await getJSON(`${SLEEPER}/draft/${main.draft_id}/picks`) });
+    }
+    const prev = lg.previous_league_id;
+    if (!prev || prev === "0") break;
+    lg = await getJSON(`${SLEEPER}/league/${prev}`);
+  }
+  return out;
 }
 
 async function cmdCandidates(a) {
@@ -802,13 +970,34 @@ async function cmdCandidates(a) {
         roster: teamPlayers(r.players, players, values, r.taxi, r.reserve, forms),
       };
     });
-    for (const t of teams) for (const p of t.roster) p.tag = marketTag(p, t.roster_id === mine.roster_id);
+    const slots = (league.roster_positions || []).filter((s) => !SKIP_SLOTS.has(s));
+    let draftHist = null;
+    if ((league.settings || {}).type === 2) {
+      // Dynasty: add every future pick to its current owner's roster, and
+      // look back at what this league's own drafts produced.
+      const traded = await getJSON(`${SLEEPER}/league/${league.league_id}/traded_picks`);
+      const pickValues = pickValueMap(valuesCache[url].rows);
+      const nameOf = {};
+      for (const t of teams) nameOf[t.roster_id] = t.name;
+      const assets = pickAssets({
+        season, rounds: Number((league.settings || {}).draft_rounds) || 4,
+        rosterIds: teams.map((t) => t.roster_id), traded, pickValues,
+        slotOf: projectedSlots(teams, slots), nameOf,
+      });
+      for (const a of assets) {
+        const t = teams.find((x) => x.roster_id === a.holder);
+        if (t) t.roster.push(a);
+      }
+      draftHist = summarizeDrafts(await rookieDrafts(league), values, pickValues, Number(season) + 1);
+    }
+    for (const t of teams) {
+      for (const p of t.roster) if (!p.isPick) p.tag = marketTag(p, t.roster_id === mine.roster_id);
+    }
     const problems = applyTargets(teams, mine.roster_id, targets);
     if (problems.length) console.error(`Targets for ${league.name}:\n  - ${problems.join("\n  - ")}`);
-    const slots = (league.roster_positions || []).filter((s) => !SKIP_SLOTS.has(s));
     const work = leagueCandidates({ league, teams, myRosterId: mine.roster_id, slots, season, week,
                                     weeks, valuesFetched: valuesCache[url].fetched,
-                                    targetsApplied: !!targets });
+                                    targetsApplied: !!targets, draftHistory: draftHist });
     fs.writeFileSync(path.join(outDir, `${league.league_id}.json`), JSON.stringify(work, null, 2));
     const kinds = {};
     for (const c of work.candidates) kinds[c.kind] = (kinds[c.kind] || 0) + 1;
@@ -816,6 +1005,8 @@ async function cmdCandidates(a) {
                    candidates: work.candidates.length, kinds,
                    sell_high: work.market.sell_high.length, hold: work.market.hold.length,
                    buy_low: work.market.buy_low.length,
+                   my_picks: work.me.picks.length,
+                   with_picks: work.candidates.filter((c) => c.picks).length,
                    file: path.join(outDir, `${league.league_id}.json`) });
   }
   console.log(JSON.stringify({ season, week, form_weeks: weeks, leagues: summary }, null, 2));
@@ -895,5 +1086,6 @@ if (require.main === module) {
 module.exports = { tradeWindow, fcParams, fcUrl, valueMap, teamPlayers, lineup, strength, leagueNotes,
                    completedWeeks, weekData, formFor, trendPct, usageIntact, marketTag, applyTargets,
                    statsUrl, projUrl, MIN_TRADES, MAX_TRADES,
+                   pickValueMap, futurePickSeasons, projectedSlots, pickAssets, summarizeDrafts,
                    packageValue, fairness, tradesWith, positionProfile, leagueCandidates,
                    finalize, FAIR_PCT };
