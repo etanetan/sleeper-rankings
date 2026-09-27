@@ -571,5 +571,51 @@ check("a week with neither a hole nor 2+ byes is left out entirely",
         ["QB"], 5, {}, 1),
       []);
 
+/* --- recap: did the rankings help for a week that's over (Phase 7) ------ */
+{
+  const players = {
+    q1: { n: "QB1", p: "QB", t: "AAA", i: "" },
+    r1: { n: "RB1 projected RB1", p: "RB", t: "AAA", i: "" },
+    r2: { n: "RB2 projected RB2, actually way better", p: "RB", t: "AAA", i: "" },
+    w1: { n: "WR1 projected WR1", p: "WR", t: "AAA", i: "" },
+    w2: { n: "WR2 projected WR2, actually better", p: "WR", t: "AAA", i: "" },
+  };
+  const projRanks = {
+    q1: { posRank: 1, pts: 20 },
+    r1: { posRank: 1, pts: 15 },
+    r2: { posRank: 2, pts: 8 },
+    w1: { posRank: 1, pts: 12 },
+    w2: { posRank: 2, pts: 9 },
+  };
+  const slots = ["QB", "RB", "WR", "FLEX"];
+  const entry = {
+    points: 50,
+    players: ["q1", "r1", "r2", "w1", "w2"],
+    starters: ["q1", "r1", "w1", "w2"],   // what was literally set - recap() ignores this
+    players_points: { q1: 18, r1: 5, r2: 22, w1: 10, w2: 14 },
+  };
+  const result = app.recap(entry, slots, players, projRanks);
+  check("actual is the matchup entry's own points, untouched",
+        result.actual, 50);
+  check("ours: following that week's projected ranking (which liked the wrong RB/WR)",
+        result.ours, 18 + 5 + 10 + 14);   // q1 + r1 + w1 + w2, per projected posRank
+  check("best: perfect hindsight re-ranks each position by what actually happened",
+        result.best, 18 + 22 + 14 + 10);  // q1 + r2 + w2 + w1
+  check("best is never less than ours (hindsight can't do worse)",
+        result.best >= result.ours, true);
+}
+check("a missing players_points entry counts as 0, not a crash",
+      app.recap(
+        { points: 10, players: ["x1"], players_points: {} },
+        ["QB"],
+        { x1: { n: "X", p: "QB", t: "AAA", i: "" } },
+        { x1: { posRank: 1, pts: 20 } }),
+      { actual: 10, ours: 0, best: 0 });
+check("an empty roster recaps to all zeros but the actual score, not a crash",
+      app.recap({ points: 30, players: [], players_points: {} }, ["QB"], {}, {}),
+      { actual: 30, ours: 0, best: 0 });
+check("a null entry is handled the same as an empty one",
+      app.recap(null, ["QB"], {}, {}), { actual: 0, ours: 0, best: 0 });
+
 console.log(`\n${results.filter(Boolean).length}/${results.length} passed`);
 process.exit(results.every(Boolean) ? 0 : 1);

@@ -510,6 +510,58 @@ function winProb(mine, theirs) {
   return normalCdf((mine - theirs) / combined);
 }
 
+/* --- recap: did the rankings help, for a week that's already over ------- */
+
+/* How the rankings would have done for a past week, against what actually
+ * happened - trust the numbers instead of the pitch. `entry` is that
+ * week's raw matchup entry as Sleeper returns it: player ids in `players`,
+ * the score as actually set in `points`, and `players_points` (each
+ * player's actual points under this league's scoring - Sleeper computes
+ * this itself, so no separate stats endpoint is needed). `projRanks` is
+ * that week's positional ranks from that week's own projections
+ * (rankPositions over them - the same shape ranksFor produces), used to
+ * rebuild what the tool would have recommended at the time, before anyone
+ * knew the results.
+ *
+ * `ours`: sum of actual points over pickLineup's picks using that week's
+ * projected ranks - what following the tool that week would have scored.
+ * `best`: perfect hindsight - re-ranked by what actually happened instead
+ * of what was projected, then picked again. A benched player who
+ * outscored the projected starter at his own position can win that slot
+ * here, which a bare swap of `pts` alone wouldn't do: a dedicated slot (no
+ * FLEX competition) is picked by `posRank`, not `pts` (see posKey), so the
+ * position groups are freshly ranked by actual points first.
+ *
+ * Known limitation, worth surfacing wherever this is shown: injury
+ * statuses here are today's, not that week's - there's no way to ask
+ * Sleeper for a past week's injury news. In practice this mostly washes
+ * out, since a player who was actually ruled out that week almost always
+ * had an already-near-zero projection, so pickLineup rarely wanted them
+ * regardless. */
+function recap(entry, slots, players, projRanks) {
+  const playersPoints = (entry && entry.players_points) || {};
+  const roster = buildRoster((entry && entry.players) || [], players, projRanks);
+  const actualOf = (s) => playersPoints[s.player.id] || 0;
+
+  const ours = pickLineup(roster, slots).starters.reduce((t, s) => t + actualOf(s), 0);
+
+  const byPos = {};
+  roster.forEach((p) => { (byPos[p.p] = byPos[p.p] || []).push(p); });
+  const hindsightPosRank = {};
+  for (const pos in byPos) {
+    byPos[pos]
+      .slice()
+      .sort((a, b) => (playersPoints[b.id] || 0) - (playersPoints[a.id] || 0))
+      .forEach((p, i) => { hindsightPosRank[p.id] = i + 1; });
+  }
+  const hindsightRoster = roster.map((p) => ({
+    ...p, pts: playersPoints[p.id] || 0, posRank: hindsightPosRank[p.id] || null,
+  }));
+  const best = pickLineup(hindsightRoster, slots).starters.reduce((t, s) => t + actualOf(s), 0);
+
+  return { actual: (entry && entry.points) || 0, ours, best };
+}
+
 /* --- trade research: shared with trades/engine.js ----------------------- */
 
 const ORDINAL = ["", "1st", "2nd", "3rd", "4th", "5th", "6th"];
@@ -542,7 +594,7 @@ if (typeof module !== "undefined") {
                     scoringLabel, scorePlayer,
                     rankPositions, consensusRanks,
                     pickLineup, currentLineup, lockedIds, lineupCheck, waiverUpgrades,
-                    projectedTotal, winProb, byeWeeks, upcomingHoles,
+                    projectedTotal, winProb, byeWeeks, upcomingHoles, recap,
                     posKey, flexKey, buildRoster, normStatus, tradeWindow,
                     SLOT_ELIGIBLE, SLOT_LABEL, SKIP_SLOTS, POS_ORDER, OUT_STATUSES,
                     ORDINAL, EVEN_PCT, isHttps, SECTIONS, sectionHeading, TRADE_FIELDS };

@@ -372,6 +372,20 @@ if (typeof document !== "undefined") {
     return panel;
   }
 
+  /* One line at the top of the Lineup tab: how the tool's picks would have
+   * done last week against what actually happened - "Week 3: you scored
+   * 112.4 · our lineup 118.0 (+5.6) · best possible 131.2". Trust over the
+   * pitch: shown whether the diff is a plus or a minus. Hidden before week
+   * 2 (no prior week yet) or if the fetch it needs failed. */
+  function recapLine(lg) {
+    if (!lg.recap) return null;
+    const { week, actual, ours, best } = lg.recap;
+    const diff = Math.round((ours - actual) * 10) / 10;
+    return el("p", "recap-line",
+      `Week ${week}: you scored ${actual.toFixed(1)} · our lineup ${ours.toFixed(1)} ` +
+      `(${diff >= 0 ? "+" : ""}${diff}) · best possible ${best.toFixed(1)}`);
+  }
+
   /* One upcomingHoles() entry as a line of text, e.g. "Wk 7: no TE (Kittle
    * on bye)" when there's a real hole, or "Wk 9: 3 starters on bye" when
    * the bench covers every slot but it's still worth a heads up. */
@@ -525,6 +539,8 @@ if (typeof document !== "undefined") {
 
     // --- lineup panel: start and sit, the week's actual decision -------
     const lineup = el("div", "panel");
+    const recapLineEl = recapLine(lg);
+    if (recapLineEl) lineup.appendChild(recapLineEl);
     const banner = lineupBanner(lg);
     if (banner) lineup.appendChild(banner);
     if (starters.length) {

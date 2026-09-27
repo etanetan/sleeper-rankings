@@ -158,8 +158,20 @@ function createLoader({ storage, onStatus } = {}) {
       for (const row of rows || []) trending[row.player_id] = row.count;
     } catch (e) { trending = {}; }
 
+    // Last week's projections, for the recap (core.js's recap()): how the
+    // tool's picks would have done against what actually happened. Not
+    // league specific - shared the same way this week's projections are,
+    // each league scores them with its own settings later in
+    // buildLeagueView. Skipped before week 2 (no prior week to recap).
+    const prevWeek = week - 1;
+    let prevWeekProjections = null;
+    if (prevWeek >= 1) {
+      try { ({ projections: prevWeekProjections } = await loadProjections(season, prevWeek)); }
+      catch (e) { prevWeekProjections = null; }
+    }
+
     return { season, leagueSeason, week, players, projections, rankings, schedule, trending,
-             playersFetched: fetched, liveStatuses };
+             prevWeek, prevWeekProjections, playersFetched: fetched, liveStatuses };
   }
 
   async function fetchUser(username) {
@@ -299,13 +311,31 @@ function createLoader({ storage, onStatus } = {}) {
       upcoming = upcomingHoles(roster, slots, data.week, byeWeeks(data.schedule));
     } catch (e) { upcoming = []; }
 
+    // Last week's recap: how the tool's picks would have done against
+    // what actually happened (core.js's recap()). Own try/catch, same
+    // reasoning as the blocks above - a bad response for one extra call
+    // shouldn't cost the rest of the view. Skipped before week 2 (no
+    // prior week) or if the last league fetch is disabled.
+    let weekRecap = null;
+    if (data.prevWeekProjections && data.prevWeek >= 1) {
+      try {
+        const prevMatchups = await fetchJson(
+          `${SLEEPER}/league/${lg.league_id}/matchups/${data.prevWeek}`);
+        const prevEntry = (prevMatchups || []).find((m) => m.roster_id === mine.roster_id);
+        if (prevEntry) {
+          const prevRanks = rankPositions(data.prevWeekProjections, data.players, settings);
+          weekRecap = { ...recap(prevEntry, slots, data.players, prevRanks), week: data.prevWeek };
+        }
+      } catch (e) { weekRecap = null; }
+    }
+
     return {
       name: lg.name, id: lg.league_id, week: data.week, slots,
       label: scoringLabel(settings),
       superflex: slots.includes("SUPER_FLEX"),
       trades: tradeWindow(lg, data.week),
       teRec: settings.bonus_rec_te || 0,
-      roster, source, rostered, waivers, names, upcoming,
+      roster, source, rostered, waivers, names, upcoming, recap: weekRecap,
       // Every ranked player in the league, not just this user's roster - the
       // extension's content script uses this to badge free agents on the
       // Players page and opponents' rosters, not only the user's own team.

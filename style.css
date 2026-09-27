@@ -64,6 +64,8 @@ a.lb-open{font-weight:600}
 .upcoming-card h4{margin:0 0 4px;font-size:13px}
 .upcoming-card .meta{margin:0;font-size:13px}
 
+.recap-line{color:var(--dim);font-size:12.5px;margin:0 0 12px;line-height:1.5}
+
 .tabs{display:flex;gap:4px;margin:14px 0 12px;background:var(--chip);
   padding:4px;border-radius:10px}
 .tab{flex:1;background:transparent;color:var(--dim);border:none;border-radius:7px;
