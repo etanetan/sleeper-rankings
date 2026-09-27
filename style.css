@@ -94,6 +94,7 @@ tr:last-child td{border-bottom:none}
 .rk.inactive b{color:var(--dim);text-decoration:line-through;text-decoration-thickness:1.5px}
 .meta{color:var(--dim);font-size:12px;font-weight:400}
 tr.chg{background:color-mix(in srgb, var(--accent) 10%, transparent)}
+tr.me-row{background:color-mix(in srgb, var(--good) 10%, transparent)}
 .lock{font-size:10px;margin-left:5px;vertical-align:1px}
 .out{color:var(--bad);font-size:10px;font-weight:700;margin-left:5px}
 .q{color:var(--accent);font-size:10px;font-weight:700;margin-left:5px}

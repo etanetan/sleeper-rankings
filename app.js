@@ -290,6 +290,37 @@ if (typeof document !== "undefined") {
     return tr;
   }
 
+  /* One row of the League tab: rank, team, this week's projected starters
+   * total, record, points for. The viewer's own row is tinted, the
+   * current opponent gets a chip - context for a trade or for how scary
+   * next week's matchup actually is. */
+  function powerRow(r, rank) {
+    const tr = el("tr", r.isMe ? "me-row" : null);
+    tr.appendChild(el("td", "slot", String(rank)));
+    const nameCell = el("td", "nm");
+    nameCell.appendChild(document.createTextNode(r.name));
+    if (r.isOpponent) nameCell.appendChild(el("span", "chip warn", "opponent"));
+    tr.appendChild(nameCell);
+    tr.appendChild(el("td", "pts", r.proj.toFixed(1)));
+    tr.appendChild(el("td", "meta", `${r.wins}-${r.losses}${r.ties ? `-${r.ties}` : ""}`));
+    tr.appendChild(el("td", "pts", r.pf.toFixed(1)));
+    return tr;
+  }
+
+  /* League power rankings: every roster ranked by projected strength
+   * right now rather than by record. */
+  function leaguePanel(lg) {
+    const panel = el("div", "panel");
+    if (!lg.power || !lg.power.length) {
+      panel.appendChild(el("p", "none", "Couldn't build power rankings for this league."));
+      return panel;
+    }
+    panel.appendChild(el("p", "tr-intro",
+      "Every roster's projected starters total for this week - ranked by strength right now, not record."));
+    panel.appendChild(table(lg.power.map((r, i) => powerRow(r, i + 1))));
+    return panel;
+  }
+
   function fmtClock(ts) {
     return new Date(ts).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
   }
@@ -524,7 +555,7 @@ if (typeof document !== "undefined") {
   // Which tab is showing, kept across league switches and re-renders so
   // changing leagues doesn't bounce you back to the lineup.
   let ACTIVE_TAB = "lineup";
-  const TAB_NAMES = new Set(["lineup", "matchup", "positions", "waivers", "trades"]);
+  const TAB_NAMES = new Set(["lineup", "matchup", "positions", "waivers", "league", "trades"]);
   try {
     const saved = localStorage.getItem("activeTab");
     if (TAB_NAMES.has(saved)) ACTIVE_TAB = saved;
@@ -547,7 +578,7 @@ if (typeof document !== "undefined") {
     };
 
     const tabs = [["lineup", "Lineup"], ["matchup", "Matchup"], ["positions", "By position"],
-                  ["waivers", "Waivers"], ["trades", "Trades"]];
+                  ["waivers", "Waivers"], ["league", "League"], ["trades", "Trades"]];
     tabs.forEach(([name, label]) => {
       const b = el("button", "tab", label);
       b.type = "button";
@@ -676,16 +707,20 @@ if (typeof document !== "undefined") {
       waivers.appendChild(el("p", "none", "No waiver upgrades found - your bench already covers your weak spots."));
     }
 
+    // --- league panel: every roster ranked by projected strength --------
+    const league = leaguePanel(lg);
+
     // --- trades panel: filled in when the research file arrives
     const trades = el("div", "panel");
     TRADES_PANEL = trades;
     loadTrades(lg, trades);
 
-    out.appendChild(tabBar({ lineup, matchup, positions, waivers, trades }));
+    out.appendChild(tabBar({ lineup, matchup, positions, waivers, league, trades }));
     out.appendChild(lineup);
     out.appendChild(matchup);
     out.appendChild(positions);
     out.appendChild(waivers);
+    out.appendChild(league);
     out.appendChild(trades);
   }
 

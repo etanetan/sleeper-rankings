@@ -496,6 +496,35 @@ function dropCandidate(roster, best, reserveIds) {
   return candidates.reduce((worst, p) => (key(p) < key(worst) ? p : worst));
 }
 
+/* League power rankings: every roster's projected starters total for this
+ * week (build the roster, pick the best lineup, sum pts - the same "how
+ * good is this team right now" measure used everywhere else on the page),
+ * next to their actual record and points-for for context. Ranked by that
+ * projected total, not the record - wins/losses say what already
+ * happened; this says who's actually strong right now, which is the more
+ * useful read on how scary an opponent is or what a trade partner can
+ * really offer. `rosters` is the league's raw Sleeper roster list (the
+ * same one buildLeagueView already fetches); each entry keeps its
+ * `roster_id` so the caller can join in team names and mark the viewer's
+ * own row. */
+function powerRanks(rosters, players, ranks, week, slots) {
+  const out = (rosters || []).map((r) => {
+    const roster = buildRoster(r.players, players, ranks, week);
+    const { starters } = pickLineup(roster, slots);
+    const settings = r.settings || {};
+    return {
+      rosterId: r.roster_id,
+      proj: projectedTotal(starters),
+      wins: settings.wins || 0,
+      losses: settings.losses || 0,
+      ties: settings.ties || 0,
+      pf: (settings.fpts || 0) + (settings.fpts_decimal || 0) / 100,
+    };
+  });
+  out.sort((a, b) => b.proj - a.proj);
+  return out;
+}
+
 /* --- matchup: projected score and win chance ---------------------------- */
 
 /* Standard normal CDF via the Abramowitz-Stegun 7.1.26 erf approximation
@@ -613,7 +642,7 @@ if (typeof module !== "undefined") {
                     scoringLabel, scorePlayer,
                     rankPositions, consensusRanks,
                     pickLineup, currentLineup, lockedIds, lineupCheck, waiverUpgrades,
-                    projectedTotal, winProb, byeWeeks, upcomingHoles, recap, dropCandidate,
+                    projectedTotal, winProb, byeWeeks, upcomingHoles, recap, dropCandidate, powerRanks,
                     posKey, flexKey, buildRoster, normStatus, tradeWindow,
                     SLOT_ELIGIBLE, SLOT_LABEL, SKIP_SLOTS, POS_ORDER, OUT_STATUSES,
                     ORDINAL, EVEN_PCT, isHttps, SECTIONS, sectionHeading, TRADE_FIELDS };

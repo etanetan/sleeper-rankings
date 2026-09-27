@@ -653,5 +653,41 @@ check("nothing to drop from an empty roster",
 check("a missing reserveIds set doesn't throw - treated as nothing reserved",
       app.dropCandidate([PL("b1", "B", "RB", 5)], { starters: [] }, undefined).id, "b1");
 
+/* --- powerRanks: league strength by projected starters (Phase 9) ------- */
+{
+  const prPlayers = {
+    a_qb: { n: "A QB", p: "QB", t: "X", i: "" },
+    a_rb: { n: "A RB", p: "RB", t: "X", i: "" },
+    b_qb: { n: "B QB", p: "QB", t: "Y", i: "" },
+    b_rb: { n: "B RB", p: "RB", t: "Y", i: "" },
+  };
+  const prRanks = {
+    a_qb: { posRank: 1, pts: 25 }, a_rb: { posRank: 1, pts: 15 },
+    b_qb: { posRank: 2, pts: 10 }, b_rb: { posRank: 2, pts: 5 },
+  };
+  const slots = ["QB", "RB"];
+  // Team A projects much stronger but has the worse record - power
+  // rankings should still put them first, since it's ranked by strength
+  // right now, not by what already happened.
+  const rosters = [
+    { roster_id: 1, players: ["a_qb", "a_rb"],
+      settings: { wins: 2, losses: 5, ties: 0, fpts: 400, fpts_decimal: 50 } },
+    { roster_id: 2, players: ["b_qb", "b_rb"],
+      settings: { wins: 6, losses: 1, ties: 0, fpts: 300, fpts_decimal: 25 } },
+  ];
+  const ranked = app.powerRanks(rosters, prPlayers, prRanks, 5, slots);
+  check("ranked by projected total, not record - the weaker-record team leads",
+        ranked.map((r) => r.rosterId), [1, 2]);
+  check("projected total sums the best lineup's starters", ranked[0].proj, 40);
+  check("record comes through even though it's not the sort key",
+        [ranked[1].wins, ranked[1].losses], [6, 1]);
+  check("points-for combines fpts and fpts_decimal/100", ranked[0].pf, 400.5);
+}
+check("missing settings on a roster default every field to 0, not a crash",
+      app.powerRanks(
+        [{ roster_id: 9, players: [] }], {}, {}, 5, ["QB"])[0],
+      { rosterId: 9, proj: 0, wins: 0, losses: 0, ties: 0, pf: 0 });
+check("an empty rosters list is simply an empty ranking", app.powerRanks([], {}, {}, 5, ["QB"]), []);
+
 console.log(`\n${results.filter(Boolean).length}/${results.length} passed`);
 process.exit(results.every(Boolean) ? 0 : 1);

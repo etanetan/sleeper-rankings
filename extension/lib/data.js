@@ -428,6 +428,7 @@ function createLoader({ storage, onStatus } = {}) {
           const oppProj = projectedTotal(oppCurrent);
           matchup = {
             oppName: names[opp.roster_id] || `Team ${opp.roster_id}`,
+            oppRosterId: opp.roster_id,
             mine: current, theirs: oppCurrent,
             myProj, myProjAsSet, oppProj,
             win: winProb(myProj, oppProj),
@@ -498,6 +499,20 @@ function createLoader({ storage, onStatus } = {}) {
       };
     });
 
+    // League power rankings: every roster's projected starters total,
+    // ranked by that rather than record. `rosters` (every roster in the
+    // league, raw) is already in hand from the top of this function. Own
+    // try/catch - a bad roster entry shouldn't cost the rest of the view.
+    let power = [];
+    try {
+      power = powerRanks(rosters, data.players, ranks, data.week, slots).map((r) => ({
+        ...r,
+        name: names[r.rosterId] || `Team ${r.rosterId}`,
+        isMe: r.rosterId === mine.roster_id,
+        isOpponent: !!(matchup && matchup.oppRosterId === r.rosterId),
+      }));
+    } catch (e) { power = []; }
+
     // Bye/injury holes over the next few weeks. Own try/catch, same as the
     // matchup block above: a missing/empty schedule is already handled by
     // byeWeeks() and upcomingHoles' own `b`-field fallback, but a schedule
@@ -534,7 +549,7 @@ function createLoader({ storage, onStatus } = {}) {
       superflex: slots.includes("SUPER_FLEX"),
       trades: tradeWindow(lg, data.week),
       teRec: settings.bonus_rec_te || 0,
-      roster, source, rostered, waivers, names, upcoming, recap: weekRecap,
+      roster, source, rostered, waivers, names, upcoming, recap: weekRecap, power,
       // Bound to this league/roster so the page can call it with no extra
       // arguments - not run automatically (see seasonRecapFor's own
       // comment): a season with many uncached weeks would mean a
