@@ -452,21 +452,32 @@ function createLoader({ storage, onStatus } = {}) {
     const reserveIds = new Set([...(mine.reserve || []), ...(mine.taxi || [])]);
     const drop = dropCandidate(roster, effectiveBest, reserveIds);
 
-    // 3-week outlook: this week's pts plus up to 2 future weeks' (skipped,
-    // not zeroed, if a future week's projections failed to load), so a
-    // one-week spike doesn't look like a real streamer suggestion.
+    // 3-week outlook: this week's pts plus up to 2 future weeks'. A week
+    // whose projections call outright failed (ranks1/ranks2 null) is
+    // skipped - there's no information for it at all, so it shouldn't
+    // drag the average down or up. A week that loaded but has no entry
+    // for this specific player (a bye, most likely) counts as 0 instead -
+    // real information (they won't score) that a one-week spike shouldn't
+    // get to hide behind by skipping it. Returns how many weeks actually
+    // went into it alongside the average, since that's usually 3 but can
+    // be fewer when a projections call failed.
     const ranks1 = nextRanksFor(data, settings, 1);
     const ranks2 = nextRanksFor(data, settings, 2);
     const next3Avg = (pid, thisPts) => {
       const vals = [thisPts != null ? thisPts : 0];
-      const addFrom = (r) => { if (r && r[pid] && r[pid].pts != null) vals.push(r[pid].pts); };
+      const addFrom = (r) => {
+        if (!r) return;   // that week's projections call failed - no information, skip it
+        vals.push(r[pid] && r[pid].pts != null ? r[pid].pts : 0);
+      };
       addFrom(ranks1);
       addFrom(ranks2);
-      return vals.reduce((a, b) => a + b, 0) / vals.length;
+      return { avg: vals.reduce((a, b) => a + b, 0) / vals.length, weeks: vals.length };
     };
     if (effectiveBest.starters) {
-      effectiveBest.starters = effectiveBest.starters.map(
-        (s) => ({ ...s, next3: next3Avg(s.player.id, s.player.pts) }));
+      effectiveBest.starters = effectiveBest.starters.map((s) => {
+        const { avg, weeks } = next3Avg(s.player.id, s.player.pts);
+        return { ...s, next3: avg, next3Weeks: weeks };
+      });
     }
 
     const waivers = waiverUpgrades(pool, rostered, effectiveBest).map((w) => {
@@ -476,13 +487,14 @@ function createLoader({ storage, onStatus } = {}) {
         ...w,
         add: (data.trending && data.trending[w.id]) || 0,
         drop,
-        next3: wNext3,
-        weakestNext3,
+        next3: wNext3.avg,
+        next3Weeks: wNext3.weeks,
+        weakestNext3: weakestNext3.avg,
         // Every entry here already beats the weakest starter this week
         // (that's how waiverUpgrades built the list) - "hold" only when
         // it keeps winning over the next 3 weeks too, "streamer" when
         // this week was the exception rather than the outlook.
-        tag: wNext3 > weakestNext3 ? "hold" : "streamer",
+        tag: wNext3.avg > weakestNext3.avg ? "hold" : "streamer",
       };
     });
 

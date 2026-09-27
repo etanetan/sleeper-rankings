@@ -271,7 +271,9 @@ if (typeof document !== "undefined") {
     // just this one - worth an actual roster spot, not just this week's
     // matchup. "streamer" only beats them this week.
     if (w.tag) nameCell.appendChild(el("span", `chip${w.tag === "hold" ? " good" : ""}`, w.tag));
-    if (w.next3 != null) nameCell.appendChild(el("span", "meta", ` · 3wk avg ${w.next3.toFixed(1)}`));
+    if (w.next3 != null) {
+      nameCell.appendChild(el("span", "meta", ` · ${w.next3Weeks || 3}wk avg ${w.next3.toFixed(1)}`));
+    }
     if (w.add) nameCell.appendChild(el("span", "meta", ` · ${num(w.add)} adds today`));
     const fills = fillsUpcoming(w, upcoming);
     if (fills) {
