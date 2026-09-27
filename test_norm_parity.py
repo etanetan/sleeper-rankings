@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 The FantasyPros join matches players by normalized name. build.py normalizes in
-Python, app.js in JavaScript. If those two ever disagree the join fails
+Python, core.js in JavaScript. If those two ever disagree the join fails
 silently - players just show as unranked - so compare them directly.
 """
 import json
@@ -24,7 +24,7 @@ NAMES = [
 ]
 
 js = """
-const app = require("./app.js");
+const app = require("./core.js");
 const names = JSON.parse(process.argv[1]);
 console.log(JSON.stringify(names.map(app.norm)));
 """

@@ -9,11 +9,13 @@ A static site (GitHub Pages, https://etanetan.github.io/sleeper-rankings) that s
 ## Commands
 
 ```bash
-node test_app.js            # site logic: scoring, ranks, lineups, injuries, trade windows
+node test_app.js            # core.js logic: scoring, ranks, lineups, injuries, trade windows
 node test_trades.js         # trade engine: form/tags, fairness, search, picks, finalize gate, CLI (uses fixtures)
 python3 test_build.py       # asset versioning, allowed hosts, secret hygiene, optional build.py
-python3 test_norm_parity.py # build.py and app.js name normalizers must agree
+python3 test_norm_parity.py # build.py and core.js name normalizers must agree
+node test_extension.js      # extension manifest, extension/lib parity with core.js/data.js, content-script helpers
 python3 -m http.server 8765 # serve the site locally at http://localhost:8765
+node extension/sync.js      # copy core.js/data.js into extension/lib/ - run after changing either
 ```
 
 Tests are flat scripts of `check(label, got, want)` calls, not a framework; there is no single-test runner, so comment out or grep for the check you care about. `test_trades.js` runs the engine CLI against canned responses via `TRADES_FIXTURES` (a JSON map of URL → response) and pins the clock with `TRADES_NOW`.
@@ -30,12 +32,15 @@ node trades/engine.js running|failed|finalize --league <id> --data <dir> ...
 ## Deploying
 
 - Pages serves the `gh-pages` branch, a mirror of `main`: push both with `git push origin main main:gh-pages`.
-- Whenever `app.js` or `style.css` change, bump the `?v=N` on their tags in `index.html` (browsers otherwise keep serving the old file; `test_build.py` checks the versioning exists).
+- Whenever `core.js`, `data.js`, `app.js` or `style.css` change, bump the `?v=N` on their tags in `index.html` (browsers otherwise keep serving the old file; `test_build.py` checks the versioning exists).
+- Whenever `core.js` or `data.js` change, also run `node extension/sync.js` and commit the updated `extension/lib/*.js` - `test_extension.js` fails if they drift from the root files.
 - No GitHub Actions: the session credential can't push `.github/workflows/`, and the owner doesn't want them.
 
 ## Architecture
 
-**`app.js` is two things.** The top half is pure logic (`norm`, `scorePlayer`, `rankPositions`, `pickLineup`, `tradeWindow`, …) exported via `module.exports` for Node; the UI lives inside `if (typeof document !== "undefined")`. `trades/engine.js` requires `app.js` for shared definitions (`SLOT_ELIGIBLE`, `tradeWindow`, `normStatus`, `scorePlayer`), so changes there affect both the page and the engine.
+**Three files, one page.** `core.js` is pure logic (`norm`, `scorePlayer`, `rankPositions`, `pickLineup`, `lineupCheck`, `tradeWindow`, …), DOM-free and exported via `module.exports` for Node. `data.js` is the Sleeper API calls and the per-league view-model builder, also DOM-free: status goes through an `onStatus` callback and caching goes through a storage adapter (`{getItem,setItem,removeItem}`, each returning a promise) so the same `createLoader({storage, onStatus})` runs against `localStorage` on the site and `chrome.storage.local` in the extension. `app.js` is UI only, inside `if (typeof document !== "undefined")`. All three are loaded as plain `<script>` tags in that order in `index.html`, so `app.js` and `data.js` use `core.js`'s top-level functions directly with no import - classic scripts share one global lexical scope, the same reason `research.js`'s exports are already usable from `app.js` without a `require`. `trades/engine.js` requires `core.js` (not `app.js`) for shared definitions (`SLOT_ELIGIBLE`, `tradeWindow`, `normStatus`, `scorePlayer`), so changes there affect the engine, the page and the extension together.
+
+**The browser extension** (`extension/`) lives in this repo rather than a separate project, because it shares `core.js`/`data.js` with the page and would otherwise drift the way `test_norm_parity.py` exists to catch. `extension/sync.js` copies `core.js`/`data.js` into `extension/lib/` (content scripts can't `require` or fetch a sibling file from the repo root); `test_extension.js` fails if `extension/lib/*` isn't byte-identical to the root files, so a forgotten sync doesn't drift silently. The side panel (`panel.html`/`panel.js`) is just an iframe of the live site with `?embed=1` (compact layout) plus `?user=`/`?league=` - no second UI to maintain, and a site fix reaches the extension without reinstalling it. `content.js` runs on `sleeper.com/leagues/*`, badges player rows with their positional rank and start/sit color, and reports the page's league id to the panel via `chrome.runtime.sendMessage`/`postMessage` so the panel follows the tab. `app.js` supports this: `?embed=1` hides the header/form/footer, `?user=`/`?league=` auto-load, and a `window.addEventListener("message", ...)` accepts `{type:"sr-league", id}` only when embedded and `id` is numeric. `extension/` also gets published to `gh-pages` since gh-pages mirrors `main` verbatim - harmless, since it's public code with no secrets.
 
 **Ranks** come from Sleeper projections scored with each league's own `scoring_settings` (including TE premium), ranked within position. The ~5MB Sleeper player dump is cached in `localStorage` for 20h (Sleeper asks for at most one pull a day); injury statuses are refreshed live from the projections call. `build.py` (FantasyPros consensus) is kept but unused: the free API tier returns only 10 players per position.
 

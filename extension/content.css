@@ -1,0 +1,10 @@
+.sr-badge{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;
+  font:600 11px/1.7 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:#efefe9;color:#6b6b63;vertical-align:middle}
+.sr-badge.sr-start{background:#dcfce7;color:#15803d}
+.sr-badge.sr-promote{background:#fef3c7;color:#b45309}
+.sr-badge.sr-demote,.sr-badge.sr-out{background:#fee2e2;color:#b91c1c}
+
+#sr-pill{position:fixed;right:16px;bottom:16px;z-index:2147483647;
+  background:#b45309;color:#fff;font:600 13px/1 ui-sans-serif,system-ui,sans-serif;
+  padding:10px 14px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.25)}

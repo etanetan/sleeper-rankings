@@ -181,3 +181,10 @@ a.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:n
   .tc-top .chip{margin-left:0}
   .tr-bar button{width:100%}
 }
+
+/* ?embed=1: the browser extension's side panel frames this page next to
+ * sleeper.com, so the page chrome that only makes sense standalone goes
+ * away and the wrapper gets to use the full (narrow) panel width. */
+body.embed{padding:10px 10px 24px}
+body.embed .wrap{max-width:none}
+body.embed header,body.embed #form,body.embed footer{display:none}

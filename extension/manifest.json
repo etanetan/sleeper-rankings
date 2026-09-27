@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "Sleeper Rankings",
+  "version": "1.0.0",
+  "description": "Weekly Sleeper rankings, lineup check and trade ideas, next to your own Sleeper leagues.",
+  "action": {
+    "default_title": "Sleeper Rankings"
+  },
+  "background": {
+    "service_worker": "bg.js",
+    "scripts": ["bg.js"]
+  },
+  "permissions": ["storage", "sidePanel"],
+  "host_permissions": [
+    "https://api.sleeper.app/*",
+    "https://api.sleeper.com/*",
+    "https://sleeper.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://sleeper.com/leagues/*"],
+      "js": ["lib/core.js", "lib/data.js", "content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "side_panel": {
+    "default_path": "panel.html"
+  },
+  "sidebar_action": {
+    "default_panel": "panel.html",
+    "default_title": "Sleeper Rankings"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "sleeper-rankings@etanetan.github.io"
+    }
+  }
+}
