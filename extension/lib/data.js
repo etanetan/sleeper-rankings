@@ -178,12 +178,19 @@ function createLoader({ storage, onStatus } = {}) {
     for (let w = 1; w < data.week; w++) {
       const cacheKey = `${RECAP_CACHE_PREFIX}:${lg.league_id}:${rosterId}:${w}:${settingsHash}`;
       let weekResult = null;
+      let cacheHit = false;
       try {
         const raw = await storage.getItem(cacheKey);
-        if (raw) weekResult = JSON.parse(raw);
-      } catch (e) { weekResult = null; }
+        if (raw) {
+          cacheHit = true;
+          const parsed = JSON.parse(raw);
+          // {noEntry:true} is its own cached sentinel (below) for "this
+          // roster has no matchup that week" - not a real result to add.
+          weekResult = parsed.noEntry ? null : parsed;
+        }
+      } catch (e) { cacheHit = false; }
 
-      if (!weekResult) {
+      if (!cacheHit) {
         try {
           const projections = await projectionsForWeek(data.season, w);
           const matchups = await fetchJson(`${SLEEPER}/league/${lg.league_id}/matchups/${w}`);
@@ -193,10 +200,15 @@ function createLoader({ storage, onStatus } = {}) {
             weekResult = recap(entry, slots, data.players, ranks);
             try { await storage.setItem(cacheKey, JSON.stringify(weekResult)); }
             catch (e) { /* over quota or private mode; not worth failing over */ }
+          } else {
+            // The fetch succeeded but this roster has no entry that week
+            // (added mid-season, a re-draft, ...) - a real, cacheable
+            // answer of "nothing to add" here too, not a failure, so a
+            // future call doesn't keep re-fetching a week that will never
+            // have this roster in it.
+            try { await storage.setItem(cacheKey, JSON.stringify({ noEntry: true })); }
+            catch (e) { /* over quota or private mode; not worth failing over */ }
           }
-          // else: the fetch succeeded but this roster has no entry that
-          // week (added mid-season, a re-draft, ...) - a real, cacheable
-          // answer of "nothing to add", not a failure.
         } catch (e) { hadError = true; }
       }
 
