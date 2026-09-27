@@ -22,6 +22,12 @@ button{padding:10px 16px;background:var(--accent);color:#fff;border-color:transp
 button:hover{filter:brightness(1.08)}
 @media(max-width:480px){form{flex-direction:column}form button{width:100%}}
 
+.league-strip{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.ls-item{background:var(--chip);color:var(--dim);border:1px solid transparent;
+  border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:600;cursor:pointer}
+.ls-item:hover{color:var(--ink)}
+.ls-item.active{background:var(--card);color:var(--ink);border-color:var(--accent)}
+
 #picker{display:flex;align-items:center;gap:10px;margin-bottom:18px}
 #picker label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;
   color:var(--dim);font-weight:600}
@@ -39,6 +45,18 @@ select{flex:1 1 auto;min-width:0;padding:9px 12px;background:var(--card);color:v
 .chip.fmt{color:var(--accent)}
 .chip.warn{color:var(--bad)}
 .chip.good{color:var(--good)}
+
+.lineup-banner{border:1px solid var(--line);border-radius:10px;padding:12px 14px;
+  margin:0 0 14px;background:var(--card)}
+.lineup-banner.ok{border-color:var(--good)}
+.lineup-banner.warn{border-color:var(--accent)}
+.lb-head{margin:0;font-weight:700;font-size:14px}
+.lineup-banner.ok .lb-head{color:var(--good)}
+.lineup-banner.warn .lb-head{color:var(--accent)}
+.lb-changes{margin:8px 0 0;padding-left:18px;font-size:13.5px;line-height:1.6}
+.lb-note{margin:8px 0 0}
+.lb-foot{margin:10px 0 0;font-size:12.5px}
+a.lb-open{font-weight:600}
 
 .tabs{display:flex;gap:4px;margin:14px 0 12px;background:var(--chip);
   padding:4px;border-radius:10px}
@@ -67,6 +85,8 @@ tr:last-child td{border-bottom:none}
 .rk b{color:var(--accent)}
 .rk.inactive b{color:var(--dim);text-decoration:line-through;text-decoration-thickness:1.5px}
 .meta{color:var(--dim);font-size:12px;font-weight:400}
+tr.chg{background:color-mix(in srgb, var(--accent) 10%, transparent)}
+.lock{font-size:10px;margin-left:5px;vertical-align:1px}
 .out{color:var(--bad);font-size:10px;font-weight:700;margin-left:5px}
 .q{color:var(--accent);font-size:10px;font-weight:700;margin-left:5px}
 .none{color:var(--dim);font-size:13px;font-style:italic}

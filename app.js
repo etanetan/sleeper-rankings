@@ -6,6 +6,7 @@
 
 const SLEEPER = "https://api.sleeper.app/v1";
 const PROJ = "https://api.sleeper.com/projections/nfl";
+const SCHEDULE = "https://api.sleeper.com/schedule/nfl/regular";
 
 const SLOT_ELIGIBLE = {
   QB: ["QB"], RB: ["RB"], WR: ["WR"], TE: ["TE"], K: ["K"], DEF: ["DEF"],
@@ -222,14 +223,29 @@ function flexKey(p) {
 
 /* Fill the most restrictive slots first, so a lone eligible player isn't
  * taken by a flex slot that had other options. Superflex takes a QB whenever
- * one is available. */
-function pickLineup(roster, slots) {
+ * one is available.
+ *
+ * `fixed` (optional) pre-fills some slots, e.g. { 2: player }, and removes
+ * those players from the pool before the rest are picked - used to hold a
+ * locked starter in place while still choosing the best lineup around them. */
+function pickLineup(roster, slots, fixed) {
   const avail = roster.slice();
+  const picked = {};
+  if (fixed) {
+    for (const key in fixed) {
+      const player = fixed[key];
+      if (!player) continue;
+      picked[key] = player;
+      const pos = avail.indexOf(player);
+      if (pos !== -1) avail.splice(pos, 1);
+    }
+  }
+
   const order = slots
     .map((s, i) => i)
+    .filter((i) => !(i in picked))
     .sort((a, b) => (SLOT_ELIGIBLE[slots[a]] || []).length - (SLOT_ELIGIBLE[slots[b]] || []).length);
 
-  const picked = {};
   for (const i of order) {
     const slot = slots[i];
     const elig = SLOT_ELIGIBLE[slot];
@@ -248,8 +264,14 @@ function pickLineup(roster, slots) {
   }
 
   const starters = [];
-  slots.forEach((s, i) => { if (picked[i]) starters.push({ slot: s, player: picked[i] }); });
-  return { starters, bench: avail };
+  // Same as `starters`, but one entry per slot (null where nothing could be
+  // filled) so callers can line it up positionally against another per-slot
+  // lineup, e.g. currentLineup's output, for lineupCheck.
+  const bySlot = slots.map((s, i) => {
+    if (picked[i]) starters.push({ slot: s, player: picked[i] });
+    return { slot: s, player: picked[i] || null };
+  });
+  return { starters, bench: avail, bySlot };
 }
 
 /* Whether trading is possible in this league right now, and if not, why. */
@@ -267,6 +289,81 @@ function tradeWindow(league, week) {
     return { open: false, reason: `The trade deadline (week ${deadline}) has passed.`, deadline };
   }
   return { open: true, deadline: deadline && deadline !== 99 ? deadline : null };
+}
+
+/* --- lineup check: what Sleeper has set vs. the best lineup ------------- */
+
+/* The lineup Sleeper will actually score, as a per-slot array lined up with
+ * `slots` (roster_positions minus BN/IR/TAXI, same order the matchup's
+ * `starters` array uses). "0" and a missing id both mean an empty slot. */
+function currentLineup(starterIds, slots, roster) {
+  const byId = {};
+  for (const p of roster || []) byId[p.id] = p;
+  return slots.map((slot, i) => {
+    const id = (starterIds || [])[i];
+    return { slot, player: id && id !== "0" ? byId[id] || null : null };
+  });
+}
+
+/* Player ids whose team's game has already started this week, so their spot
+ * in the lineup can no longer be changed. DEF is keyed by its own team code,
+ * same as every other player's `t`. No schedule means nothing is locked yet. */
+function lockedIds(roster, schedule, week) {
+  const locked = new Set();
+  if (!schedule) return locked;
+  const started = new Set();
+  for (const g of schedule) {
+    if (Number(g.week) !== Number(week)) continue;
+    if (g.status !== "in_game" && g.status !== "complete") continue;
+    if (g.home) started.add(g.home);
+    if (g.away) started.add(g.away);
+  }
+  for (const p of roster || []) {
+    if (p.t && started.has(p.t)) locked.add(p.id);
+  }
+  return locked;
+}
+
+/* Compare the lineup Sleeper has set (`current`) with the best lineup this
+ * roster supports (`best`) - both per-slot arrays shaped like
+ * currentLineup's output, one entry per slot, player possibly null.
+ *
+ * "ok" means the same set of starters; which flex slot a player landed in
+ * doesn't matter, so a pure reshuffle between equally-eligible flex spots
+ * reports no changes. Everything else is read off `current`: an empty slot
+ * or a starter who's OUT/bye is a problem with the lineup Sleeper has set,
+ * regardless of whether the set otherwise matches. */
+function lineupCheck(current, best) {
+  const sumPts = (arr) => arr.reduce(
+    (t, e) => t + (e.player && e.player.pts != null ? e.player.pts : 0), 0);
+  const idSet = (arr) => arr.map((e) => e.player && e.player.id).filter(Boolean).sort();
+
+  const empty = [];
+  const unavailableList = [];
+  current.forEach((e) => {
+    if (!e.player) empty.push(e.slot);
+    else if (unavailable(e.player)) unavailableList.push(e.player);
+  });
+
+  const ok = JSON.stringify(idSet(current)) === JSON.stringify(idSet(best));
+  const changes = [];
+  let gain = 0;
+  if (!ok) {
+    const n = Math.max(current.length, best.length);
+    for (let i = 0; i < n; i++) {
+      const c = current[i] || { slot: best[i] && best[i].slot, player: null };
+      const b = best[i] || { slot: c.slot, player: null };
+      const cid = c.player && c.player.id;
+      const bid = b.player && b.player.id;
+      if (cid === bid) continue;
+      const g = (b.player && b.player.pts != null ? b.player.pts : 0) -
+                (c.player && c.player.pts != null ? c.player.pts : 0);
+      changes.push({ slot: c.slot || b.slot, out: c.player || null, in: b.player || null, gain: g });
+    }
+    gain = sumPts(best) - sumPts(current);
+  }
+
+  return { ok, changes, gain, empty, unavailable: unavailableList };
 }
 
 /* --- trade research: shared with trades/engine.js ----------------------- */
@@ -300,7 +397,7 @@ if (typeof module !== "undefined") {
   module.exports = { norm, trimPlayers, statusFromRow, unavailable, benchReason,
                     scoringLabel, scorePlayer,
                     rankPositions, consensusRanks,
-                    pickLineup,
+                    pickLineup, currentLineup, lockedIds, lineupCheck,
                     posKey, flexKey, buildRoster, normStatus, tradeWindow,
                     SLOT_ELIGIBLE, OUT_STATUSES,
                     ORDINAL, EVEN_PCT, isHttps, SECTIONS, sectionHeading, TRADE_FIELDS };
@@ -440,7 +537,12 @@ if (typeof document !== "undefined") {
     let rankings = null;
     try { rankings = await json("data/rankings.json"); } catch (e) { rankings = null; }
 
-    DATA = { season, leagueSeason, week, players, projections, rankings,
+    // Who's locked in for the lineup check. Not fetching this shouldn't cost
+    // the rest of the page - it just means nothing reads as locked yet.
+    let schedule = null;
+    try { schedule = await json(`${SCHEDULE}/${season}`); } catch (e) { schedule = null; }
+
+    DATA = { season, leagueSeason, week, players, projections, rankings, schedule,
              playersFetched: fetched, liveStatuses };
     const injAge = (Date.now() - fetched) / 36e5;
     let rankSrc = "Ranks from Sleeper projections, scored by each league's settings. ";
@@ -498,14 +600,48 @@ if (typeof document !== "undefined") {
         const settings = lg.scoring_settings || {};
         const { ranks, source } = ranksFor(data, settings);
         const slots = (lg.roster_positions || []).filter((s) => !SKIP_SLOTS.has(s));
+        const roster = buildRoster(mine.players, data.players, ranks, data.week);
+
+        // Every roster's players, not just mine - free for waiver upgrades
+        // later, since the leagues call already fetched every roster.
+        const rostered = new Set();
+        for (const r of rosters) for (const pid of r.players || []) rostered.add(pid);
+
+        // What Sleeper actually has set for this week, compared with the best
+        // lineup this roster supports. A locked starter stays put; a locked
+        // bench player is dropped from consideration entirely, so the result
+        // is always a lineup that can still be set.
+        let current = null;
+        let check = null;
+        let best = null;
+        let locked = new Set();
+        let checkedAt = null;
+        try {
+          const matchups = await json(`${SLEEPER}/league/${lg.league_id}/matchups/${data.week}`);
+          const mm = (matchups || []).find((m) => m.roster_id === mine.roster_id);
+          if (mm) {
+            current = currentLineup(mm.starters, slots, roster);
+            locked = lockedIds(roster, data.schedule, data.week);
+            const startingIds = new Set(
+              current.map((e) => e.player && e.player.id).filter(Boolean));
+            const fixed = {};
+            current.forEach((e, i) => { if (e.player && locked.has(e.player.id)) fixed[i] = e.player; });
+            const pool = roster.filter((p) => !locked.has(p.id) || startingIds.has(p.id));
+            best = pickLineup(pool, slots, fixed);
+            check = lineupCheck(current, best.bySlot);
+            checkedAt = Date.now();
+          }
+        } catch (e) { current = null; check = null; best = null; locked = new Set(); checkedAt = null; }
+
         return {
           name: lg.name, id: lg.league_id, slots,
           label: scoringLabel(settings),
           superflex: slots.includes("SUPER_FLEX"),
           trades: tradeWindow(lg, data.week),
           teRec: settings.bonus_rec_te || 0,
-          roster: buildRoster(mine.players, data.players, ranks, data.week),
-          source,
+          roster, source, rostered,
+          current, check, best, locked, checkedAt,
+          sleeperUrl: `https://sleeper.com/leagues/${lg.league_id}/team`,
         };
       }));
 
@@ -526,17 +662,30 @@ if (typeof document !== "undefined") {
       setStatus(failed.length
         ? `Couldn't load ${failed.join(", ")} — showing the rest.` : "", failed.length > 0);
       renderPicker();
+      renderStrip();
       render(0);
     } catch (e) {
       setStatus(`Sleeper request failed: ${e.message}`, true);
     }
   }
 
+  /* A short suffix for the picker and the league strip: ✓ when Sleeper's
+   * lineup already matches, otherwise how many changes are pending, or ⚠
+   * when a starter needs attention (OUT/bye/empty) regardless of count. */
+  function checkSuffix(lg) {
+    if (!lg.check) return "";
+    if (lg.check.unavailable.length || lg.check.empty.length) return "⚠";
+    if (lg.check.ok) return "✓";
+    const n = lg.check.changes.length;
+    return `${n} change${n === 1 ? "" : "s"}`;
+  }
+
   function renderPicker() {
     const sel = $("#league");
     sel.innerHTML = "";
     LEAGUES.forEach((lg, i) => {
-      const o = el("option", null, `${lg.name} — ${lg.label}`);
+      const suffix = checkSuffix(lg);
+      const o = el("option", null, `${lg.name} — ${lg.label}${suffix ? ` · ${suffix}` : ""}`);
       o.value = i;
       sel.appendChild(o);
     });
@@ -544,11 +693,38 @@ if (typeof document !== "undefined") {
     sel.onchange = () => render(+sel.value);
   }
 
-  function playerRow(p, slot) {
-    const tr = el("tr");
+  function renderStrip() {
+    const strip = $("#strip");
+    if (!strip) return;
+    strip.innerHTML = "";
+    LEAGUES.forEach((lg, i) => {
+      const suffix = checkSuffix(lg);
+      const b = el("button", "ls-item", `${lg.name}${suffix ? ` ${suffix}` : ""}`);
+      b.type = "button";
+      b.dataset.idx = i;
+      b.addEventListener("click", () => render(i));
+      strip.appendChild(b);
+    });
+    strip.hidden = LEAGUES.length === 0;
+  }
+
+  function updateStripActive(idx) {
+    const strip = $("#strip");
+    if (!strip) return;
+    Array.from(strip.children).forEach((b, i) => b.classList.toggle("active", i === idx));
+  }
+
+  function playerRow(p, slot, flags) {
+    flags = flags || {};
+    const tr = el("tr", flags.chg ? "chg" : null);
     if (slot !== undefined) tr.appendChild(el("td", "slot", SLOT_LABEL[slot] || slot));
     const nameCell = el("td", "nm");
     nameCell.appendChild(document.createTextNode(p.n));
+    if (flags.locked) {
+      const lock = el("span", "lock", "🔒");
+      lock.title = "Locked - this player's game has started";
+      nameCell.appendChild(lock);
+    }
     if (p.onBye) nameCell.appendChild(el("span", "out", "BYE"));
     if (p.status) {
       nameCell.appendChild(el("span", OUT_STATUSES.has(p.status) ? "out" : "q", p.status));
@@ -577,6 +753,67 @@ if (typeof document !== "undefined") {
     rows.forEach((r) => t.appendChild(r));
     wrap.appendChild(t);
     return wrap;
+  }
+
+  function fmtClock(ts) {
+    return new Date(ts).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  }
+
+  function changeItem(c) {
+    const li = el("li");
+    const slotLabel = SLOT_LABEL[c.slot] || c.slot;
+    if (c.in) {
+      li.appendChild(document.createTextNode("Start "));
+      li.appendChild(el("b", null, c.in.n));
+      if (c.in.posRank != null) {
+        li.appendChild(el("span", "meta", ` ${c.in.p === "DEF" ? "DST" : c.in.p}${c.in.posRank}`));
+      }
+    }
+    if (c.out) {
+      li.appendChild(document.createTextNode(c.in ? " over " : "Bench "));
+      li.appendChild(el("b", null, c.out.n));
+    }
+    li.appendChild(document.createTextNode(` in ${slotLabel}`));
+    return li;
+  }
+
+  /* Above the starters table: what Sleeper has set vs. the best lineup this
+   * roster supports, plus anything wrong with what's actually set. */
+  function lineupBanner(lg) {
+    if (!lg.check) return null;
+    const box = el("div", "lineup-banner " + (lg.check.ok ? "ok" : "warn"));
+    if (lg.check.ok) {
+      box.appendChild(el("p", "lb-head", "✓ Your Sleeper lineup matches"));
+    } else {
+      const n = lg.check.changes.length;
+      const gain = Math.round(lg.check.gain * 10) / 10;
+      box.appendChild(el("p", "lb-head",
+        `Make ${n} change${n === 1 ? "" : "s"} (${gain > 0 ? "+" : ""}${gain} pts)`));
+      if (n) {
+        const ul = el("ul", "lb-changes");
+        lg.check.changes.forEach((c) => ul.appendChild(changeItem(c)));
+        box.appendChild(ul);
+      }
+    }
+    lg.check.unavailable.forEach((p) => {
+      box.appendChild(el("p", "note warn lb-note",
+        `${p.n} is in your lineup but ${benchReason(p) || "unavailable"} this week.`));
+    });
+    lg.check.empty.forEach((slot) => {
+      box.appendChild(el("p", "note warn lb-note",
+        `Your ${SLOT_LABEL[slot] || slot} slot is empty in Sleeper.`));
+    });
+    const foot = el("p", "lb-foot");
+    const link = el("a", "lb-open", "Open in Sleeper ↗");
+    link.href = lg.sleeperUrl;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    foot.appendChild(link);
+    if (lg.checkedAt) {
+      foot.appendChild(el("span", "meta", ` · Sleeper lineup as of ${fmtClock(lg.checkedAt)}`));
+    }
+    box.appendChild(foot);
+    return box;
   }
 
   // Which tab is showing, kept across league switches and re-renders so
@@ -634,6 +871,7 @@ if (typeof document !== "undefined") {
     if (!lg) return;
     if (CURRENT && CURRENT !== lg) closeTradeQuietly();
     CURRENT = lg;
+    updateStripActive(idx);
 
     const head = el("div", "lh");
     head.appendChild(el("h2", null, lg.name));
@@ -652,10 +890,23 @@ if (typeof document !== "undefined") {
       }
     }
 
-    const { starters, bench } = pickLineup(lg.roster, lg.slots);
+    // The best lineup this roster supports. Where a matchup was fetched, it's
+    // the lock-aware one computed alongside the lineup check, so what's shown
+    // here always matches what the banner is comparing against; otherwise
+    // fall back to picking from the whole roster, same as before.
+    const { starters } = lg.best || pickLineup(lg.roster, lg.slots);
+    const startingIds = new Set(starters.map((s) => s.player.id));
+    const bench = lg.roster.filter((p) => !startingIds.has(p.id));
+
+    const changedIn = new Set();
+    if (lg.check && !lg.check.ok) {
+      lg.check.changes.forEach((c) => { if (c.in) changedIn.add(c.in.id); });
+    }
 
     // --- lineup panel: start and sit, the week's actual decision -------
     const lineup = el("div", "panel");
+    const banner = lineupBanner(lg);
+    if (banner) lineup.appendChild(banner);
     if (starters.length) {
       const forced = starters.filter((s) => unavailable(s.player));
       if (forced.length) {
@@ -666,7 +917,8 @@ if (typeof document !== "undefined") {
           `${forced.length > 1 ? "They're" : "He's"} still listed below because ` +
           `the slot has to be filled — check waivers.`));
       }
-      lineup.appendChild(table(starters.map((s) => playerRow(s.player, s.slot))));
+      lineup.appendChild(table(starters.map((s) => playerRow(s.player, s.slot,
+        { chg: changedIn.has(s.player.id), locked: lg.locked.has(s.player.id) }))));
     } else {
       lineup.appendChild(el("p", "none", "Couldn't build a lineup from this roster."));
     }
