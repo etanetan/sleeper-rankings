@@ -149,7 +149,16 @@ function createLoader({ storage, onStatus } = {}) {
     let schedule = null;
     try { schedule = await fetchJson(`${SCHEDULE}/${season}`); } catch (e) { schedule = null; }
 
-    return { season, leagueSeason, week, players, projections, rankings, schedule,
+    // Trending adds, used to tag waiver-upgrade suggestions. Not league
+    // specific, so one call covers every league; a failure just means
+    // suggestions go untagged.
+    let trending = {};
+    try {
+      const rows = await fetchJson(`${SLEEPER}/players/nfl/trending/add?lookback_hours=24`);
+      for (const row of rows || []) trending[row.player_id] = row.count;
+    } catch (e) { trending = {}; }
+
+    return { season, leagueSeason, week, players, projections, rankings, schedule, trending,
              playersFetched: fetched, liveStatuses };
   }
 
@@ -210,13 +219,21 @@ function createLoader({ storage, onStatus } = {}) {
       }
     } catch (e) { current = null; check = null; best = null; locked = new Set(); checkedAt = null; }
 
+    // Free agents who'd beat your weakest starter at a slot they can fill,
+    // tagged with how many leagues have added them in the last day. Uses the
+    // same best lineup the check does when there is one, so "weakest
+    // starter" means the same thing in both places.
+    const pool = buildRoster(Object.keys(ranks), data.players, ranks, data.week);
+    const waivers = waiverUpgrades(pool, rostered, best || pickLineup(roster, slots))
+      .map((w) => ({ ...w, add: (data.trending && data.trending[w.id]) || 0 }));
+
     return {
       name: lg.name, id: lg.league_id, slots,
       label: scoringLabel(settings),
       superflex: slots.includes("SUPER_FLEX"),
       trades: tradeWindow(lg, data.week),
       teRec: settings.bonus_rec_te || 0,
-      roster, source, rostered,
+      roster, source, rostered, waivers,
       current, check, best, locked, checkedAt,
       sleeperUrl: `https://sleeper.com/leagues/${lg.league_id}/team`,
     };

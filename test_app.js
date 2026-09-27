@@ -387,5 +387,51 @@ const rOut = app.lineupCheck(outCur, outCur);
 check("an OUT starter is flagged even when the set already matches",
       rOut.unavailable.map((p) => p.n), ["Hurt Starter"]);
 
+/* --- waiverUpgrades: free agents who'd beat your weakest starter -------- */
+const wBest = { starters: [
+  { slot: "RB", player: PL("o1", "Owned RB", "RB", 8) },
+  { slot: "WR", player: PL("o2", "Owned WR", "WR", 15) },
+  { slot: "FLEX", player: PL("o3", "Owned Flex TE", "TE", 10) },
+] };
+const wRostered = new Set(["o1", "o2", "o3"]);
+
+const faRB = PL("fa1", "FA RB", "RB", 12);          // beats RB slot's 8, not FLEX's 10
+const faWR = PL("fa2", "FA WR", "WR", 11);           // loses to WR slot's 15, beats FLEX's 10
+const faWRlow = PL("fa3", "FA WR low", "WR", 9);     // loses to both eligible slots
+const faTElow = PL("fa4", "FA TE low", "TE", 9);     // only eligible for FLEX (10); loses
+const faTEhigh = PL("fa5", "FA TE high", "TE", 13);  // only eligible for FLEX (10); beats it
+const faOut = PL("fa6", "FA Hurt RB", "RB", 99, "OUT");
+const faNoPts = { ...PL("fa7", "FA No Projection", "RB", null) };
+const faRosteredDup = PL("o1", "Somehow Also FA", "RB", 99);   // same id as a starter - excluded
+
+const pool = [faRB, faWR, faWRlow, faTElow, faTEhigh, faOut, faNoPts, faRosteredDup];
+const up = app.waiverUpgrades(pool, wRostered, wBest);
+const byName = Object.fromEntries(up.map((w) => [w.n, w]));
+
+check("a free agent beating the weakest eligible starter is suggested", "FA RB" in byName, true);
+check("gain is measured against the weakest eligible slot, not any slot",
+      byName["FA RB"].gain, 12 - 8);
+check("the weakest starter is attached for display", byName["FA RB"].weakest.n, "Owned RB");
+check("cross-position eligibility uses the weakest of all slots that fit",
+      byName["FA WR"].gain, 11 - 10);
+check("a free agent that loses at every eligible slot is left out", "FA WR low" in byName, false);
+check("no eligible slot at all (no bare TE slot here) means no suggestion",
+      "FA TE low" in byName, false);
+check("a free agent with no eligible slot is never force-matched to one",
+      "FA TE high" in byName, true);
+check("an OUT free agent is never suggested regardless of gain", "FA Hurt RB" in byName, false);
+check("a free agent with no projection is never suggested", "FA No Projection" in byName, false);
+check("a rostered player id is excluded even with a different name", "Somehow Also FA" in byName, false);
+
+const manyFAs = [];
+for (let i = 0; i < 8; i++) manyFAs.push(PL(`m${i}`, `Many ${i}`, "RB", 8 + i));
+check("only the top 5 by gain are kept", app.waiverUpgrades(manyFAs, wRostered, wBest).length, 5);
+check("kept ones are sorted by descending gain",
+      app.waiverUpgrades(manyFAs, wRostered, wBest).map((w) => w.n),
+      ["Many 7", "Many 6", "Many 5", "Many 4", "Many 3"]);
+
+check("no eligible starters at all means nothing is suggested",
+      app.waiverUpgrades([faRB], wRostered, { starters: [] }), []);
+
 console.log(`\n${results.filter(Boolean).length}/${results.length} passed`);
 process.exit(results.every(Boolean) ? 0 : 1);

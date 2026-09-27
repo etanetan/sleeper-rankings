@@ -163,7 +163,11 @@ if (typeof document !== "undefined") {
       const b = el("button", "ls-item", `${lg.name}${suffix ? ` ${suffix}` : ""}`);
       b.type = "button";
       b.dataset.idx = i;
-      b.addEventListener("click", () => render(i));
+      b.addEventListener("click", () => {
+        const sel = $("#league");
+        if (sel) sel.value = i;
+        render(i);
+      });
       strip.appendChild(b);
     });
     strip.hidden = LEAGUES.length === 0;
@@ -214,6 +218,23 @@ if (typeof document !== "undefined") {
     rows.forEach((r) => t.appendChild(r));
     wrap.appendChild(t);
     return wrap;
+  }
+
+  function waiverRow(w) {
+    const tr = el("tr");
+    const nameCell = el("td", "nm");
+    nameCell.appendChild(document.createTextNode(w.n));
+    if (w.status) nameCell.appendChild(el("span", OUT_STATUSES.has(w.status) ? "out" : "q", w.status));
+    nameCell.appendChild(el("span", "meta", ` ${w.t || "FA"} · over ${w.weakest.n}`));
+    if (w.add) nameCell.appendChild(el("span", "meta", ` · ${num(w.add)} adds today`));
+    tr.appendChild(nameCell);
+    tr.appendChild(el("td", "pos", w.p === "DEF" ? "DST" : w.p));
+    tr.appendChild(el("td", "pts", `+${w.gain.toFixed(1)}`));
+    const rk = el("td", w.posRank != null ? "rk" : "rk meta");
+    if (w.posRank != null) rk.appendChild(el("b", null, `${w.p === "DEF" ? "DST" : w.p}${w.posRank}`));
+    else rk.textContent = "—";
+    tr.appendChild(rk);
+    return tr;
   }
 
   function fmtClock(ts) {
@@ -280,9 +301,10 @@ if (typeof document !== "undefined") {
   // Which tab is showing, kept across league switches and re-renders so
   // changing leagues doesn't bounce you back to the lineup.
   let ACTIVE_TAB = "lineup";
+  const TAB_NAMES = new Set(["lineup", "positions", "waivers", "trades"]);
   try {
     const saved = localStorage.getItem("activeTab");
-    if (saved === "lineup" || saved === "positions" || saved === "trades") ACTIVE_TAB = saved;
+    if (TAB_NAMES.has(saved)) ACTIVE_TAB = saved;
   } catch (e) { /* private mode */ }
 
   function tabBar(panels) {
@@ -301,7 +323,9 @@ if (typeof document !== "undefined") {
       for (const key in panels) panels[key].hidden = key !== name;
     };
 
-    [["lineup", "Lineup"], ["positions", "By position"], ["trades", "Trades"]].forEach(([name, label]) => {
+    const tabs = [["lineup", "Lineup"], ["positions", "By position"],
+                  ["waivers", "Waivers"], ["trades", "Trades"]];
+    tabs.forEach(([name, label]) => {
       const b = el("button", "tab", label);
       b.type = "button";
       b.dataset.tab = name;
@@ -410,14 +434,25 @@ if (typeof document !== "undefined") {
       positions.appendChild(table(grp.map((p) => playerRow(p))));
     }
 
+    // --- waivers panel: free agents who'd beat your weakest starter -----
+    const waivers = el("div", "panel");
+    if (lg.waivers && lg.waivers.length) {
+      waivers.appendChild(el("p", "tr-intro",
+        "Free agents who'd outscore your weakest starter at a position they can fill, by the gain."));
+      waivers.appendChild(table(lg.waivers.map((w) => waiverRow(w))));
+    } else {
+      waivers.appendChild(el("p", "none", "No waiver upgrades found - your bench already covers your weak spots."));
+    }
+
     // --- trades panel: filled in when the research file arrives
     const trades = el("div", "panel");
     TRADES_PANEL = trades;
     loadTrades(lg, trades);
 
-    out.appendChild(tabBar({ lineup, positions, trades }));
+    out.appendChild(tabBar({ lineup, positions, waivers, trades }));
     out.appendChild(lineup);
     out.appendChild(positions);
+    out.appendChild(waivers);
     out.appendChild(trades);
   }
 

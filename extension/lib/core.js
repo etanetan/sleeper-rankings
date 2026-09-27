@@ -365,6 +365,42 @@ function lineupCheck(current, best) {
   return { ok, changes, gain, empty, unavailable: unavailableList };
 }
 
+/* --- waiver upgrades: free agents who'd beat your weakest starter ------- */
+
+/* Free agents (in `pool` but not `rostered`) who'd outscore your weakest
+ * current starter at a slot they're eligible for - the standard "who should
+ * I pick up" check. `pool` is every ranked player under this league's
+ * scoring (buildRoster over every id in `ranks`, roster or not); `best` is
+ * pickLineup's result. Sorted by gain, top 5. */
+function waiverUpgrades(pool, rostered, best) {
+  const startersBySlot = {};
+  for (const s of (best && best.starters) || []) {
+    (startersBySlot[s.slot] = startersBySlot[s.slot] || []).push(s.player);
+  }
+
+  const out = [];
+  for (const p of pool) {
+    if (rostered.has(p.id) || p.pts == null || unavailable(p)) continue;
+
+    let weakest = null;
+    let weakestPts = Infinity;
+    for (const slot in SLOT_ELIGIBLE) {
+      if (!SLOT_ELIGIBLE[slot].includes(p.p)) continue;
+      for (const starter of startersBySlot[slot] || []) {
+        const sp = starter.pts != null ? starter.pts : 0;
+        if (sp < weakestPts) { weakest = starter; weakestPts = sp; }
+      }
+    }
+    if (!weakest) continue;
+
+    const gain = p.pts - weakestPts;
+    if (gain > 0) out.push({ ...p, gain, weakest });
+  }
+
+  out.sort((a, b) => b.gain - a.gain);
+  return out.slice(0, 5);
+}
+
 /* --- trade research: shared with trades/engine.js ----------------------- */
 
 const ORDINAL = ["", "1st", "2nd", "3rd", "4th", "5th", "6th"];
@@ -396,7 +432,7 @@ if (typeof module !== "undefined") {
   module.exports = { norm, trimPlayers, statusFromRow, unavailable, benchReason,
                     scoringLabel, scorePlayer,
                     rankPositions, consensusRanks,
-                    pickLineup, currentLineup, lockedIds, lineupCheck,
+                    pickLineup, currentLineup, lockedIds, lineupCheck, waiverUpgrades,
                     posKey, flexKey, buildRoster, normStatus, tradeWindow,
                     SLOT_ELIGIBLE, SLOT_LABEL, SKIP_SLOTS, POS_ORDER, OUT_STATUSES,
                     ORDINAL, EVEN_PCT, isHttps, SECTIONS, sectionHeading, TRADE_FIELDS };
