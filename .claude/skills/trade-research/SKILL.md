@@ -177,7 +177,8 @@ angle holds up. Then pick **at least 5 and at most 8** per league, across
 different partners where possible, leading with the strongest angles. If
 fewer than 5 candidates survive, re-run step 5 with more buy targets before
 settling; publish fewer only with a `short_reason`, which is shown on the
-page.
+page. That applies down to zero: if nothing fair survives, publish no trades
+with a `short_reason` explaining why, rather than leaving the league silent.
 
 **Each trade stands alone.** Judge every one against the roster as it is
 today. Never assume another suggested trade happened.

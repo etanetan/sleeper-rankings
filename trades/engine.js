@@ -22,6 +22,7 @@
 const fs = require("fs");
 const path = require("path");
 const { SLOT_ELIGIBLE, tradeWindow, normStatus, scorePlayer } = require("../app.js");
+const { MIN_TRADES, markRunning, markFailed, reasonFor, pickNext } = require("../research.js");
 
 const SLEEPER = "https://api.sleeper.app/v1";
 const STATS = "https://api.sleeper.com/stats/nfl";
@@ -64,7 +65,6 @@ const TAG_MIN_VALUE = 300;
 // ranking, and how much buying a player at his peak costs.
 const ANGLE_BONUS = 0.03;
 const AVOID_PENALTY = 0.03;
-const MIN_TRADES = 5;
 const MAX_TRADES = 8;
 
 // Draft picks, in dynasty leagues where FantasyCalc prices them. Each side
@@ -758,8 +758,8 @@ function finalize(work, research, now) {
   // Ethan wants at least five to choose from. Fewer only when there aren't
   // five fair candidates, or with a stated reason he'll see on the page.
   const need = Math.min(MIN_TRADES, (work.candidates || []).length);
-  const shortReason = research && (research.short_reason || research.none_reason);
-  if (list.length < need && !shortReason) {
+  const reasonGiven = research && (research.short_reason || research.none_reason);
+  if (list.length < need && !reasonGiven) {
     errors.push(`${list.length} trade(s); publish at least ${need} ` +
       `(there are ${(work.candidates || []).length} candidates), or give a short_reason.`);
   }
@@ -829,8 +829,7 @@ function finalize(work, research, now) {
       values_source: work.values_source,
       me: { name: work.me.name, record: work.me.record, thin: work.me.thin, deep: work.me.deep },
       trades,
-      none_reason: trades.length ? null : (research && research.none_reason) || null,
-      short_reason: trades.length && trades.length < MIN_TRADES ? shortReason || null : null,
+      short_reason: reasonFor(research, trades.length),
       // A second agent audited the research before it was published.
       review: research && research.review && research.review.checked
         ? { checked: true, notes: (research.review.notes || []).filter((n) => typeof n === "string").slice(0, 20) }
@@ -1093,23 +1092,6 @@ function cmdBrief(a) {
   console.log(brief(work));
 }
 
-/* Which league a scheduled run should research: the open league whose
- * published research is oldest, skipping any another run is working on.
- * Runs are spread through the day so each fits a usage window; once every
- * league is fresh (under 20 hours old) there's nothing to do. */
-function pickNext(open, files, now) {
-  const t = now.getTime();
-  let best = null;
-  for (const lg of open) {
-    const f = files[lg.league_id] || {};
-    if (f.status === "running" && f.started && t - Date.parse(f.started) < 3 * 3600e3) continue;
-    const age = f.generated ? t - Date.parse(f.generated) : Infinity;
-    if (age < 20 * 3600e3) continue;
-    if (!best || age > best.age) best = { league_id: lg.league_id, name: lg.name, age };
-  }
-  return best;
-}
-
 async function cmdNext(a) {
   if (!a.data) throw new Error("--data is required");
   const user = a.user || "etanetan";
@@ -1130,23 +1112,19 @@ async function cmdNext(a) {
 /* Mark a league as being researched, keeping last week's trades visible. */
 function cmdRunning(a) {
   const file = dataFile(a);
-  const prev = readJSON(file) || { version: 1, league_id: a.league, trades: [] };
-  prev.status = "running";
-  prev.started = new Date().toISOString();
-  delete prev.error;
+  const now = process.env.TRADES_NOW ? new Date(process.env.TRADES_NOW) : new Date();
+  const next = markRunning(readJSON(file), a.league, now);
   fs.mkdirSync(a.data, { recursive: true });
-  fs.writeFileSync(file, JSON.stringify(prev, null, 2));
+  fs.writeFileSync(file, JSON.stringify(next, null, 2));
   console.log(`${file}: running`);
 }
 
 function cmdFailed(a) {
   const file = dataFile(a);
-  const prev = readJSON(file) || { version: 1, league_id: a.league, trades: [] };
-  prev.status = "ready";
-  prev.error = { at: new Date().toISOString(), reason: a.reason || "Research didn't finish." };
-  delete prev.started;
-  fs.writeFileSync(file, JSON.stringify(prev, null, 2));
-  console.log(`${file}: failed (${prev.error.reason})`);
+  const now = process.env.TRADES_NOW ? new Date(process.env.TRADES_NOW) : new Date();
+  const next = markFailed(readJSON(file), a.league, a.reason, now);
+  fs.writeFileSync(file, JSON.stringify(next, null, 2));
+  console.log(`${file}: failed (${next.error.reason})`);
 }
 
 function cmdFinalize(a) {

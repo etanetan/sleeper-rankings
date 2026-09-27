@@ -698,7 +698,6 @@ if (typeof document !== "undefined") {
     "https://raw.githubusercontent.com/etanetan/sleeper-rankings/refs/heads/claude/trade-data";
   const ROUTINES_URL = "https://claude.ai/code/routines";
   const ROUTINE_NAME = "Sleeper trade research";
-  const RUN_STALE_MS = 3 * 3600 * 1000;
   const _trades = new Map();   // league id -> { at, data }
   let CURRENT = null;
   let TRADES_PANEL = null;
@@ -840,11 +839,11 @@ if (typeof document !== "undefined") {
   }
 
   function tradeList(lg, panel, data) {
+    const v = tradesView(data, Date.now(), readRequests()[lg.id]);
     const box = el("div");
     const bar = el("div", "tr-bar");
-    bar.appendChild(el("span", "meta", data && data.generated
-      ? `Researched ${fmtWhen(data.generated)} · week ${data.week}` +
-        (data.review && data.review.checked ? " · double-checked" : "")
+    bar.appendChild(el("span", "meta", v.generated
+      ? `Researched ${fmtWhen(v.generated)} · week ${v.week}` + (v.reviewed ? " · double-checked" : "")
       : "No research for this league yet"));
     const btn = el("button", "ghost small", "Research new trades");
     btn.type = "button";
@@ -860,48 +859,39 @@ if (typeof document !== "undefined") {
       box.appendChild(el("p", "note warn", `${lg.trades.reason} No new trade ideas for this league.`));
     }
 
-    const started = data && data.status === "running" && data.started ? new Date(data.started) : null;
-    if (started && Date.now() - started.getTime() < RUN_STALE_MS) {
-      const n = el("p", "note", `Researching new trades now (started ${fmtWhen(data.started)}). ` +
+    if (v.running === "fresh") {
+      const n = el("p", "note", `Researching new trades now (started ${fmtWhen(v.started)}). ` +
         `Check back in 15–30 minutes. `);
       const again = el("a", null, "Check again");
       again.href = "#";
       again.addEventListener("click", (e) => { e.preventDefault(); loadTrades(lg, panel, true); });
       n.appendChild(again);
       box.appendChild(n);
-    } else if (started) {
-      box.appendChild(el("p", "note warn", `The research run started ${fmtWhen(data.started)} ` +
+    } else if (v.running === "stale") {
+      box.appendChild(el("p", "note warn", `The research run started ${fmtWhen(v.started)} ` +
         `never finished. Tap Research new trades to try again.`));
-    } else {
-      const asked = readRequests()[lg.id];
-      const done = data && data.generated ? new Date(data.generated).getTime() : 0;
-      if (asked && asked > done && Date.now() - asked < RUN_STALE_MS) {
-        box.appendChild(el("p", "note", `You asked for new research at ` +
-          `${fmtWhen(new Date(asked).toISOString())}. It shows up here once the run starts.`));
-      }
+    } else if (v.requested) {
+      box.appendChild(el("p", "note", `You asked for new research at ` +
+        `${fmtWhen(new Date(v.requested).toISOString())}. It shows up here once the run starts.`));
     }
-    if (data && data.error) {
-      box.appendChild(el("p", "note warn", `The last run failed (${fmtWhen(data.error.at)}): ` +
-        `${data.error.reason} Showing the trades from before.`));
+    if (v.error) {
+      box.appendChild(el("p", "note warn", `The last run failed (${fmtWhen(v.error.at)}): ` +
+        `${v.error.reason} Showing the trades from before.`));
     }
 
-    const trades = (data && data.trades) || [];
-    if (trades.length) {
+    if (v.trades.length) {
       box.appendChild(el("p", "tr-intro", "Sell high: your players scoring above expectations. " +
         "Buy low: theirs scoring below it while still getting the ball. " +
         "Your slumping players are never offered."));
     }
-    if (trades.length && data.short_reason) box.appendChild(el("p", "note", data.short_reason));
-    if (!trades.length) {
-      if (data && data.none_reason) box.appendChild(el("p", "note", data.none_reason));
-      else if (!data) {
-        box.appendChild(el("p", "none", lg.trades.open
-          ? "Trade ideas are researched every Tuesday. Want some now? Tap Research new trades."
-          : "Nothing to show."));
-      }
+    if (v.reason) box.appendChild(el("p", "note", v.reason));
+    if (v.empty && !v.reason && !data) {
+      box.appendChild(el("p", "none", lg.trades.open
+        ? "Trade ideas are researched every Tuesday. Want some now? Tap Research new trades."
+        : "Nothing to show."));
     }
-    trades.forEach((t) => box.appendChild(tradeCard(t, () => openTrade(t.id))));
-    if (trades.length) box.appendChild(credit(data));
+    v.trades.forEach((t) => box.appendChild(tradeCard(t, () => openTrade(t.id))));
+    if (v.trades.length) box.appendChild(credit(data));
     return box;
   }
 
