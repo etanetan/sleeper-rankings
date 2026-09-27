@@ -463,5 +463,102 @@ check("trailing means below even odds", app.winProb(90, 110) < 0.5, true);
 check("win probability is bounded above by 1", app.winProb(500, 0) <= 1, true);
 check("win probability is bounded below by 0", app.winProb(0, 500) >= 0, true);
 
+/* --- coming up: byeWeeks, upcomingHoles (Phase 5) ----------------------- */
+{
+  // 4 teams, 5 scheduled weeks; T3 and T4 share a bye in week 7 (only one
+  // game that week, T1 @ T2), everyone else plays every week.
+  const schedule = [
+    { week: 5, home: "T1", away: "T2" }, { week: 5, home: "T3", away: "T4" },
+    { week: 6, home: "T1", away: "T3" }, { week: 6, home: "T2", away: "T4" },
+    { week: 7, home: "T1", away: "T2" },
+    { week: 8, home: "T1", away: "T4" }, { week: 8, home: "T2", away: "T3" },
+    { week: 9, home: "T1", away: "T3" }, { week: 9, home: "T2", away: "T4" },
+  ];
+  const byes = app.byeWeeks(schedule);
+  check("a team missing from a week it should've played is on bye that week",
+        Array.from(byes.T3 || []).sort(), [7]);
+  check("both teams sharing a bye week are flagged", Array.from(byes.T4 || []).sort(), [7]);
+  check("a team playing every scheduled week has no byes", Array.from(byes.T1 || []).sort(), []);
+  check("an empty schedule returns no byes at all", app.byeWeeks([]), {});
+  check("a missing schedule returns no byes at all", app.byeWeeks(null), {});
+}
+{
+  const roster = [
+    { id: "q1", n: "QB1", p: "QB", t: "T1", status: "", pts: 20, posRank: 1 },
+    { id: "r1", n: "RB1", p: "RB", t: "T1", status: "", pts: 15, posRank: 1 },
+    { id: "w1", n: "WR1", p: "WR", t: "T1", status: "", pts: 12, posRank: 1 },
+    { id: "t1", n: "TE1", p: "TE", t: "T4", status: "", pts: 8, posRank: 1 },
+  ];
+  const slots = ["QB", "RB", "WR", "TE"];
+  const holes = app.upcomingHoles(roster, slots, 5, { T4: new Set([7]) }, 4);
+  check("only the TE's bye week is reported when nothing else is wrong",
+        holes.map((h) => h.week), [7]);
+  check("the empty TE slot is named as the hole", holes[0].holes, ["TE"]);
+  check("the bye'd starter is listed", holes[0].byes.map((p) => p.id), ["t1"]);
+}
+{
+  // The only RB is on IR, with no bench RB - a real hole in every future
+  // week, but only if the IR player is actually excluded rather than
+  // force-started the way pickLineup would for *this* week.
+  const roster = [
+    { id: "q1", n: "QB1", p: "QB", t: "T1", status: "", pts: 20, posRank: 1 },
+    { id: "r1", n: "RB1", p: "RB", t: "T1", status: "IR", pts: 15, posRank: 1 },
+  ];
+  const holes = app.upcomingHoles(roster, ["QB", "RB"], 5, {}, 2);
+  check("an IR player is never counted as available in a future week",
+        holes.map((h) => h.week), [6, 7]);
+  check("the RB slot is a hole every week since the only RB is on IR",
+        holes.every((h) => h.holes.includes("RB")), true);
+}
+{
+  // The only RB is merely Questionable - a this-week-only call that says
+  // nothing about 2 weeks from now, so it shouldn't disqualify them.
+  const roster = [
+    { id: "q1", n: "QB1", p: "QB", t: "T1", status: "", pts: 20, posRank: 1 },
+    { id: "r1", n: "RB1", p: "RB", t: "T1", status: "Q", pts: 15, posRank: 1 },
+  ];
+  check("a questionable player still counts as available weeks out",
+        app.upcomingHoles(roster, ["QB", "RB"], 5, {}, 2), []);
+}
+{
+  // Both starters share a team and a bye week, but each has a backup on a
+  // different team - no hole, yet still worth a heads up since half the
+  // lineup turns over the same week.
+  const roster = [
+    { id: "q1", n: "QB1", p: "QB", t: "T1", status: "", pts: 20, posRank: 1 },
+    { id: "q2", n: "QB2", p: "QB", t: "T2", status: "", pts: 10, posRank: 2 },
+    { id: "r1", n: "RB1", p: "RB", t: "T1", status: "", pts: 15, posRank: 1 },
+    { id: "r2", n: "RB2", p: "RB", t: "T3", status: "", pts: 9, posRank: 2 },
+  ];
+  const holes = app.upcomingHoles(roster, ["QB", "RB"], 5, { T1: new Set([9]) }, 4);
+  check("2+ starters on bye is reported even with no hole",
+        holes.map((h) => h.week), [9]);
+  check("no hole, since the backups fill every slot", holes[0].holes, []);
+  check("both bye'd starters are listed", holes[0].byes.map((p) => p.id).sort(), ["q1", "r1"]);
+}
+{
+  const holes = app.upcomingHoles([], ["QB"], 1, {});
+  check("default horizon (4) covers week+1..week+4", holes.map((h) => h.week), [2, 3, 4, 5]);
+  check("an empty roster is a hole every one of those weeks",
+        holes.every((h) => h.holes.includes("QB")), true);
+}
+{
+  // No schedule reached at all (byes = {}) - falls back to the player
+  // dump's own `b` field instead of silently reporting no upcoming byes.
+  const roster = [
+    { id: "q1", n: "QB1", p: "QB", t: "T1", status: "", pts: 20, posRank: 1, b: 8 },
+  ];
+  const holes = app.upcomingHoles(roster, ["QB"], 5, {}, 4);
+  check("falls back to the player's own bye-week field when byes is empty",
+        holes.map((h) => h.week), [8]);
+  check("that week's QB slot is a hole via the b-field fallback",
+        holes[0].holes, ["QB"]);
+}
+check("a week with neither a hole nor 2+ byes is left out entirely",
+      app.upcomingHoles(
+        [{ id: "q1", n: "QB1", p: "QB", t: "T1", status: "", pts: 20, posRank: 1 }],
+        ["QB"], 5, {}, 1),
+      []);
+
 console.log(`\n${results.filter(Boolean).length}/${results.length} passed`);
 process.exit(results.every(Boolean) ? 0 : 1);

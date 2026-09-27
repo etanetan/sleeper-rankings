@@ -59,6 +59,11 @@ select{flex:1 1 auto;min-width:0;padding:9px 12px;background:var(--card);color:v
 .lb-foot{margin:10px 0 0;font-size:12.5px}
 a.lb-open{font-weight:600}
 
+.upcoming-card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;
+  margin:14px 0 0;background:var(--card)}
+.upcoming-card h4{margin:0 0 4px;font-size:13px}
+.upcoming-card .meta{margin:0;font-size:13px}
+
 .tabs{display:flex;gap:4px;margin:14px 0 12px;background:var(--chip);
   padding:4px;border-radius:10px}
 .tab{flex:1;background:transparent;color:var(--dim);border:none;border-radius:7px;

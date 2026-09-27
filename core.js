@@ -323,6 +323,72 @@ function lockedIds(roster, schedule, week) {
   return locked;
 }
 
+/* Bye weeks per team, read off the full-season schedule rather than the
+ * player dump's `b` field (sometimes null mid-season): for every week that
+ * has games at all, a team missing from that week's games but present in
+ * some other week is on bye then. Returns `{ teamAbbr: Set(weekNumbers) }`.
+ * A missing/empty schedule returns `{}` - callers fall back to `b` then. */
+function byeWeeks(schedule) {
+  const byes = {};
+  if (!schedule || !schedule.length) return byes;
+
+  const teamsByWeek = {};   // week -> Set(team)
+  const allTeams = new Set();
+  for (const g of schedule) {
+    const week = Number(g.week);
+    if (!Number.isFinite(week)) continue;
+    if (!teamsByWeek[week]) teamsByWeek[week] = new Set();
+    if (g.home) { teamsByWeek[week].add(g.home); allTeams.add(g.home); }
+    if (g.away) { teamsByWeek[week].add(g.away); allTeams.add(g.away); }
+  }
+  for (const team of allTeams) byes[team] = new Set();
+  for (const week in teamsByWeek) {
+    const playing = teamsByWeek[week];
+    for (const team of allTeams) {
+      if (!playing.has(team)) byes[team].add(Number(week));
+    }
+  }
+  return byes;
+}
+
+// Long-term-out statuses worth planning weeks ahead around - unlike
+// Q/D/OUT (this week's news only, and often stale a month out), a player
+// tagged one of these isn't coming back on any particular schedule.
+const LONG_TERM_OUT = new Set(["IR", "PUP", "SUS", "NA"]);
+
+/* Bye and long-term-injury holes over the next few weeks, so a gap shows up
+ * with enough notice to grab a replacement instead of discovering it on
+ * Saturday. For each week `w` in `week+1 .. week+horizon`: a player is
+ * available in `w` unless their team's on bye then (`byes`) or they're
+ * long-term out now (IR/PUP/SUS/NA - not a this-week-only Q/D/OUT, which
+ * says nothing about a month from now). Runs pickLineup on whoever's left;
+ * any slot pickLineup can't fill (`bySlot` entry with a null player) is a
+ * hole. Separately flags this week's best-lineup starters who are on bye
+ * in `w`, since 2+ starters gone the same week is worth a heads up even
+ * when the bench covers every slot. Only weeks with a hole or 2+ bye
+ * starters are returned: `[{ week, holes: ["TE"], byes: [player, …] }]`. */
+function upcomingHoles(roster, slots, week, byes, horizon) {
+  horizon = horizon == null ? 4 : horizon;
+  const out = [];
+  const bestNow = pickLineup(roster, slots).starters;
+  // A team-level bye from the schedule (`byes`) when there is one; a
+  // player's own `b` field (Sleeper's player dump, sometimes null
+  // mid-season - see byeWeeks above) as a fallback, so a missing or
+  // unreachable schedule doesn't just silently report no upcoming byes.
+  const onByeIn = (p, w) =>
+    (byes[p.t] && byes[p.t].has(w)) || (p.b != null && Number(p.b) === w);
+  for (let w = week + 1; w <= week + horizon; w++) {
+    const available = (roster || []).filter((p) => !LONG_TERM_OUT.has(p.status) && !onByeIn(p, w));
+    const bySlot = pickLineup(available, slots).bySlot;
+    const holes = bySlot.filter((e) => !e.player).map((e) => e.slot);
+    const byeStarters = bestNow.filter((s) => onByeIn(s.player, w)).map((s) => s.player);
+    if (holes.length || byeStarters.length >= 2) {
+      out.push({ week: w, holes, byes: byeStarters });
+    }
+  }
+  return out;
+}
+
 /* Sum of `player.pts` over a currentLineup-shaped array (one entry per
  * slot, `{slot, player}`, player possibly null): an empty slot or a null
  * projection counts 0. The lineup's total projected points. */
@@ -472,7 +538,7 @@ if (typeof module !== "undefined") {
                     scoringLabel, scorePlayer,
                     rankPositions, consensusRanks,
                     pickLineup, currentLineup, lockedIds, lineupCheck, waiverUpgrades,
-                    projectedTotal, winProb,
+                    projectedTotal, winProb, byeWeeks, upcomingHoles,
                     posKey, flexKey, buildRoster, normStatus, tradeWindow,
                     SLOT_ELIGIBLE, SLOT_LABEL, SKIP_SLOTS, POS_ORDER, OUT_STATUSES,
                     ORDINAL, EVEN_PCT, isHttps, SECTIONS, sectionHeading, TRADE_FIELDS };

@@ -288,13 +288,19 @@ function createLoader({ storage, onStatus } = {}) {
     const waivers = waiverUpgrades(pool, rostered, best || pickLineup(roster, slots))
       .map((w) => ({ ...w, add: (data.trending && data.trending[w.id]) || 0 }));
 
+    // Bye/injury holes over the next few weeks - a schedule failure (same
+    // as the matchup fetch above) just means byeWeeks() falls back to
+    // upcomingHoles' own per-player `b`-field fallback rather than costing
+    // the rest of the view.
+    const upcoming = upcomingHoles(roster, slots, data.week, byeWeeks(data.schedule));
+
     return {
       name: lg.name, id: lg.league_id, slots,
       label: scoringLabel(settings),
       superflex: slots.includes("SUPER_FLEX"),
       trades: tradeWindow(lg, data.week),
       teRec: settings.bonus_rec_te || 0,
-      roster, source, rostered, waivers, names,
+      roster, source, rostered, waivers, names, upcoming,
       // Every ranked player in the league, not just this user's roster - the
       // extension's content script uses this to badge free agents on the
       // Players page and opponents' rosters, not only the user's own team.

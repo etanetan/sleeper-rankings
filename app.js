@@ -247,13 +247,31 @@ if (typeof document !== "undefined") {
     return wrap;
   }
 
-  function waiverRow(w) {
+  /* The nearest upcoming week where this waiver pickup's position could
+   * fill a hole, if any - the first week in `upcoming` (already ordered
+   * soonest-first) whose empty slots include one this position is eligible
+   * for. Not tied to *which* current starter caused that hole; a position
+   * match is enough to be worth flagging. */
+  function fillsUpcoming(w, upcoming) {
+    for (const u of upcoming || []) {
+      const slot = u.holes.find((s) => (SLOT_ELIGIBLE[s] || []).includes(w.p));
+      if (slot) return { week: u.week, slot };
+    }
+    return null;
+  }
+
+  function waiverRow(w, upcoming) {
     const tr = el("tr");
     const nameCell = el("td", "nm");
     nameCell.appendChild(document.createTextNode(w.n));
     if (w.status) nameCell.appendChild(el("span", OUT_STATUSES.has(w.status) ? "out" : "q", w.status));
     nameCell.appendChild(el("span", "meta", ` ${w.t || "FA"} · over ${w.weakest.n}`));
     if (w.add) nameCell.appendChild(el("span", "meta", ` · ${num(w.add)} adds today`));
+    const fills = fillsUpcoming(w, upcoming);
+    if (fills) {
+      nameCell.appendChild(el("span", "chip fmt",
+        `fills Wk ${fills.week} ${SLOT_LABEL[fills.slot] || fills.slot}`));
+    }
     tr.appendChild(nameCell);
     tr.appendChild(el("td", "pos", w.p === "DEF" ? "DST" : w.p));
     tr.appendChild(el("td", "pts", `+${w.gain.toFixed(1)}`));
@@ -352,6 +370,28 @@ if (typeof document !== "undefined") {
     }
 
     return panel;
+  }
+
+  /* One upcomingHoles() entry as a line of text, e.g. "Wk 7: no TE (Kittle
+   * on bye)" when there's a real hole, or "Wk 9: 3 starters on bye" when
+   * the bench covers every slot but it's still worth a heads up. */
+  function upcomingLine(u) {
+    if (u.holes.length) {
+      const who = u.byes.length ? ` (${u.byes.map((p) => p.n).join(", ")} on bye)` : "";
+      return `Wk ${u.week}: no ${u.holes.map((s) => SLOT_LABEL[s] || s).join(", ")}${who}`;
+    }
+    return `Wk ${u.week}: ${u.byes.length} starters on bye`;
+  }
+
+  /* A compact card for the bottom of the Lineup tab, a few weeks' notice on
+   * bye/injury holes so they're not a Saturday surprise. Hidden entirely
+   * when there's nothing to report. */
+  function upcomingCard(lg) {
+    if (!lg.upcoming || !lg.upcoming.length) return null;
+    const box = el("div", "upcoming-card");
+    box.appendChild(el("h4", null, "Coming up"));
+    box.appendChild(el("p", "meta", lg.upcoming.map(upcomingLine).join(" · ")));
+    return box;
   }
 
   /* Above the starters table: what Sleeper has set vs. the best lineup this
@@ -518,6 +558,8 @@ if (typeof document !== "undefined") {
       bench.sort((a, b) => POS_ORDER.indexOf(a.p) - POS_ORDER.indexOf(b.p) || posKey(a) - posKey(b));
       lineup.appendChild(table(bench.map((p) => playerRow(p))));
     }
+    const upcomingCardEl = upcomingCard(lg);
+    if (upcomingCardEl) lineup.appendChild(upcomingCardEl);
 
     // --- matchup panel: this week's opponent, projected score and holes -
     const matchup = matchupPanel(lg);
@@ -537,7 +579,7 @@ if (typeof document !== "undefined") {
     if (lg.waivers && lg.waivers.length) {
       waivers.appendChild(el("p", "tr-intro",
         "Free agents who'd outscore your weakest starter at a position they can fill, by the gain."));
-      waivers.appendChild(table(lg.waivers.map((w) => waiverRow(w))));
+      waivers.appendChild(table(lg.waivers.map((w) => waiverRow(w, lg.upcoming))));
     } else {
       waivers.appendChild(el("p", "none", "No waiver upgrades found - your bench already covers your weak spots."));
     }
