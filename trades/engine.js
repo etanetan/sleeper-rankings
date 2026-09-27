@@ -12,6 +12,8 @@
  *
  *   node trades/engine.js candidates --user etanetan [--league <id|name>] [--out trades/work]
  *                                   [--targets <file>]   (with --league: research's buy/sell calls)
+ *   node trades/engine.js brief      --league <id> [--work trades/work]   (compact text view)
+ *   node trades/engine.js next       --user etanetan --data <dir>        (stalest open league)
  *   node trades/engine.js running    --league <id> --data <dir>
  *   node trades/engine.js finalize   --league <id> --research <file> --data <dir> [--work trades/work]
  *   node trades/engine.js failed     --league <id> --data <dir> --reason "<why>"
@@ -835,6 +837,66 @@ function finalize(work, research, now) {
   };
 }
 
+/* --------------------------------------------------------------- brief */
+
+/* The work file as compact text. The JSON runs 100KB+ per league; reading it
+ * whole costs the research step a lot of its usage budget, and most of it is
+ * detail this view keeps in one line per player or trade. */
+function brief(work) {
+  const L = [];
+  const n0 = (x) => Math.round(x || 0).toLocaleString("en-US");
+  const tag = (p) => (p.tag ? ` [${p.tag}${p.tagBy === "research" ? "*" : ""}]` : "");
+  const form = (p) => {
+    const f = p.form;
+    const bits = [];
+    if (f && f.g) bits.push(`${f.ppg}/${f.proj}ppg${f.perf != null ? ` perf ${f.perf}` : ""}`);
+    if (f && f.snap != null) bits.push(`snap ${f.snap}%`);
+    if (f && f.tgtShare != null) bits.push(`tgt ${f.tgtShare}%`);
+    if (f && f.touches != null) bits.push(`${f.touches} tch/g`);
+    if (f && f.rz) bits.push(`rz ${f.rz}/g`);
+    if (p.trendPct) bits.push(`30d ${p.trendPct > 0 ? "+" : ""}${Math.round(p.trendPct * 100)}%`);
+    if (p.status) bits.push(p.status);
+    return bits.length ? ` (${bits.join(", ")})` : "";
+  };
+  const pl = (p) => `${p.n} ${p.p}${p.t && !p.isPick ? " " + p.t : ""} ${n0(p.v)}${tag(p)}` +
+    `${p.sidelined ? " SIDELINED" : ""} id:${p.id}${p.isPick ? ` ${p.t}` : form(p)}`;
+  const lg = work.league || {};
+  L.push(`# ${work.league_name} (${work.league_id}) · week ${work.week} · ${lg.type}` +
+    `${lg.superflex ? " superflex" : ""} · rec ${lg.rec}${lg.te_premium ? ` · TE premium ${lg.te_premium}` : ""}` +
+    ` · deadline ${lg.trade_deadline || "none"} · form weeks ${(work.market.weeks || []).join(",") || "none"}`);
+  L.push(`Picks: ${lg.picks}`);
+  const me = work.me;
+  L.push(`\n## You: ${me.name} ${me.record} · thin ${me.thin.join("/")} · deep ${me.deep.join("/")}` +
+    ` · vs league ${Object.entries(me.vsLeague || {}).map(([k, v]) => `${k} ${v}%`).join(" ")}`);
+  me.starters.forEach((p) => L.push(`  START ${p.slot}: ${pl(p)}`));
+  me.bench.filter((p) => p.v > 0 || p.sidelined).forEach((p) => L.push(`  bench: ${pl(p)}`));
+  (me.picks || []).forEach((p) => L.push(`  pick: ${pl(p)}`));
+  const m = work.market;
+  L.push("\n## Market calls (numbers; * = research)");
+  L.push("Your sell-high:"); m.sell_high.forEach((p) => L.push(`  ${pl(p)}`));
+  L.push("Your hold (never offered):"); m.hold.forEach((p) => L.push(`  ${pl(p)}`));
+  L.push("Buy-low targets:"); m.buy_low.slice(0, 20).forEach((p) => L.push(`  ${pl(p)} @ ${p.owner}`));
+  L.push("Avoid (their peak):"); m.avoid.slice(0, 12).forEach((p) => L.push(`  ${pl(p)} @ ${p.owner}`));
+  const dh = work.draft_history;
+  if (dh && dh.rounds && dh.rounds.length) {
+    L.push(`\n## This league's rookie drafts ${dh.seasons.join(", ")}: value today vs market price`);
+    dh.rounds.forEach((r) => L.push(`  R${r.round}: median ${n0(r.median)} (early ${n0(r.early)}, mid ${n0(r.mid)},` +
+      ` late ${n0(r.late)}), ${r.busts}% busts · market early ${n0(r.market.early)}, mid ${n0(r.market.mid)},` +
+      ` late ${n0(r.market.late)} · best ${r.best.map((b) => `${b.name} ${b.pick} '${String(b.season).slice(2)} ${n0(b.v)}`).join("; ")}`));
+  }
+  L.push(`\n## Candidates (${work.candidates.length}${work.targets_applied ? ", with research calls" : ""})`);
+  work.candidates.forEach((c) => {
+    const side = (ps) => ps.map((p) => `${p.n}${p.tag ? ` [${p.tag}]` : ""} ${n0(p.v)}`).join(" + ");
+    L.push(`- ${c.id} · ${c.kind}${c.picks ? " · picks" : ""} · with ${c.partner.name} ${c.partner.record}` +
+      ` (thin ${c.partner.thin.join("/")}, deep ${c.partner.deep.join("/")})`);
+    L.push(`    give ${side(c.give)}  ->  get ${side(c.get)}`);
+    L.push(`    ${c.value.verdict} ${Math.round(c.value.diffPct * 100)}% · you ${c.you.gainPct}% them ${c.them.gainPct}%` +
+      ` · starts: ${c.you.changes.in.map((x) => x.n).join(", ") || "none"} · leaves: ${c.you.changes.out.map((x) => x.n).join(", ") || "none"}` +
+      `${c.you.drop ? ` · drop ${c.you.drop.n}` : ""}`);
+  });
+  return L.join("\n");
+}
+
 /* ----------------------------------------------------------------- cli */
 
 async function getJSON(url) {
@@ -1021,6 +1083,46 @@ function readJSON(file) {
   try { return JSON.parse(fs.readFileSync(file, "utf8")); } catch (e) { return null; }
 }
 
+function cmdBrief(a) {
+  if (!a.league) throw new Error("--league is required");
+  const work = readJSON(path.join(a.work || path.join(__dirname, "work"), `${a.league}.json`));
+  if (!work) throw new Error(`No work file for ${a.league}; run candidates first.`);
+  console.log(brief(work));
+}
+
+/* Which league a scheduled run should research: the open league whose
+ * published research is oldest, skipping any another run is working on.
+ * Runs are spread through the day so each fits a usage window; once every
+ * league is fresh (under 20 hours old) there's nothing to do. */
+function pickNext(open, files, now) {
+  const t = now.getTime();
+  let best = null;
+  for (const lg of open) {
+    const f = files[lg.league_id] || {};
+    if (f.status === "running" && f.started && t - Date.parse(f.started) < 3 * 3600e3) continue;
+    const age = f.generated ? t - Date.parse(f.generated) : Infinity;
+    if (age < 20 * 3600e3) continue;
+    if (!best || age > best.age) best = { league_id: lg.league_id, name: lg.name, age };
+  }
+  return best;
+}
+
+async function cmdNext(a) {
+  if (!a.data) throw new Error("--data is required");
+  const user = a.user || "etanetan";
+  const state = await getJSON(`${SLEEPER}/state/nfl`);
+  const season = state.league_season || state.season;
+  const week = state.week || state.display_week || 1;
+  const who = await getJSON(`${SLEEPER}/user/${encodeURIComponent(user)}`);
+  const leagues = await getJSON(`${SLEEPER}/user/${who.user_id}/leagues/nfl/${season}`);
+  const open = leagues.filter((l) => tradeWindow(l, week).open);
+  const files = {};
+  for (const l of open) files[l.league_id] = readJSON(path.join(a.data, `${l.league_id}.json`));
+  const now = process.env.TRADES_NOW ? new Date(process.env.TRADES_NOW) : new Date();
+  const pick = pickNext(open, files, now);
+  console.log(pick ? `${pick.league_id} ${pick.name}` : "none");
+}
+
 /* Mark a league as being researched, keeping last week's trades visible. */
 function cmdRunning(a) {
   const file = dataFile(a);
@@ -1075,6 +1177,8 @@ async function main() {
   if (cmd === "running") return cmdRunning(a);
   if (cmd === "failed") return cmdFailed(a);
   if (cmd === "finalize") return cmdFinalize(a);
+  if (cmd === "brief") return cmdBrief(a);
+  if (cmd === "next") return cmdNext(a);
   console.error("usage: engine.js candidates|running|finalize|failed [options] (see top of file)");
   process.exit(1);
 }
@@ -1087,5 +1191,6 @@ module.exports = { tradeWindow, fcParams, fcUrl, valueMap, teamPlayers, lineup, 
                    completedWeeks, weekData, formFor, trendPct, usageIntact, marketTag, applyTargets,
                    statsUrl, projUrl, MIN_TRADES, MAX_TRADES,
                    pickValueMap, futurePickSeasons, projectedSlots, pickAssets, summarizeDrafts,
+                   brief, pickNext,
                    packageValue, fairness, tradesWith, positionProfile, leagueCandidates,
                    finalize, FAIR_PCT };

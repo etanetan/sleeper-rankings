@@ -302,6 +302,31 @@ check("draft history: what each round turned into", T.summarizeDrafts([
            { name: "Bust Three", pos: "WR", season: "2025", pick: "1.03", v: 100 }],
     market: { early: 4800, mid: 3200, late: 2400, any: 3000 } });
 
+/* --- one league per run ------------------------------------------------ */
+{
+  const now = new Date("2026-09-29T13:00:00Z");
+  const open = [{ league_id: "A", name: "A" }, { league_id: "B", name: "B" }, { league_id: "C", name: "C" }];
+  const ago = (h) => new Date(now.getTime() - h * 3600e3).toISOString();
+  check("never-researched league goes first",
+    T.pickNext(open, { A: { generated: ago(170) }, C: { generated: ago(1) } }, now).league_id, "B");
+  check("then the oldest research",
+    T.pickNext(open, { A: { generated: ago(170) }, B: { generated: ago(150) }, C: { generated: ago(1) } }, now).league_id, "A");
+  check("a league another run is on is skipped",
+    T.pickNext(open, { A: { generated: ago(170), status: "running", started: ago(1) }, B: { generated: ago(150) },
+                       C: { generated: ago(1) } }, now).league_id, "B");
+  check("a run that died hours ago doesn't block the league",
+    T.pickNext(open, { A: { generated: ago(170), status: "running", started: ago(5) }, B: { generated: ago(150) },
+                       C: { generated: ago(1) } }, now).league_id, "A");
+  check("nothing to do once every league is fresh",
+    T.pickNext(open, { A: { generated: ago(2) }, B: { generated: ago(3) }, C: { generated: ago(1) } }, now), null);
+}
+{
+  const text = T.brief(work);
+  check("brief is much smaller than the work file", text.length < JSON.stringify(work).length / 3, true);
+  check("brief lists every candidate id", work.candidates.every((c) => text.includes(c.id)), true);
+  check("brief carries player ids for research calls", text.includes("id:w1"), true);
+}
+
 /* --- finalize: the research has to clear the numbers ------------------- */
 const cid = work.candidates[0].id;
 const good = {
