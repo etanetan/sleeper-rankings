@@ -126,6 +126,65 @@ function createLoader({ storage, onStatus } = {}) {
     return ranks;
   }
 
+  // A completed week's projections, shared across every league's
+  // seasonRecapFor call this session (not fetched once per league) - a
+  // plain in-memory Map, since it only needs to outlive one page load, the
+  // same lifetime as the loader itself.
+  const _weekProjectionsCache = new Map();
+  async function projectionsForWeek(season, w) {
+    if (_weekProjectionsCache.has(w)) return _weekProjectionsCache.get(w);
+    const { projections } = await loadProjections(season, w);
+    _weekProjectionsCache.set(w, projections);
+    return projections;
+  }
+
+  const RECAP_CACHE_PREFIX = "sr-recap-v1";
+
+  /* Season totals across every completed week (1..data.week-1): how the
+   * tool's picks would have done, added up over the whole season so far -
+   * not automatically part of buildLeagueView's view (a fresh install with
+   * many weeks already played would mean two fetches per uncached week,
+   * sequentially, which is too slow to make every league render wait on)
+   * but rather something the page calls on demand, e.g. when the owner
+   * asks to see it.
+   *
+   * A completed week's result never changes, so each {league, week}
+   * recap is cached in storage forever once computed - only a week that
+   * just wrapped up since the last time this ran costs an API call; on
+   * this or any future load, everything before that is served straight
+   * from the cache. */
+  async function seasonRecapFor(lg, data, settings, slots, rosterId) {
+    let actual = 0, ours = 0, best = 0, counted = 0;
+    for (let w = 1; w < data.week; w++) {
+      const cacheKey = `${RECAP_CACHE_PREFIX}:${lg.league_id}:${w}`;
+      let weekResult = null;
+      try {
+        const raw = await storage.getItem(cacheKey);
+        if (raw) weekResult = JSON.parse(raw);
+      } catch (e) { weekResult = null; }
+
+      if (!weekResult) {
+        try {
+          const projections = await projectionsForWeek(data.season, w);
+          const matchups = await fetchJson(`${SLEEPER}/league/${lg.league_id}/matchups/${w}`);
+          const entry = (matchups || []).find((m) => m.roster_id === rosterId);
+          if (entry) {
+            const ranks = rankPositions(projections, data.players, settings);
+            weekResult = recap(entry, slots, data.players, ranks);
+            try { await storage.setItem(cacheKey, JSON.stringify(weekResult)); }
+            catch (e) { /* over quota or private mode; not worth failing over */ }
+          }
+        } catch (e) { weekResult = null; }
+      }
+
+      if (weekResult) {
+        actual += weekResult.actual; ours += weekResult.ours; best += weekResult.best;
+        counted++;
+      }
+    }
+    return counted ? { actual, ours, best, weeks: counted } : null;
+  }
+
   /* The season's shared data: the player list, this week's projections
    * (scored per-league later, by ranksFor), consensus rankings if a build
    * published them, and the schedule the lineup check uses to know who's
@@ -357,6 +416,12 @@ function createLoader({ storage, onStatus } = {}) {
       trades: tradeWindow(lg, data.week),
       teRec: settings.bonus_rec_te || 0,
       roster, source, rostered, waivers, names, upcoming, recap: weekRecap,
+      // Bound to this league/roster so the page can call it with no extra
+      // arguments - not run automatically (see seasonRecapFor's own
+      // comment): a season with many uncached weeks would mean a
+      // sequential fetch chain too slow to make a league render wait on,
+      // so this is a "click to see it" affordance instead.
+      seasonRecap: () => seasonRecapFor(lg, data, settings, slots, mine.roster_id),
       // Every ranked player in the league, not just this user's roster - the
       // extension's content script uses this to badge free agents on the
       // Players page and opponents' rosters, not only the user's own team.
@@ -368,6 +433,6 @@ function createLoader({ storage, onStatus } = {}) {
 
   return {
     json: fetchJson, loadPlayers, forgetPlayers, loadProjections, loadData,
-    ranksFor, prevRanksFor, clearRanksCache, fetchUser, fetchLeagues, buildLeagueView,
+    ranksFor, prevRanksFor, seasonRecapFor, clearRanksCache, fetchUser, fetchLeagues, buildLeagueView,
   };
 }

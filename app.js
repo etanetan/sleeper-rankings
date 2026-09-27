@@ -372,6 +372,15 @@ if (typeof document !== "undefined") {
     return panel;
   }
 
+  /* "you scored 112.4 · our lineup 118.0 (+5.6) · best possible 131.2" -
+   * the tail end shared by both the one-week recap line and the season
+   * totals button's result, so the two always read consistently. */
+  function recapText(r) {
+    const diff = Math.round((r.ours - r.actual) * 10) / 10;
+    return `you scored ${r.actual.toFixed(1)} · our lineup ${r.ours.toFixed(1)} ` +
+      `(${diff >= 0 ? "+" : ""}${diff}) · best possible ${r.best.toFixed(1)}`;
+  }
+
   /* One line at the top of the Lineup tab: how the tool's picks would have
    * done last week against what actually happened - "Week 3: you scored
    * 112.4 · our lineup 118.0 (+5.6) · best possible 131.2". Trust over the
@@ -379,11 +388,34 @@ if (typeof document !== "undefined") {
    * 2 (no prior week yet) or if the fetch it needs failed. */
   function recapLine(lg) {
     if (!lg.recap) return null;
-    const { week, actual, ours, best } = lg.recap;
-    const diff = Math.round((ours - actual) * 10) / 10;
-    return el("p", "recap-line",
-      `Week ${week}: you scored ${actual.toFixed(1)} · our lineup ${ours.toFixed(1)} ` +
-      `(${diff >= 0 ? "+" : ""}${diff}) · best possible ${best.toFixed(1)}`);
+    return el("p", "recap-line", `Week ${lg.recap.week}: ${recapText(lg.recap)}`);
+  }
+
+  /* A "See season totals" button next to the one-week recap - not shown
+   * automatically (see data.js's seasonRecapFor comment): a season with
+   * many weeks not yet cached would mean a sequential fetch chain too slow
+   * to make every league render wait on, so this is click-to-see instead.
+   * Once clicked, every week it needed is cached in storage forever
+   * (completed weeks don't change), so a second click - or next visit -
+   * on the same league is instant. */
+  function seasonRecapButton(lg) {
+    if (!lg.week || lg.week <= 1) return null;
+    const wrap = el("p", "recap-line");
+    const btn = el("button", "ghost", "See season totals");
+    btn.type = "button";
+    wrap.appendChild(btn);
+    btn.addEventListener("click", async () => {
+      btn.disabled = true;
+      btn.textContent = "Loading…";
+      let result;
+      try { result = await lg.seasonRecap(); }
+      catch (e) { result = null; }
+      if (!wrap.isConnected) return;   // switched leagues/tabs while loading
+      wrap.textContent = result
+        ? `Season (${result.weeks} wk${result.weeks === 1 ? "" : "s"}): ${recapText(result)}`
+        : "No completed weeks to total up yet.";
+    });
+    return wrap;
   }
 
   /* One upcomingHoles() entry as a line of text, e.g. "Wk 7: no TE (Kittle
@@ -541,6 +573,8 @@ if (typeof document !== "undefined") {
     const lineup = el("div", "panel");
     const recapLineEl = recapLine(lg);
     if (recapLineEl) lineup.appendChild(recapLineEl);
+    const seasonBtn = seasonRecapButton(lg);
+    if (seasonBtn) lineup.appendChild(seasonBtn);
     const banner = lineupBanner(lg);
     if (banner) lineup.appendChild(banner);
     if (starters.length) {
