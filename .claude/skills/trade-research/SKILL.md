@@ -96,7 +96,7 @@ closed there). `brief` prints it compactly — read that. It holds:
 - `me`: your starters and bench; where you're `thin` or `deep`.
 - `league`: what FantasyCalc can't see (type, TE premium, scoring).
 - `candidates`: up to 20 trades, each fair within 10% on FantasyCalc value,
-  labelled `kind` (`sell-high`, `buy-low`, `sell-high + buy-low`, `need`),
+  labelled `kind` (`sell_high`, `buy_low`, `sell_high+buy_low`, `need`),
   with lineup changes, the partner's record and needs, and who you'd drop.
   Your `hold` players are never in them. `picks: true` marks deals that
   include draft picks.

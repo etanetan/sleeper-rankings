@@ -354,10 +354,14 @@ function marketTag(p, mine) {
   // yours are held if their price is falling, otherwise no call either way.
   if (sidelined(p)) return mine && cold ? "hold" : null;
   if (mine) return cold ? "hold" : hot ? "sell_high" : null;
-  if (cold && !hot && usageIntact(p) && !sidelined(p)) return "buy_low";
+  if (cold && !hot && usageIntact(p)) return "buy_low";
   if (hot && !cold) return "avoid";
   return null;
 }
+
+/* Whether a player can be offered in a trade: never one of yours that's
+ * slumping (that would be selling at the low). */
+const offerable = (p) => p.tag !== "hold";
 
 /* Research's calls replace the numbers': `sell` and `hold` (not for trade,
  * slumping or simply too good to sell) for your players, `buy` and `avoid`
@@ -387,6 +391,16 @@ function applyTargets(teams, myRosterId, targets) {
   set(targets.avoid, "avoid", false);
   set(targets.neutral, null, null);
   return problems;
+}
+
+/* Tag every rostered player with the numbers' market call, then let
+ * research's targets confirm, reject or extend it. Returns any problems
+ * with the targets (an id that isn't on the roster it's supposed to be). */
+function tagTeams(teams, myRosterId, targets) {
+  for (const t of teams) {
+    for (const p of t.roster) if (!p.isPick) p.tag = marketTag(p, t.roster_id === myRosterId);
+  }
+  return applyTargets(teams, myRosterId, targets);
 }
 
 /* --------------------------------------------------------------- picks */
@@ -518,7 +532,7 @@ function tradesWith(me, them, slots, rosterSize, opts) {
     const allPicks = r.filter((p) => p.isPick && p.v > 0).sort(byV);
     const picks = allPicks.slice(0, PICK_POOL)
       .concat(allPicks.filter((p, i) => i >= PICK_POOL && p.tag === keep));
-    return top.concat(extra, picks).filter((p) => p.tag !== "hold");
+    return top.concat(extra, picks).filter(offerable);
   };
   const myPkgs = combos(pool(me, "sell_high"), MAX_PIECES);
   const theirPkgs = combos(pool(them, "buy_low"), MAX_PIECES);
@@ -645,6 +659,7 @@ function leagueNotes(league) {
 function leagueCandidates(ctx, opts) {
   const limit = (opts && opts.limit) || 20;
   const { league, teams, myRosterId, slots } = ctx;
+  if (ctx.targets || ctx.tagged !== true) tagTeams(teams, myRosterId, ctx.targets);
   const me = teams.find((t) => t.roster_id === myRosterId);
   const rosterSize = (league.roster_positions || []).filter((s) => s !== "IR" && s !== "TAXI").length;
   const profile = positionProfile(teams, slots);
@@ -683,7 +698,7 @@ function leagueCandidates(ctx, opts) {
     const buys = c.get.filter((p) => p.tag === "buy_low").length;
     picked.push({
       id: hashId(`${league.league_id}:${giveKey}>${getKey}`),
-      kind: sells && buys ? "sell-high + buy-low" : sells ? "sell-high" : buys ? "buy-low" : "need",
+      kind: sells && buys ? "sell_high+buy_low" : sells ? "sell_high" : buys ? "buy_low" : "need",
       picks: c.give.concat(c.get).some((p) => p.isPick),
       partner: {
         roster_id: pk, name: c.partner.name, user: c.partner.user,
@@ -798,7 +813,7 @@ function finalize(work, research, now) {
       errors.push(`${where}: confidence must be high, medium or low.`);
     }
     for (const p of c.give) {
-      if (p.tag === "hold") errors.push(`${where}: gives ${p.n}, who's slumping (hold). Don't sell low.`);
+      if (!offerable(p)) errors.push(`${where}: gives ${p.n}, who's slumping (hold). Don't sell low.`);
     }
     // Re-validate against the market rather than trusting the file.
     const f = fairness(c.give.map((p) => p.v), c.get.map((p) => p.v));
@@ -1054,14 +1069,11 @@ async function cmdCandidates(a) {
       }
       draftHist = summarizeDrafts(await rookieDrafts(league), values, pickValues, Number(season) + 1);
     }
-    for (const t of teams) {
-      for (const p of t.roster) if (!p.isPick) p.tag = marketTag(p, t.roster_id === mine.roster_id);
-    }
-    const problems = applyTargets(teams, mine.roster_id, targets);
+    const problems = tagTeams(teams, mine.roster_id, targets);
     if (problems.length) console.error(`Targets for ${league.name}:\n  - ${problems.join("\n  - ")}`);
     const work = leagueCandidates({ league, teams, myRosterId: mine.roster_id, slots, season, week,
                                     weeks, valuesFetched: valuesCache[url].fetched,
-                                    targetsApplied: !!targets, draftHistory: draftHist });
+                                    targetsApplied: !!targets, draftHistory: draftHist, tagged: true });
     fs.writeFileSync(path.join(outDir, `${league.league_id}.json`), JSON.stringify(work, null, 2));
     const kinds = {};
     for (const c of work.candidates) kinds[c.kind] = (kinds[c.kind] || 0) + 1;
@@ -1171,6 +1183,7 @@ if (require.main === module) {
 
 module.exports = { tradeWindow, fcParams, fcUrl, valueMap, teamPlayers, lineup, strength, leagueNotes,
                    completedWeeks, weekData, formFor, trendPct, usageIntact, marketTag, applyTargets,
+                   tagTeams, offerable,
                    statsUrl, projUrl, MIN_TRADES, MAX_TRADES,
                    pickValueMap, futurePickSeasons, projectedSlots, pickAssets, summarizeDrafts,
                    brief, pickNext,

@@ -249,6 +249,40 @@ check("QB usage needs the snaps", T.usageIntact({ p: "QB", form: { snap: 50 } })
   check("buying at the peak ranks lower", !!bought && !!unbought && bought.score < unbought.score, true);
 }
 
+/* --- leagueCandidates tags on its own when the caller hasn't ----------- */
+{
+  const hot = tp({ id: "hot1", n: "Hot-Mine", form: { g: 2, perf: 1.5, snap: 80 } });
+  const cold = tp({ id: "cold1", n: "Cold-Mine", form: { g: 2, perf: 0.6, snap: 80 } });
+  const theirCold = tp({ id: "cold2", n: "Cold-Theirs", form: { g: 2, perf: 0.6, snap: 85, tgtShare: 24 } });
+  const untaggedTeams = [
+    { roster_id: 1, name: "Mine", user: "etanetan", record: "2-1", roster: me.map((p) => ({ ...p })).concat([hot, cold]) },
+    { roster_id: 2, name: "Team B", user: "bee", record: "1-2", roster: b.map((p) => ({ ...p })).concat([theirCold]) },
+    { roster_id: 3, name: "Team C", user: "sea", record: "3-0", roster: c.map((p) => ({ ...p })) },
+  ];
+  const tagWork = T.leagueCandidates({ league, teams: untaggedTeams, myRosterId: 1, slots, season: "2026",
+    week: 4, valuesFetched: "2026-09-29T12:00:00Z" });
+  check("leagueCandidates tags a hot player of yours as sell_high",
+    untaggedTeams[0].roster.find((p) => p.id === "hot1").tag, "sell_high");
+  check("leagueCandidates tags a cold player of yours as hold",
+    untaggedTeams[0].roster.find((p) => p.id === "cold1").tag, "hold");
+  check("leagueCandidates tags a cold, still-used player of theirs as buy_low",
+    untaggedTeams[1].roster.find((p) => p.id === "cold2").tag, "buy_low");
+  check("a hot player of yours shows up as a give",
+    tagWork.candidates.some((x) => x.give.some((p) => p.id === "hot1")), true);
+  check("a cold (hold) player of yours never does",
+    tagWork.candidates.every((x) => !x.give.some((p) => p.id === "cold1")), true);
+  check("kind spelling matches the tags",
+    tagWork.candidates.every((x) => ["need", "sell_high", "buy_low", "sell_high+buy_low"].includes(x.kind)), true);
+}
+
+/* --- offerable ----------------------------------------------------------- */
+check("offerable: a hold player isn't", T.offerable({ tag: "hold" }), false);
+check("offerable: anything else is", T.offerable({ tag: "sell_high" }), true);
+check("offerable: no tag at all is fine", T.offerable({ tag: null }), true);
+
+check("tagTeams reports an id on no roster", T.tagTeams([{ roster_id: 1, roster: [] }], 1,
+  { sell: ["ghost"] }), ["ghost isn't on any roster in this league"]);
+
 /* --- draft picks --------------------------------------------------------- */
 const fcPickRows = [
   { player: { sleeperId: "FP_2027_early_0", name: "2027 1st (Early)", position: "PICK" }, value: 4800, trend30Day: 300 },
@@ -479,7 +513,7 @@ check("cli: partner named from team_name or display name",
   cliWork.candidates.every((x) => ["bee", "sea"].includes(x.partner.name)), true);
 check("cli: records carried", cliWork.me.record, "2-1");
 check("cli: market sheet written", Object.keys(cliWork.market).sort(), ["avoid", "buy_low", "hold", "sell_high", "weeks"]);
-check("cli: every candidate labelled", cliWork.candidates.every((x) => ["need", "sell-high", "buy-low", "sell-high + buy-low"].includes(x.kind)), true);
+check("cli: every candidate labelled", cliWork.candidates.every((x) => ["need", "sell_high", "buy_low", "sell_high+buy_low"].includes(x.kind)), true);
 
 {
   // Research calls re-run the search for one league.
