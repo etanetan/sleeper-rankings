@@ -289,5 +289,103 @@ check("null safe", app.normStatus(null), "");
 check("doubtful counts as out", app.OUT_STATUSES.has(app.normStatus("Doubtful")), true);
 check("questionable does not", app.OUT_STATUSES.has(app.normStatus("Questionable")), false);
 
+/* --- currentLineup: zipping Sleeper's starters onto our slot list ------ */
+const clRoster = [
+  { id: "1", n: "QB A", p: "QB", t: "BUF", pts: 20 },
+  { id: "2", n: "RB A", p: "RB", t: "ATL", pts: 15 },
+  { id: "3", n: "WR A", p: "WR", t: "KC", pts: 12 },
+];
+check("zips starters with slots in order",
+      app.currentLineup(["1", "2", "3"], ["QB", "RB", "WR"], clRoster).map((e) => e.player.n),
+      ["QB A", "RB A", "WR A"]);
+check("\"0\" becomes an empty slot",
+      app.currentLineup(["1", "0", "3"], ["QB", "RB", "WR"], clRoster).map((e) => e.player && e.player.n),
+      ["QB A", null, "WR A"]);
+check("a missing starter id is also empty",
+      app.currentLineup(["1"], ["QB", "RB"], clRoster).map((e) => e.player && e.player.n),
+      ["QB A", null]);
+check("an unknown starter id is empty rather than throwing",
+      app.currentLineup(["999"], ["QB"], clRoster)[0].player, null);
+check("works with a superflex slot",
+      app.currentLineup(["1"], ["SUPER_FLEX"], clRoster)[0].player.n, "QB A");
+// A dynasty league's roster_positions include IR/TAXI, but by the time
+// currentLineup sees `slots` those are already filtered out (app.js does
+// that once, the same way for both this and matchup.starters), so the two
+// arrays stay in lockstep even with a longer, odder slot list.
+const dynastySlots = ["QB", "RB", "WR", "TE", "FLEX", "DEF"];
+const dynastyStarters = ["1", "2", "3", "0", "0", "0"];
+check("stays aligned with a longer dynasty slot list",
+      app.currentLineup(dynastyStarters, dynastySlots, clRoster).map((e) => e.slot),
+      dynastySlots);
+check("trailing empty slots line up correctly",
+      app.currentLineup(dynastyStarters, dynastySlots, clRoster).map((e) => e.player && e.player.n),
+      ["QB A", "RB A", "WR A", null, null, null]);
+
+/* --- lockedIds: whose game has already started -------------------------- */
+const schedRoster = [
+  { id: "1", n: "P1", t: "BUF" }, { id: "2", n: "P2", t: "KC" },
+  { id: "3", n: "P3", t: "ATL" }, { id: "d", n: "Niners D", p: "DEF", t: "SF" },
+];
+const schedule = [
+  { week: 5, home: "BUF", away: "KC", status: "in_game" },
+  { week: 5, home: "ATL", away: "NYG", status: "pre_game" },
+  { week: 6, home: "SF", away: "LAR", status: "complete" },
+];
+check("locks both teams of an in-progress game",
+      Array.from(app.lockedIds(schedRoster, schedule, 5)).sort(), ["1", "2"]);
+check("leaves a pre-game matchup unlocked",
+      app.lockedIds(schedRoster, schedule, 5).has("3"), false);
+check("DEF locks by its own team code",
+      app.lockedIds(schedRoster, schedule, 6).has("d"), true);
+check("no schedule means nothing is locked", app.lockedIds(schedRoster, null, 5).size, 0);
+
+/* --- pickLineup with a fixed (locked) slot ------------------------------ */
+const lockedWeak = P("Locked but weak", "RB", 20, 3);
+const strongerRB = P("Stronger RB", "RB", 2, 18);
+const fixedLu = app.pickLineup([lockedWeak, strongerRB], ["RB", "FLEX"], { 0: lockedWeak });
+check("a fixed slot keeps the locked player in place",
+      fixedLu.starters.find((s) => s.slot === "RB").player.n, "Locked but weak");
+check("the locked player is removed from the pool for the rest of the picks",
+      fixedLu.starters.find((s) => s.slot === "FLEX").player.n, "Stronger RB");
+check("a player simply left out of the roster is never picked",
+      app.pickLineup([strongerRB], ["RB", "FLEX"]).starters.length, 1);
+check("calling with no fixed argument still behaves exactly as before",
+      JSON.stringify(app.pickLineup(full, ["QB", "RB", "RB", "WR", "WR", "TE", "FLEX", "K", "DEF"]).starters),
+      JSON.stringify(lu.starters));
+
+/* --- lineupCheck: comparing Sleeper's lineup with the best one --------- */
+const PL = (id, n, p, pts, status = "") => ({ id, n, p, pts, status, t: "XXX" });
+const qbGood = PL("q1", "QB Good", "QB", 22);
+const rbA = PL("r1", "RB A", "RB", 15);
+const rbB = PL("r2", "RB B", "RB", 12);
+const wrFlex = PL("w1", "WR Flex", "WR", 14);
+
+const reordered = [{ slot: "RB", player: rbA }, { slot: "FLEX", player: rbB }];
+const reorderedBest = [{ slot: "RB", player: rbB }, { slot: "FLEX", player: rbA }];
+const rSame = app.lineupCheck(reordered, reorderedBest);
+check("same set in a different flex order is ok", rSame.ok, true);
+check("no changes needed when the set already matches", rSame.changes, []);
+check("no point gain when the set already matches", rSame.gain, 0);
+
+const swapCur = [{ slot: "RB", player: rbA }, { slot: "FLEX", player: rbB }];
+const swapBest = [{ slot: "RB", player: rbA }, { slot: "FLEX", player: wrFlex }];
+const rSwap = app.lineupCheck(swapCur, swapBest);
+check("a genuine swap is not ok", rSwap.ok, false);
+check("a genuine swap is reported as one change", rSwap.changes.length, 1);
+check("the change names who's out and in",
+      [rSwap.changes[0].out.n, rSwap.changes[0].in.n], ["RB B", "WR Flex"]);
+check("gain is the point difference of the swap", rSwap.gain, 14 - 12);
+
+const emptyCur = [{ slot: "RB", player: null }, { slot: "FLEX", player: rbB }];
+const emptyBest = [{ slot: "RB", player: rbA }, { slot: "FLEX", player: rbB }];
+const rEmpty = app.lineupCheck(emptyCur, emptyBest);
+check("an empty current slot is reported", rEmpty.empty, ["RB"]);
+
+const outStarter = PL("o1", "Hurt Starter", "RB", 20, "OUT");
+const outCur = [{ slot: "RB", player: outStarter }];
+const rOut = app.lineupCheck(outCur, outCur);
+check("an OUT starter is flagged even when the set already matches",
+      rOut.unavailable.map((p) => p.n), ["Hurt Starter"]);
+
 console.log(`\n${results.filter(Boolean).length}/${results.length} passed`);
 process.exit(results.every(Boolean) ? 0 : 1);

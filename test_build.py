@@ -124,12 +124,13 @@ check("client never names the key variable", "FANTASYPROS_API_KEY" in client, Fa
 check("client never requests a fantasypros host",
       bool(re.search(r"https?://[a-z0-9.\-]*fantasypros", client, re.I)), False)
 # Fetched: Sleeper, and this repo's trade-data branch. Linked, never fetched:
-# claude.ai (to start a research run) and fantasycalc.com (attribution).
+# claude.ai (to start a research run), fantasycalc.com (attribution) and
+# sleeper.com (the "Open in Sleeper" team page link).
 check("client only reaches known hosts",
       sorted({re.sub(r"^https?://", "", u)
               for u in re.findall(r'https?://[a-z0-9.\-]+', client)}),
       ["api.sleeper.app", "api.sleeper.com", "claude.ai", "fantasycalc.com",
-       "raw.githubusercontent.com"])
+       "raw.githubusercontent.com", "sleeper.com"])
 check("trade data read from this repo's claude/trade-data branch",
       re.findall(r'https://raw\.githubusercontent\.com/[^"]+', client),
       ["https://raw.githubusercontent.com/etanetan/sleeper-rankings/refs/heads/claude/trade-data"])
