@@ -288,11 +288,16 @@ function createLoader({ storage, onStatus } = {}) {
     const waivers = waiverUpgrades(pool, rostered, best || pickLineup(roster, slots))
       .map((w) => ({ ...w, add: (data.trending && data.trending[w.id]) || 0 }));
 
-    // Bye/injury holes over the next few weeks - a schedule failure (same
-    // as the matchup fetch above) just means byeWeeks() falls back to
-    // upcomingHoles' own per-player `b`-field fallback rather than costing
-    // the rest of the view.
-    const upcoming = upcomingHoles(roster, slots, data.week, byeWeeks(data.schedule));
+    // Bye/injury holes over the next few weeks. Own try/catch, same as the
+    // matchup block above: a missing/empty schedule is already handled by
+    // byeWeeks() and upcomingHoles' own `b`-field fallback, but a schedule
+    // response that parses as JSON yet has a malformed entry (a field
+    // missing or the wrong type) would otherwise throw out of this whole
+    // function and cost the entire league, not just this one card.
+    let upcoming = [];
+    try {
+      upcoming = upcomingHoles(roster, slots, data.week, byeWeeks(data.schedule));
+    } catch (e) { upcoming = []; }
 
     return {
       name: lg.name, id: lg.league_id, slots,

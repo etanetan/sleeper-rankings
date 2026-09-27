@@ -554,6 +554,17 @@ check("win probability is bounded below by 0", app.winProb(0, 500) >= 0, true);
   check("that week's QB slot is a hole via the b-field fallback",
         holes[0].holes, ["QB"]);
 }
+{
+  // The schedule has an entry for this player's team (byes.T1 exists, even
+  // though it's empty - the team simply has no upcoming bye per the live
+  // schedule) while their stale `b` field still claims one. The schedule
+  // must win: it's the whole reason byeWeeks() exists over trusting `b`.
+  const roster = [
+    { id: "q1", n: "QB1", p: "QB", t: "T1", status: "", pts: 20, posRank: 1, b: 8 },
+  ];
+  check("a live schedule saying a team plays overrides a stale b-field bye",
+        app.upcomingHoles(roster, ["QB"], 5, { T1: new Set() }, 4), []);
+}
 check("a week with neither a hole nor 2+ byes is left out entirely",
       app.upcomingHoles(
         [{ id: "q1", n: "QB1", p: "QB", t: "T1", status: "", pts: 20, posRank: 1 }],

@@ -371,12 +371,16 @@ function upcomingHoles(roster, slots, week, byes, horizon) {
   horizon = horizon == null ? 4 : horizon;
   const out = [];
   const bestNow = pickLineup(roster, slots).starters;
-  // A team-level bye from the schedule (`byes`) when there is one; a
-  // player's own `b` field (Sleeper's player dump, sometimes null
-  // mid-season - see byeWeeks above) as a fallback, so a missing or
-  // unreachable schedule doesn't just silently report no upcoming byes.
+  // The schedule (`byes`) is authoritative for any team it actually covers
+  // - trust it fully, `has(w)` or not, rather than also consulting `p.b`
+  // for a team the schedule already answered for, since `b` is exactly the
+  // field that goes stale mid-season (see byeWeeks above) and a live
+  // schedule saying "playing" should win over a stale "bye" on file. `b`
+  // only fills in for a team the schedule has nothing on at all (a missing
+  // or unreachable schedule, most likely), so a bad fetch doesn't just
+  // silently report no upcoming byes.
   const onByeIn = (p, w) =>
-    (byes[p.t] && byes[p.t].has(w)) || (p.b != null && Number(p.b) === w);
+    byes[p.t] ? byes[p.t].has(w) : p.b != null && Number(p.b) === w;
   for (let w = week + 1; w <= week + horizon; w++) {
     const available = (roster || []).filter((p) => !LONG_TERM_OUT.has(p.status) && !onByeIn(p, w));
     const bySlot = pickLineup(available, slots).bySlot;
