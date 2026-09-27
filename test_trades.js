@@ -40,6 +40,13 @@ check("odd ppr snaps to nearest", fmt(0.8, ["QB"], 0, 12).ppr, 1);
 check("url shape", T.fcUrl({ isDynasty: false, numQbs: 1, numTeams: 12, ppr: 0.5 }),
   "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=1&numTeams=12&ppr=0.5");
 
+const notes = T.leagueNotes({ settings: { type: 1, taxi_slots: 3, trade_deadline: 99 },
+  scoring_settings: { rec: 0, bonus_rec_te: 1, pass_td: 6 }, roster_positions: ["QB", "SUPER_FLEX", "BN", "TAXI"] });
+check("league notes: keeper, TE premium, no deadline",
+  [notes.type, notes.te_premium, notes.superflex, notes.trade_deadline, notes.starters],
+  ["keeper", 1, true, null, ["QB", "SUPER_FLEX"]]);
+check("league notes: dynasty", T.leagueNotes({ settings: { type: 2 } }).type, "dynasty");
+
 check("value map keyed by sleeper id", T.valueMap([
   { player: { sleeperId: "4046", name: "Patrick Mahomes", position: "QB", maybeTeam: "KC" },
     value: 6012.4, positionRank: 3, trend30Day: -120 },
@@ -77,7 +84,8 @@ check("top trade sends a WR", top.give.some((p) => p.p === "WR"), true);
 check("top trade brings back a RB", top.get.some((p) => p.p === "RB"), true);
 check("top trade is fair", top.f.fair, true);
 check("top trade helps you", top.myAfter > top.myBase, true);
-check("top trade doesn't hurt them", top.theirAfter >= top.theirBase, true);
+check("top trade helps them too", top.theirAfter > top.theirBase, true);
+check("every candidate gives them a reason to say yes", withB.every((x) => x.theirGain >= 0.002), true);
 check("lineup changes named", top.myChanges.in.length > 0 && top.myChanges.out.length > 0, true);
 check("a starter who only changes slot isn't listed as new",
   top.myChanges.in.some((x) => x.n === "RB-r1"), false);
@@ -119,6 +127,7 @@ check("ids are stable", T.leagueCandidates({ league, teams, myRosterId: 1, slots
 check("my thin spots include RB", work.me.thin.includes("RB"), true);
 check("partner needs carried", Array.isArray(work.candidates[0].partner.thin), true);
 check("format recorded", work.format.ppr, 1);
+check("league type recorded", work.league.type, "redraft");
 check("source is FantasyCalc", work.values_source.name, "FantasyCalc");
 const profile = T.positionProfile(teams, slots);
 check("Team B is deep at RB", profile[2].deep.includes("RB"), true);

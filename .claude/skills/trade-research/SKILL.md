@@ -71,7 +71,13 @@ where the network allows):
   from the last 72 hours (trades, suspensions, returns from IR). FantasyCalc
   lags breaking news by a day or two; **news beats the value number.**
 - **The partner:** record and roster decide whether they're buying now or
-  building for later. In dynasty leagues age matters.
+  building for later.
+- **What FantasyCalc can't see** — the work file's `league` block:
+  - `type: "dynasty"`: age and the next 2–3 seasons count, not just this one.
+  - `type: "keeper"`: valued as redraft; this season first, keeper value second.
+  - `te_premium` above 0: tight ends score more here than FantasyCalc's
+    numbers assume, so treat TEs as worth more than their value says.
+  - Draft picks aren't in the candidates. Don't propose adding one.
 
 Pick the **best 3–5** trades, across different partners where possible. Fewer
 is fine; zero is fine with a reason. Throw a candidate out when:

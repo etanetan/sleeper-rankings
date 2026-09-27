@@ -35,11 +35,16 @@ const BENCH_WEIGHT = 0.1;
 const BENCH_DEPTH = 4;
 const MAX_PIECES = 2;
 const POOL_SIZE = 14;
+// The other side has to come out ahead too, not merely even: a pitch that
+// leaves their lineup unchanged gives them no reason to accept.
+const THEIR_MIN_GAIN = 0.002;
+const LEAGUE_TYPES = { 0: "redraft", 1: "keeper", 2: "dynasty" };
 
 /* ------------------------------------------------------------- leagues */
 
 /* FantasyCalc scales its values to the league's format. It only knows 0, 0.5
- * and 1 PPR and 1 or 2 starting QBs, so snap to the nearest. */
+ * and 1 PPR and 1 or 2 starting QBs, so snap to the nearest. Keeper leagues
+ * use redraft values: this season is most of what a keeper is worth. */
 function fcParams(league) {
   const s = league.settings || {};
   const sc = league.scoring_settings || {};
@@ -221,7 +226,7 @@ function tradesWith(me, them, slots, rosterSize) {
       const theirGain = (theirAfter - theirBase) / Math.max(theirBase, 1);
       // Worth pitching only if it helps you and the other side has a reason
       // to say yes, not just a reason not to say no.
-      if (myGain <= 0.005 || theirGain < 0) continue;
+      if (myGain <= 0.005 || theirGain < THEIR_MIN_GAIN) continue;
       found.push({
         give, get, f, myBase, myAfter, theirBase, theirAfter, myGain, theirGain,
         myAfterRoster, theirAfterRoster,
@@ -287,6 +292,23 @@ function positionProfile(teams, slots) {
   return profile;
 }
 
+/* The parts of a league's setup that change what a player is worth. */
+function leagueNotes(league) {
+  const s = league.settings || {};
+  const sc = league.scoring_settings || {};
+  const slots = league.roster_positions || [];
+  return {
+    type: LEAGUE_TYPES[s.type] || "other",
+    superflex: slots.includes("SUPER_FLEX"),
+    rec: Number(sc.rec || 0),
+    te_premium: Number(sc.bonus_rec_te || 0),
+    pass_td: sc.pass_td != null ? Number(sc.pass_td) : null,
+    starters: slots.filter((x) => !SKIP_SLOTS.has(x)),
+    taxi_slots: Number(s.taxi_slots || 0),
+    trade_deadline: s.trade_deadline && s.trade_deadline !== 99 ? s.trade_deadline : null,
+  };
+}
+
 /* Candidates for one league, spread across partners and players so the
  * research step has real choices rather than twelve versions of one deal. */
 function leagueCandidates(ctx, opts) {
@@ -339,6 +361,8 @@ function leagueCandidates(ctx, opts) {
     season: ctx.season, week: ctx.week,
     window: tradeWindow(league, ctx.week),
     format: fcParams(league),
+    // What FantasyCalc can't see, for the research step to weigh by hand.
+    league: leagueNotes(league),
     values_source: { name: "FantasyCalc", url: "https://fantasycalc.com",
                      api: fcUrl(fcParams(league)), fetched: ctx.valuesFetched },
     me: {
@@ -582,7 +606,7 @@ async function main() {
   if (process.env.HTTPS_PROXY && !process.env.NODE_USE_ENV_PROXY && !process.env.TRADES_FIXTURES) {
     const { spawnSync } = require("child_process");
     const r = spawnSync(process.execPath, process.argv.slice(1),
-      { stdio: "inherit", env: { ...process.env, NODE_USE_ENV_PROXY: "1" } });
+      { stdio: "inherit", env: { ...process.env, NODE_USE_ENV_PROXY: "1", NODE_NO_WARNINGS: "1" } });
     process.exit(r.status == null ? 1 : r.status);
   }
   const a = args(process.argv.slice(2));
@@ -599,6 +623,6 @@ if (require.main === module) {
   main().catch((e) => { console.error(e.message); process.exit(1); });
 }
 
-module.exports = { tradeWindow, fcParams, fcUrl, valueMap, teamPlayers, lineup, strength,
+module.exports = { tradeWindow, fcParams, fcUrl, valueMap, teamPlayers, lineup, strength, leagueNotes,
                    packageValue, fairness, tradesWith, positionProfile, leagueCandidates,
                    finalize, FAIR_PCT };
