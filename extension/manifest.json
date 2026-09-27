@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Sleeper Rankings",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Weekly Sleeper rankings, lineup check and trade ideas, next to your own Sleeper leagues.",
   "icons": {
     "16": "icons/icon-16.png",

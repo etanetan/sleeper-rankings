@@ -129,16 +129,35 @@ function createLoader({ storage, onStatus } = {}) {
   // A completed week's projections, shared across every league's
   // seasonRecapFor call this session (not fetched once per league) - a
   // plain in-memory Map, since it only needs to outlive one page load, the
-  // same lifetime as the loader itself.
+  // same lifetime as the loader itself. Caches the in-flight promise, not
+  // just the eventual value: two leagues clicked in close succession
+  // (before the first has resolved) both see a hit and await the same
+  // fetch instead of each starting their own. A rejected fetch is evicted
+  // rather than cached, so a transient failure doesn't poison the week for
+  // the rest of the session.
   const _weekProjectionsCache = new Map();
-  async function projectionsForWeek(season, w) {
+  function projectionsForWeek(season, w) {
     if (_weekProjectionsCache.has(w)) return _weekProjectionsCache.get(w);
-    const { projections } = await loadProjections(season, w);
-    _weekProjectionsCache.set(w, projections);
-    return projections;
+    const promise = loadProjections(season, w).then(({ projections }) => projections);
+    promise.catch(() => { _weekProjectionsCache.delete(w); });
+    _weekProjectionsCache.set(w, promise);
+    return promise;
   }
 
-  const RECAP_CACHE_PREFIX = "sr-recap-v1";
+  const RECAP_CACHE_PREFIX = "sr-recap-v2";
+
+  // A short, non-cryptographic hash (folded into the cache key below) so a
+  // scoring-settings change or a roster reassigned to a new owner - both
+  // things Sleeper lets a commissioner do mid-season - naturally lands on
+  // a fresh key instead of reading another owner's or a stale settings'
+  // cached numbers forever. The old entries are just orphaned, not
+  // corrected, but that's a fixed, small amount of dead storage, not a
+  // wrong answer.
+  function shortHash(s) {
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+    return (h >>> 0).toString(36);
+  }
 
   /* Season totals across every completed week (1..data.week-1): how the
    * tool's picks would have done, added up over the whole season so far -
@@ -154,9 +173,10 @@ function createLoader({ storage, onStatus } = {}) {
    * this or any future load, everything before that is served straight
    * from the cache. */
   async function seasonRecapFor(lg, data, settings, slots, rosterId) {
+    const settingsHash = shortHash(JSON.stringify(settings || {}));
     let actual = 0, ours = 0, best = 0, counted = 0;
     for (let w = 1; w < data.week; w++) {
-      const cacheKey = `${RECAP_CACHE_PREFIX}:${lg.league_id}:${w}`;
+      const cacheKey = `${RECAP_CACHE_PREFIX}:${lg.league_id}:${rosterId}:${w}:${settingsHash}`;
       let weekResult = null;
       try {
         const raw = await storage.getItem(cacheKey);

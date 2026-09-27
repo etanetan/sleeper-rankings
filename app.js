@@ -401,20 +401,48 @@ if (typeof document !== "undefined") {
   function seasonRecapButton(lg) {
     if (!lg.week || lg.week <= 1) return null;
     const wrap = el("p", "recap-line");
-    const btn = el("button", "ghost", "See season totals");
-    btn.type = "button";
-    wrap.appendChild(btn);
-    btn.addEventListener("click", async () => {
-      btn.disabled = true;
-      btn.textContent = "Loading…";
-      let result;
-      try { result = await lg.seasonRecap(); }
-      catch (e) { result = null; }
+
+    function renderIdle(label) {
+      wrap.innerHTML = "";
+      const btn = el("button", "ghost", label);
+      btn.type = "button";
+      btn.addEventListener("click", load);
+      wrap.appendChild(btn);
+    }
+
+    // A failed load (network, a bad response) gets its own retry-able
+    // button rather than a dead-end line, and shouldn't read the same as
+    // "genuinely nothing to total up yet" (which this button's own guard
+    // above already makes unreachable in practice - by the time it's
+    // shown, week > 1, so there's always at least one week to try).
+    function renderError() {
+      wrap.innerHTML = "";
+      wrap.appendChild(document.createTextNode("Couldn't load season totals. "));
+      const btn = el("button", "ghost", "Retry");
+      btn.type = "button";
+      btn.addEventListener("click", load);
+      wrap.appendChild(btn);
+    }
+
+    async function load() {
+      wrap.innerHTML = "";
+      const loading = el("button", "ghost", "Loading…");
+      loading.type = "button";
+      loading.disabled = true;
+      wrap.appendChild(loading);
+
+      let result = null;
+      try { result = await lg.seasonRecap(); } catch (e) { result = null; }
       if (!wrap.isConnected) return;   // switched leagues/tabs while loading
-      wrap.textContent = result
-        ? `Season (${result.weeks} wk${result.weeks === 1 ? "" : "s"}): ${recapText(result)}`
-        : "No completed weeks to total up yet.";
-    });
+
+      if (result) {
+        wrap.textContent = `Season (${result.weeks} wk${result.weeks === 1 ? "" : "s"}): ${recapText(result)}`;
+      } else {
+        renderError();
+      }
+    }
+
+    renderIdle("See season totals");
     return wrap;
   }
 
