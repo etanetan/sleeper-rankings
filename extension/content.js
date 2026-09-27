@@ -73,6 +73,26 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
     let LEAGUE_ID = null;
     let CTX = null;   // { startingIds, bestIds, outIds, players, byNameKey, check }
 
+    // The x position of the "OWN %" column header, so every row's badge can
+    // sit just to its left instead of crowding the player name - found by
+    // its text, not a guessed class name, since that's stable across a CSS
+    // rebuild the way a hashed class name isn't. Cached per page (reset on
+    // navigation): a horizontal position doesn't change between rows or on
+    // vertical scroll, and re-scanning every element on every row would be
+    // needlessly expensive. Pages without that header (the Players page,
+    // most likely) just fall back to placement next to the name.
+    let OWN_PCT_X = null;
+    function ownPctX() {
+      if (OWN_PCT_X != null) return OWN_PCT_X;
+      for (const el of document.querySelectorAll("div, span, th")) {
+        if (el.children.length === 0 && /^own\s*%$/i.test(el.textContent.trim())) {
+          OWN_PCT_X = el.getBoundingClientRect().left;
+          return OWN_PCT_X;
+        }
+      }
+      return null;
+    }
+
     function findPlayerId(row) {
       const aria = row.querySelector(SELECTORS.ariaAvatar);
       if (aria) {
@@ -119,7 +139,12 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
         const badgeRect = badge.getBoundingClientRect();
         if (getComputedStyle(row).position === "static") row.style.position = "relative";
         badge.style.position = "absolute";
-        badge.style.left = `${badgeRect.left - rowRect.left}px`;
+        const ownX = ownPctX();
+        // Just left of OWN% when that header exists; otherwise where it
+        // already naturally landed, right after the name.
+        badge.style.left = ownX != null
+          ? `${ownX - rowRect.left - badgeRect.width - 14}px`
+          : `${badgeRect.left - rowRect.left}px`;
         badge.style.marginLeft = "0";
         badge.style.top = "50%";
         badge.style.transform = "translateY(-50%)";
@@ -190,8 +215,16 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
       } catch (e) { /* fail silently - a missing badge beats a broken page */ }
     }
 
+    let LAST_PATH = null;
     function onNavigate() {
-      const m = LEAGUE_RE.exec(location.pathname);
+      const path = location.pathname;
+      if (path !== LAST_PATH) {
+        LAST_PATH = path;
+        // Switching tabs within the same league (Team -> Players) doesn't
+        // change LEAGUE_ID below, but the column header can still differ.
+        OWN_PCT_X = null;
+      }
+      const m = LEAGUE_RE.exec(path);
       const id = m ? m[1] : null;
       if (id === LEAGUE_ID) return;
       LEAGUE_ID = id;
