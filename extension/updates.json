@@ -1,0 +1,12 @@
+{
+  "addons": {
+    "sleeper-rankings@etanetan.github.io": {
+      "updates": [
+        {
+          "version": "1.1.0",
+          "update_link": "https://etanetan.github.io/sleeper-rankings/extension/dist/sleeper-rankings-1.1.0.xpi"
+        }
+      ]
+    }
+  }
+}
