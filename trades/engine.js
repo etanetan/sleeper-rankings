@@ -21,7 +21,8 @@
 
 const fs = require("fs");
 const path = require("path");
-const { SLOT_ELIGIBLE, tradeWindow, normStatus, scorePlayer } = require("../app.js");
+const { SLOT_ELIGIBLE, tradeWindow, normStatus, scorePlayer,
+        ORDINAL, EVEN_PCT, isHttps, SECTIONS } = require("../app.js");
 const { MIN_TRADES, markRunning, markFailed, reasonFor, pickNext } = require("../research.js");
 
 const SLEEPER = "https://api.sleeper.app/v1";
@@ -72,7 +73,6 @@ const MAX_TRADES = 8;
 // team's strength: they're next year's players, not this week's.
 const PICK_POOL = 4;
 const PICK_WEIGHT = 0.15;
-const ORDINAL = ["", "1st", "2nd", "3rd", "4th", "5th", "6th"];
 // Out for weeks, not days: these players can't help a lineup now, whatever
 // they're worth on the market. A one-week "Out" still counts.
 const LONG_OUT = new Set(["IR", "PUP", "SUS", "NA", "DNR"]);
@@ -198,7 +198,7 @@ function fairness(giveVals, getVals) {
   return {
     give, get, giveAdj, getAdj, diffPct,
     fair: Math.abs(diffPct) <= FAIR_PCT,
-    verdict: Math.abs(diffPct) <= 0.03 ? "Even"
+    verdict: Math.abs(diffPct) <= EVEN_PCT ? "Even"
       : diffPct > 0 ? "Slightly in your favor" : "You pay a little more",
   };
 }
@@ -754,9 +754,6 @@ function leagueCandidates(ctx, opts) {
 
 /* ------------------------------------------------------------ finalize */
 
-// "experts" is the week's news and what fantasy analysts are saying about the
-// players involved: current sentiment is part of every call.
-const SECTIONS = ["give", "get", "you", "them", "experts"];
 // The page talks to the manager: "you", never "I" or "we".
 const FIRST_PERSON = /(^|[^\w'’])(I|I'm|I’m|I've|I’ve|I'd|I’d|[Mm]y|[Mm]ine|[Ww]e|[Ww]e're|[Ww]e’re|[Oo]ur|[Oo]urs|[Uu]s)(?=$|[^\w'’])/;
 
@@ -797,7 +794,7 @@ function finalize(work, research, now) {
     const sources = r.sources || [];
     if (!sources.length) errors.push(`${where}: cite at least one source.`);
     sources.forEach((s, j) => {
-      if (!s || !/^https:\/\//.test(s.url || "") || !s.title) {
+      if (!s || !isHttps(s.url) || !s.title) {
         errors.push(`${where}: sources[${j}] needs a title and an https url.`);
       }
     });
@@ -820,7 +817,9 @@ function finalize(work, research, now) {
     if (!f.fair) errors.push(`${where}: not fair by FantasyCalc (${Math.round(f.diffPct * 100)}%).`);
 
     trades.push({
-      ...c, value: f,
+      id: c.id, partner: c.partner, give: c.give, get: c.get, value: f,
+      you: { gainPct: c.you.gainPct, changes: c.you.changes, drop: c.you.drop },
+      them: { gainPct: c.them.gainPct },
       headline: r.headline, summary: r.summary || "",
       confidence: r.confidence || "medium",
       why: { give: why.give, get: why.get, you: why.you, them: why.them, experts: why.experts },

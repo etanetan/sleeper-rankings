@@ -267,12 +267,9 @@ node trades/engine.js finalize --league <id> \
   --research trades/work/<id>.research.json --data /tmp/trade-data
 ```
 
-This is the check against FantasyCalc and the rules: it recomputes every
-trade's value from the market numbers and refuses anything outside ±10%,
-fewer than 5 trades without a `short_reason`, more than 8, a slumping player
-of yours being sold, unknown candidates, empty sections (including
-`experts`), first-person wording, or sources without https links. On exit
-code 2, fix what it prints and run it again.
+This is the check against FantasyCalc and the rules. `finalize` names
+anything it rejects; fix what it prints and run it again. On exit code 2,
+nothing was published.
 
 ```bash
 cd /tmp/trade-data

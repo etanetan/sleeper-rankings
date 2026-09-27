@@ -5,6 +5,7 @@ const os = require("os");
 const path = require("path");
 const { execFileSync } = require("child_process");
 const T = require("./trades/engine.js");
+const A = require("./app.js");
 const results = [];
 
 function check(label, got, want) {
@@ -386,6 +387,14 @@ check("numbers come from the candidates, not the research",
   ok.data.trades[0].value.giveAdj, work.candidates[0].value.giveAdj);
 check("status ready", ok.data.status, "ready");
 check("unreviewed research says so", ok.data.review, { checked: false });
+check("a published trade has exactly the fields the page reads",
+  Object.keys(ok.data.trades[0]).sort(), A.TRADE_FIELDS.slice().sort());
+check("the work-only fields (kind, picks) aren't published",
+  ["kind", "picks"].some((k) => k in ok.data.trades[0]), false);
+check("them keeps only gainPct, not before/after/changes/drop",
+  Object.keys(ok.data.trades[0].them), ["gainPct"]);
+check("you keeps gainPct, changes and drop, not before/after",
+  Object.keys(ok.data.trades[0].you).sort(), ["changes", "drop", "gainPct"]);
 check("experts section required", T.finalize(work, { ...good, trades: [{ ...good.trades[0],
   why: { ...good.trades[0].why, experts: [] } }] }).errors.some((e) => /why.experts/.test(e)), true);
 check("a second agent's review is published",
