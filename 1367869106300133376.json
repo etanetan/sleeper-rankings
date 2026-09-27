@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1367869106300133376",
   "league_name": "FCFFL",
   "season": "2026",
   "week": 3,
-  "generated": "2026-09-27T02:38:41.770Z",
+  "generated": "2026-09-27T02:51:51.805Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=1&numTeams=12&ppr=1",
-    "fetched": "2026-09-27T02:29:20.621Z"
+    "fetched": "2026-09-27T02:45:04.775Z"
   },
   "me": {
     "name": "Young Blood",
@@ -20,13 +20,194 @@
       "TE"
     ],
     "deep": [
-      "WR",
-      "RB"
+      "RB",
+      "WR"
     ]
   },
   "trades": [
     {
-      "id": "1csuv2f",
+      "id": "1bhjtcb",
+      "partner": {
+        "roster_id": 6,
+        "name": "The Bedouin",
+        "user": "CJ129",
+        "record": "1-1",
+        "thin": [
+          "WR",
+          "QB"
+        ],
+        "deep": [
+          "RB",
+          "TE"
+        ]
+      },
+      "give": [
+        {
+          "id": "9500",
+          "n": "Josh Downs",
+          "p": "WR",
+          "t": "IND",
+          "v": 1226,
+          "pr": 30,
+          "trend": 347,
+          "status": null,
+          "sidelined": false
+        },
+        {
+          "id": "7002",
+          "n": "Juwan Johnson",
+          "p": "TE",
+          "t": "NO",
+          "v": 757,
+          "pr": 12,
+          "trend": 368,
+          "status": null,
+          "sidelined": false
+        }
+      ],
+      "get": [
+        {
+          "id": "7523",
+          "n": "Trevor Lawrence",
+          "p": "QB",
+          "t": "JAX",
+          "v": 1585,
+          "pr": 9,
+          "trend": -96,
+          "status": null,
+          "sidelined": false
+        },
+        {
+          "id": "13414",
+          "n": "Kaelon Black",
+          "p": "RB",
+          "t": "SF",
+          "v": 399,
+          "pr": 42,
+          "trend": 324,
+          "status": null,
+          "sidelined": false
+        }
+      ],
+      "value": {
+        "give": 1983,
+        "get": 1984,
+        "giveAdj": 1832,
+        "getAdj": 1904,
+        "diffPct": 0.045,
+        "fair": true,
+        "verdict": "Slightly in your favor"
+      },
+      "you": {
+        "before": 21879,
+        "after": 22912,
+        "gainPct": 4.7,
+        "changes": {
+          "in": [
+            {
+              "n": "Trevor Lawrence",
+              "slot": "QB"
+            },
+            {
+              "n": "Dalton Schultz",
+              "slot": "TE"
+            },
+            {
+              "n": "DK Metcalf",
+              "slot": "FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Daniel Jones",
+              "slot": "QB"
+            },
+            {
+              "n": "Juwan Johnson",
+              "slot": "TE"
+            },
+            {
+              "n": "Josh Downs",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "before": 26695,
+        "after": 26761,
+        "gainPct": 0.2,
+        "changes": {
+          "in": [
+            {
+              "n": "Jared Goff",
+              "slot": "QB"
+            },
+            {
+              "n": "Josh Downs",
+              "slot": "WR"
+            }
+          ],
+          "out": [
+            {
+              "n": "Trevor Lawrence",
+              "slot": "QB"
+            },
+            {
+              "n": "Michael Wilson",
+              "slot": "WR"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "headline": "Turn Downs and Johnson into Trevor Lawrence, playing the best football of his career",
+      "summary": "Sends receiver and tight end surplus to a WR/QB-thin rival for a red-hot dual-threat starter at your weakest position.",
+      "confidence": "high",
+      "why": {
+        "give": [
+          "Downs' 29% target share only opened up after Alec Pierce got hurt; Colts split targets with Tyler Warren, capping him as WR depth you don't need.",
+          "Johnson's role is easily replaced by Dalton Schultz, who has outproduced him the last two weeks as a top-5 fantasy tight end."
+        ],
+        "get": [
+          "Lawrence leads the NFL in average depth of target (11.1 yards) and was named AFC Offensive Player of the Week entering Week 3.",
+          "Black has out-touched Christian McCaffrey 21-20 through two weeks in a real committee, giving him standalone flex value."
+        ],
+        "you": [
+          "Lawrence becomes your starting QB, replacing Daniel Jones' 132 FantasyCalc value and -78 trend outright.",
+          "Dalton Schultz (687 value, +517 trend) steps into the starting TE spot Johnson vacates, so the position doesn't downgrade."
+        ],
+        "them": [
+          "The Bedouin (1-1) are thin at WR and QB; adding Downs fills their receiver need in a lateral QB swap to Goff.",
+          "They're deep at TE already, so absorbing Johnson as WR/QB-thin depth costs them nothing on the bench."
+        ]
+      },
+      "risks": [
+        "Lawrence completes just 35.3% of throws under pressure, a soft spot a good pass rush could exploit.",
+        "If Alec Pierce returns healthy in Indianapolis, Downs' target share (and the Colts' incentive to deal him) could shrink back down."
+      ],
+      "sources": [
+        {
+          "title": "Why pressuring Trevor Lawrence is likely key to Patriots beating Jaguars",
+          "url": "https://www.nbcsportsboston.com/nfl/new-england-patriots/trevor-lawrence-jaguars-stats-patriots-preview-week-3/804070/"
+        },
+        {
+          "title": "Jaguar Report: Trevor Lawrence named AFC Offensive Player of the Week",
+          "url": "https://www.si.com/nfl/jaguars/news/trevor-lawrence-named-afc-offensive-player-of-the-week-after-performance-vs-chargers"
+        },
+        {
+          "title": "How Colts are planning to grow Josh Downs' role within offense in 2026",
+          "url": "https://www.colts.com/news/josh-downs-wide-receiver-fantasy-football-usage-snap-counts-targets-2026-season"
+        },
+        {
+          "title": "Meet Kaelon Black, the 49ers RB irking fantasy owners by taking snaps away from Christian McCaffrey",
+          "url": "https://sports.yahoo.com/articles/meet-kaelon-black-49ers-rb-020359620.html"
+        }
+      ]
+    },
+    {
+      "id": "1sovqly",
       "partner": {
         "roster_id": 9,
         "name": "Ben Hur Returns",
@@ -43,15 +224,162 @@
       },
       "give": [
         {
-          "id": "5859",
-          "n": "A.J. Brown",
+          "id": "5846",
+          "n": "DK Metcalf",
           "p": "WR",
-          "t": "NE",
-          "v": 2623,
-          "pr": 22,
-          "trend": -3431,
-          "status": "IR"
+          "t": "PIT",
+          "v": 991,
+          "pr": 36,
+          "trend": -345,
+          "status": null,
+          "sidelined": false
         },
+        {
+          "id": "5001",
+          "n": "Dalton Schultz",
+          "p": "TE",
+          "t": "HOU",
+          "v": 687,
+          "pr": 14,
+          "trend": 517,
+          "status": null,
+          "sidelined": false
+        }
+      ],
+      "get": [
+        {
+          "id": "12545",
+          "n": "Tyler Shough",
+          "p": "QB",
+          "t": "NO",
+          "v": 1342,
+          "pr": 11,
+          "trend": 877,
+          "status": null,
+          "sidelined": false
+        },
+        {
+          "id": "12487",
+          "n": "Terrance Ferguson",
+          "p": "TE",
+          "t": "LAR",
+          "v": 216,
+          "pr": 21,
+          "trend": 162,
+          "status": null,
+          "sidelined": false
+        }
+      ],
+      "value": {
+        "give": 1678,
+        "get": 1558,
+        "giveAdj": 1541,
+        "getAdj": 1515,
+        "diffPct": -0.019,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "before": 21879,
+        "after": 22956,
+        "gainPct": 4.9,
+        "changes": {
+          "in": [
+            {
+              "n": "Tyler Shough",
+              "slot": "QB"
+            }
+          ],
+          "out": [
+            {
+              "n": "Daniel Jones",
+              "slot": "QB"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "before": 26226,
+        "after": 26353,
+        "gainPct": 0.5,
+        "changes": {
+          "in": [
+            {
+              "n": "Dalton Schultz",
+              "slot": "TE"
+            }
+          ],
+          "out": [
+            {
+              "n": "Kyle Pitts",
+              "slot": "TE"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "headline": "Sell high on a hot tight end, buy the NFL's passing-yardage leader Tyler Shough",
+      "summary": "Moves an underperforming Metcalf and a spiked Schultz to a QB-deep rebuilder for Shough and a rookie TE1 replacement.",
+      "confidence": "high",
+      "why": {
+        "give": [
+          "Metcalf has 4 drops and 2 needless offensive pass interference calls on just 19 targets through two games.",
+          "Schultz is riding a TE5, 26-point week with Nico Collins out; moving him now cashes in that spike before touches normalize."
+        ],
+        "get": [
+          "Shough leads the NFL with 662 passing yards through two weeks and delivered a go-ahead rushing touchdown against Baltimore.",
+          "Ferguson has claimed the Rams' TE1 job: 71.4% route share, 26.9% target share, and a TE8 finish last week."
+        ],
+        "you": [
+          "Shough takes the QB slot outright from Daniel Jones, a clear upgrade at your thinnest position.",
+          "Ferguson fills the flex/TE spot Schultz vacates so the position isn't left empty."
+        ],
+        "them": [
+          "Ben Hur Returns (0-2) are thin at TE and WR and deep at QB, so trading Shough away costs them a surplus piece.",
+          "Metcalf and Schultz fill two real holes for a rebuilding roster hunting difference-makers at receiver and tight end."
+        ]
+      },
+      "risks": [
+        "Shough's production is heavily fourth-quarter-driven (350 of his yards there); a low-scoring week could look different.",
+        "Ferguson still shares some early-down snaps with Tyler Higbee, which can cap his floor in a given week."
+      ],
+      "sources": [
+        {
+          "title": "Morning Break: Tyler Shough leads NFL in passing yards as Saints enter Week 3",
+          "url": "https://www.neworleanssaints.com/news/morning-break-tyler-shough-leads-nfl-in-passing-yards-as-saints-enter-week-3-new-orleans-news-headlines-9-23-2026"
+        },
+        {
+          "title": "Tyler Shough Has Earned Must-Start Fantasy Football Status in Week 3",
+          "url": "https://twsn.net/2026/09/25/tyler-shough-has-earned-must-start-fantasy-football-status-in-week-3"
+        },
+        {
+          "title": "Rams snap count review: Terrance Ferguson stakes a claim for TE#1",
+          "url": "https://sports.yahoo.com/articles/rams-snap-count-review-terrance-223500168.html"
+        },
+        {
+          "title": "DK Metcalf carries a low floor into Week 3",
+          "url": "https://www.rotoballer.com/player-news/dk-metcalf-carries-a-low-floor-into-week-3/1950103"
+        }
+      ]
+    },
+    {
+      "id": "1vtpviu",
+      "partner": {
+        "roster_id": 10,
+        "name": "ChampaignTornadoes",
+        "user": "ChampaignTornadoes",
+        "record": "1-1",
+        "thin": [
+          "RB",
+          "TE"
+        ],
+        "deep": [
+          "QB",
+          "WR"
+        ]
+      },
+      "give": [
         {
           "id": "2449",
           "n": "Stefon Diggs",
@@ -60,256 +388,42 @@
           "v": 1201,
           "pr": 32,
           "trend": 91,
-          "status": null
+          "status": null,
+          "sidelined": false
         }
       ],
       "get": [
         {
-          "id": "6904",
-          "n": "Jalen Hurts",
+          "id": "6797",
+          "n": "Justin Herbert",
           "p": "QB",
-          "t": "PHI",
-          "v": 2084,
-          "pr": 5,
-          "trend": -544,
-          "status": null
-        },
-        {
-          "id": "11646",
-          "n": "Jalen Coker",
-          "p": "WR",
-          "t": "CAR",
-          "v": 1871,
-          "pr": 27,
-          "trend": 1379,
-          "status": "Questionable"
+          "t": "LAC",
+          "v": 1143,
+          "pr": 13,
+          "trend": -964,
+          "status": null,
+          "sidelined": false
         }
       ],
       "value": {
-        "give": 3824,
-        "get": 3955,
-        "giveAdj": 3584,
-        "getAdj": 3581,
-        "diffPct": -0.001,
+        "give": 1201,
+        "get": 1143,
+        "giveAdj": 1201,
+        "getAdj": 1143,
+        "diffPct": -0.048,
         "fair": true,
-        "verdict": "Even"
+        "verdict": "You pay a little more"
       },
       "you": {
-        "before": 23691,
-        "after": 24519,
-        "gainPct": 3.5,
+        "before": 21879,
+        "after": 22594,
+        "gainPct": 3.3,
         "changes": {
           "in": [
             {
-              "n": "Jalen Hurts",
+              "n": "Justin Herbert",
               "slot": "QB"
             },
-            {
-              "n": "Jalen Coker",
-              "slot": "FLEX"
-            }
-          ],
-          "out": [
-            {
-              "n": "Jayden Daniels",
-              "slot": "QB"
-            },
-            {
-              "n": "A.J. Brown",
-              "slot": "FLEX"
-            }
-          ]
-        },
-        "drop": {
-          "id": "13301",
-          "n": "Antonio Williams",
-          "p": "WR",
-          "v": 9
-        }
-      },
-      "them": {
-        "before": 26228,
-        "after": 26401,
-        "gainPct": 0.7,
-        "changes": {
-          "in": [
-            {
-              "n": "Tyler Shough",
-              "slot": "QB"
-            },
-            {
-              "n": "A.J. Brown",
-              "slot": "WR"
-            },
-            {
-              "n": "Stefon Diggs",
-              "slot": "FLEX"
-            }
-          ],
-          "out": [
-            {
-              "n": "Jalen Hurts",
-              "slot": "QB"
-            },
-            {
-              "n": "Jalen Coker",
-              "slot": "FLEX"
-            },
-            {
-              "n": "Denzel Boston",
-              "slot": "FLEX"
-            }
-          ]
-        },
-        "drop": null
-      },
-      "headline": "Flip a dead IR body (A.J. Brown) and buried Stefon Diggs for a true starting QB in Jalen Hurts.",
-      "summary": "A.J. Brown is stuck on IR for ~6 weeks and Stefon Diggs is buried on a deep WR bench, so send both to Ben Hur Returns for Jalen Hurts, who becomes your starter with Jayden Daniels' return date unclear.",
-      "confidence": "high",
-      "why": {
-        "give": [
-          "A.J. Brown (ankle) is on IR and expected out ~6 weeks per Ian Rapoport, producing nothing for you in the meantime.",
-          "Stefon Diggs (v1201) sits buried on your bench behind a WR group the league already rates as your deep position."
-        ],
-        "get": [
-          "Jalen Hurts (v2084, PR5) is an every-week starting QB1, filling your thinnest roster spot the moment you need it.",
-          "Hurts' rushing floor is the buy-in case; analysts project positive regression after under 500 rush yards in a down 2025.",
-          "Jalen Coker (ankle, Questionable) was a limited-but-full practice participant Friday and is trending toward playing Week 3."
-        ],
-        "you": [
-          "Hurts starts immediately at QB in place of Jayden Daniels, who dislocated his elbow again and has no firm return date.",
-          "Coker becomes a second-FLEX flier; you lose nothing in practice from A.J. Brown, who wasn't playing on IR anyway.",
-          "Converts a dead IR roster spot and a bench-only WR into a legitimate starting quarterback."
-        ],
-        "them": [
-          "Ben Hur Returns (0-2) is thin at WR/TE and adds Brown plus Diggs, even if Brown's snaps don't start for weeks.",
-          "They already roster Tyler Shough as a starter-capable backup QB, so moving Hurts doesn't leave their lineup empty."
-        ]
-      },
-      "risks": [
-        "Daniels dislocated the same elbow last year too and missed only 4 weeks then; a similarly quick return would make this look redundant.",
-        "Philadelphia lost O-line coach Jeff Stoutland and graded outside the top 16 on the line in 2025, a real threat to Hurts' rushing floor.",
-        "Coker's ankle has flared up multiple times already this season and could resurface in a later week."
-      ],
-      "sources": [
-        {
-          "title": "Patriots reportedly expected to miss more than 4 weeks due to ankle injury",
-          "url": "https://www.boston.com/sports/new-england-patriots/2026/09/13/new-england-patriots-a-j-brown-injury-update-ir-timeline-ankle-sprain/"
-        },
-        {
-          "title": "Week 3 Friday Injury Report: Jalen Coker questionable",
-          "url": "https://www.panthers.com/news/week-3-friday-injury-report-three-ruled-out-for-cleveland-devin-lloyd-jalen-coker-questionable"
-        },
-        {
-          "title": "Jalen Hurts Fantasy Prediction 2026: Rushing Floor Is the Whole Case",
-          "url": "https://sports.yahoo.com/articles/jalen-hurts-fantasy-prediction-2026-101000863.html"
-        },
-        {
-          "title": "Jayden Daniels injury update: Commanders QB avoids surgery after dislocated elbow",
-          "url": "https://www.cbssports.com/nfl/news/jayden-daniels-injury-update-commanders-qb-elbow-2026/"
-        }
-      ]
-    },
-    {
-      "id": "tzskqj",
-      "partner": {
-        "roster_id": 2,
-        "name": "Strikes",
-        "user": "DStruyk",
-        "record": "0-2",
-        "thin": [
-          "RB",
-          "QB"
-        ],
-        "deep": [
-          "TE",
-          "WR"
-        ]
-      },
-      "give": [
-        {
-          "id": "5846",
-          "n": "DK Metcalf",
-          "p": "WR",
-          "t": "PIT",
-          "v": 991,
-          "pr": 36,
-          "trend": -345,
-          "status": null
-        },
-        {
-          "id": "11566",
-          "n": "Jayden Daniels",
-          "p": "QB",
-          "t": "WAS",
-          "v": 427,
-          "pr": 20,
-          "trend": -2433,
-          "status": "Out"
-        }
-      ],
-      "get": [
-        {
-          "id": "9228",
-          "n": "Bryce Young",
-          "p": "QB",
-          "t": "CAR",
-          "v": 1133,
-          "pr": 14,
-          "trend": 979,
-          "status": null
-        },
-        {
-          "id": "11435",
-          "n": "Emanuel Wilson",
-          "p": "RB",
-          "t": "SEA",
-          "v": 237,
-          "pr": 50,
-          "trend": 237,
-          "status": null
-        }
-      ],
-      "value": {
-        "give": 1418,
-        "get": 1370,
-        "giveAdj": 1333,
-        "getAdj": 1323,
-        "diffPct": -0.009,
-        "fair": true,
-        "verdict": "Even"
-      },
-      "you": {
-        "before": 23691,
-        "after": 24323,
-        "gainPct": 2.7,
-        "changes": {
-          "in": [
-            {
-              "n": "Bryce Young",
-              "slot": "QB"
-            }
-          ],
-          "out": [
-            {
-              "n": "Jayden Daniels",
-              "slot": "QB"
-            }
-          ]
-        },
-        "drop": {
-          "id": "13301",
-          "n": "Antonio Williams",
-          "p": "WR",
-          "v": 9
-        }
-      },
-      "them": {
-        "before": 26528,
-        "after": 26643,
-        "gainPct": 0.4,
-        "changes": {
-          "in": [
             {
               "n": "DK Metcalf",
               "slot": "FLEX"
@@ -317,55 +431,77 @@
           ],
           "out": [
             {
-              "n": "Deebo Samuel",
+              "n": "Daniel Jones",
+              "slot": "QB"
+            },
+            {
+              "n": "Stefon Diggs",
               "slot": "FLEX"
             }
           ]
         },
         "drop": null
       },
-      "headline": "Sell hurt Jayden Daniels and an inefficient DK Metcalf for Bryce Young's hot 648-yard, 6-TD start.",
-      "summary": "Daniels' elbow has no firm timeline and DK Metcalf can't turn target volume into yards, so both go to Strikes for Bryce Young, who's off to a top-14 caliber start, plus a depth running back.",
+      "them": {
+        "before": 28074,
+        "after": 28213,
+        "gainPct": 0.5,
+        "changes": {
+          "in": [
+            {
+              "n": "Stefon Diggs",
+              "slot": "FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Blake Corum",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "headline": "Sell Diggs at his touchdown-fueled peak, buy a struggling Herbert before positive regression",
+      "summary": "Cashes in Diggs' hot start right as his QB situation downgrades, for a talented Herbert stuck in an 0-2 execution slump.",
       "confidence": "medium",
       "why": {
         "give": [
-          "Jayden Daniels dislocated the same elbow for a second time in 11 months; no surgery planned, but no firm return date either.",
-          "DK Metcalf led Pittsburgh in targets in Week 2 (9) but caught just 4 for 27 yards with a drop, shadowed by top corners."
+          "Diggs has 3 touchdowns on just 15 targets through two games, scoring pace well ahead of his 21.7% target share.",
+          "Washington just lost Jayden Daniels (elbow) to backup Marcus Mariota, a real downgrade to the QB play Diggs has been producing behind."
         ],
         "get": [
-          "Bryce Young has thrown for 648 yards, 6 TDs and just 1 INT through two games, in start-worthy Week 3 conversation.",
-          "Emanuel Wilson adds a depth flier at RB behind your already-deep Jonathan Taylor/Quinshon Judkins duo."
+          "Both Chargers losses have come by the same 26-14 score with clear execution issues (drops, false starts) rather than a talent shortfall.",
+          "Herbert and OC Mike McDaniel are meeting more to fix a 28th-ranked scoring offense, a buy-low window before it turns."
         ],
         "you": [
-          "Young gives you a proven, in-form starter alongside newly acquired Jalen Hurts while Daniels' recovery stays open-ended.",
-          "Sheds Daniels' downside risk (repeat elbow dislocation, no set return) before further bad news erodes his value more."
+          "Herbert takes over as your starting QB, replacing Daniel Jones' -78 trend outright.",
+          "You keep DK Metcalf and Josh Downs as receiver depth after moving only Diggs out of the flex spot."
         ],
         "them": [
-          "Strikes are 0-2 and may be selling Young's hot two-game stretch for a bigger name in Metcalf plus a talent stash in Daniels.",
-          "They plug Metcalf straight into their flex spot as an upgrade over Deebo Samuel there, per their own lineup math."
+          "ChampaignTornadoes (1-1) are deep at QB and WR but thin at RB and TE, and are still adding scoring punch at receiver.",
+          "Diggs' current touchdown pace makes him an appealing rental for a team already stacked at the position."
         ]
       },
       "risks": [
-        "Bryce Young's 648-yard, 6-TD start over two games may not hold up once Carolina faces tougher pass defenses.",
-        "Emanuel Wilson's role in Seattle is unsettled; reports conflict on whether he or Jadarian Price leads the backfield.",
-        "Daniels missed only 4 weeks with this same elbow injury last year; a similarly quick return gives Strikes real value."
+        "Herbert has yet to complete a single pass of 20+ air yards this season, a sign the buy-low could be early.",
+        "Diggs may keep producing regardless of QB, since Washington's passing game now runs through him as the clear No. 2 option."
       ],
       "sources": [
         {
-          "title": "Jayden Daniels injury update: Commanders QB avoids surgery after dislocated elbow",
-          "url": "https://www.cbssports.com/nfl/news/jayden-daniels-injury-update-commanders-qb-elbow-2026/"
+          "title": "Stefon Diggs Week 3 Outlook for Fantasy Football (2026)",
+          "url": "https://www.rotoballer.com/player-news/stefon-diggs-looking-to-stay-hot-in-week-3-against-seattle/1951504"
         },
         {
-          "title": "Fantasy Football Start or Sit Week 3: Bryce Young, Chuba Hubbard, Darren Waller",
-          "url": "https://sports.yahoo.com/articles/fantasy-football-start-sit-week-155157040.html"
+          "title": "2026 Fantasy Football Fallout: Stefon Diggs changes the Commanders outlooks for McLaurin and Daniels",
+          "url": "https://www.cbssports.com/fantasy/football/news/stefon-diggs-washington-commanders-fantasy-football-2026-outlook/"
         },
         {
-          "title": "DK Metcalf totals 27 yards on nine targets",
-          "url": "https://www.nbcsports.com/fantasy/football/player-news/2026-09-20/dk-metcalf-totals-27-yards-on-nine-targets"
+          "title": "'We got some growing pains': What's going on with the Chargers' offense through two games?",
+          "url": "https://www.espn.com/nfl/story/_/id/50024098/los-angeles-chargers-offense-troubles-jim-harbaugh-mike-mcdaniel"
         }
       ]
     }
   ],
-  "none_reason": null,
-  "started": "2026-09-27T02:45:11.035Z"
+  "none_reason": null
 }
