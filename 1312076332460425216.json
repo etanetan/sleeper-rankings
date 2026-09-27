@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1312076332460425216",
   "league_name": "Family Dynasty",
   "season": "2026",
   "week": 3,
-  "generated": "2026-09-27T02:37:12.585Z",
+  "generated": "2026-09-27T14:35:13.986Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&numTeams=12&ppr=1",
-    "fetched": "2026-09-27T02:29:21.009Z"
+    "fetched": "2026-09-27T14:19:07.634Z"
   },
   "me": {
     "name": "Bob’s Dynasty",
@@ -26,84 +26,162 @@
   },
   "trades": [
     {
-      "id": "wog3zj",
+      "id": "1n6r7nv",
+      "kind": "sell-high + buy-low",
+      "picks": true,
       "partner": {
-        "roster_id": 2,
-        "name": "Mother Theresa’s child ",
-        "user": "paigie123456789",
-        "record": "1-1",
+        "roster_id": 12,
+        "name": "The Galactic Empire",
+        "user": "HenryMyos",
+        "record": "2-0",
         "thin": [
-          "RB",
+          "TE",
           "QB"
         ],
         "deep": [
-          "TE",
+          "RB",
           "WR"
         ]
       },
       "give": [
         {
-          "id": "11564",
-          "n": "Drake Maye",
+          "id": "12545",
+          "n": "Tyler Shough",
           "p": "QB",
-          "t": "NE",
-          "v": 6535,
-          "pr": 4,
-          "trend": -1898,
-          "status": null
+          "t": "NO",
+          "v": 4275,
+          "pr": 14,
+          "trend": 977,
+          "trendPct": 0.3,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 2,
+            "ppg": 28.1,
+            "proj": 19.5,
+            "perf": 1.44,
+            "snap": 100,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 2
+          }
         },
         {
-          "id": "9997",
-          "n": "Zay Flowers",
-          "p": "WR",
-          "t": "BAL",
-          "v": 4275,
-          "pr": 13,
-          "trend": 569,
-          "status": "Questionable"
+          "id": "pick_2027_2_5",
+          "n": "2027 2nd (Mid)",
+          "p": "PICK",
+          "t": "via The Bedouin",
+          "v": 1631,
+          "pr": null,
+          "trend": 122,
+          "trendPct": 0.08,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": null,
+          "isPick": true,
+          "season": 2027,
+          "round": 2,
+          "slot": "mid",
+          "from": 5
         }
       ],
       "get": [
         {
-          "id": "7547",
-          "n": "Amon-Ra St. Brown",
-          "p": "WR",
-          "t": "DET",
-          "v": 7877,
-          "pr": 3,
-          "trend": 331,
-          "status": null
+          "id": "12507",
+          "n": "Omarion Hampton",
+          "p": "RB",
+          "t": "LAC",
+          "v": 4789,
+          "pr": 8,
+          "trend": -1321,
+          "trendPct": -0.22,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 2,
+            "ppg": 14.9,
+            "proj": 15.1,
+            "perf": 0.98,
+            "snap": 61,
+            "tgtShare": 4,
+            "tpg": 1,
+            "touches": 18.5,
+            "rz": 2
+          }
         },
         {
-          "id": "5849",
-          "n": "Kyler Murray",
-          "p": "QB",
-          "t": "MIN",
-          "v": 2723,
-          "pr": 23,
-          "trend": -207,
-          "status": null
+          "id": "12502",
+          "n": "Gunnar Helm",
+          "p": "TE",
+          "t": "TEN",
+          "v": 1035,
+          "pr": 28,
+          "trend": -213,
+          "trendPct": -0.17,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 2,
+            "ppg": 5.1,
+            "proj": 7,
+            "perf": 0.72,
+            "snap": 82,
+            "tgtShare": 16,
+            "tpg": 3.5,
+            "touches": null,
+            "rz": 1
+          }
         }
       ],
       "value": {
-        "give": 10810,
-        "get": 10600,
-        "giveAdj": 9955,
-        "getAdj": 10055,
-        "diffPct": 0.013,
+        "give": 5906,
+        "get": 5824,
+        "giveAdj": 5580,
+        "getAdj": 5617,
+        "diffPct": 0.008,
         "fair": true,
         "verdict": "Even"
       },
       "you": {
-        "before": 54292,
-        "after": 55536,
-        "gainPct": 2.3,
+        "before": 53984,
+        "after": 54253,
+        "gainPct": 0.5,
         "changes": {
           "in": [
             {
-              "n": "Amon-Ra St. Brown",
-              "slot": "WR"
-            },
+              "n": "Omarion Hampton",
+              "slot": "RB"
+            }
+          ],
+          "out": [
+            {
+              "n": "Tyler Shough",
+              "slot": "SUPER_FLEX"
+            }
+          ]
+        },
+        "drop": {
+          "id": "4454",
+          "n": "Kendrick Bourne",
+          "p": "WR",
+          "v": 208
+        }
+      },
+      "them": {
+        "before": 67887,
+        "after": 67617,
+        "gainPct": -0.4,
+        "changes": {
+          "in": [
             {
               "n": "Tyler Shough",
               "slot": "SUPER_FLEX"
@@ -111,91 +189,61 @@
           ],
           "out": [
             {
-              "n": "Zay Flowers",
+              "n": "Omarion Hampton",
               "slot": "FLEX"
-            },
-            {
-              "n": "Drake Maye",
-              "slot": "SUPER_FLEX"
             }
           ]
         },
         "drop": null
       },
-      "them": {
-        "before": 41977,
-        "after": 42187,
-        "gainPct": 0.5,
-        "changes": {
-          "in": [
-            {
-              "n": "Drake Maye",
-              "slot": "QB"
-            },
-            {
-              "n": "Zay Flowers",
-              "slot": "WR"
-            }
-          ],
-          "out": [
-            {
-              "n": "Amon-Ra St. Brown",
-              "slot": "WR"
-            },
-            {
-              "n": "Kyler Murray",
-              "slot": "SUPER_FLEX"
-            }
-          ]
-        },
-        "drop": null
-      },
-      "headline": "Sell a struggling Drake Maye + banged-up Zay Flowers for red-zone monster Amon-Ra St. Brown and a QB bridge",
-      "summary": "Maye is turnover-prone and benched-in-all-but-name right now, while Kyler Murray is only a one-year rental for the partner; flip both plus Flowers for St. Brown's elite target share and a Superflex fill-in while Caleb Williams is hurt.",
-      "confidence": "high",
+      "headline": "Flip a hot backup QB and an overpriced 2nd for a rebounding RB and the Titans' TE1",
+      "summary": "Tyler Shough's early surge funds a package of Omarion Hampton and Gunnar Helm, filling both thin roster spots at once.",
+      "confidence": "medium",
       "why": {
         "give": [
-          "Maye has thrown 4 INTs in 2 games and looks 'scared' per analysts; Patriots offense scored just 10 and 13 points.",
-          "Flowers is questionable (hamstring) and is only my WR4/flex depth behind Smith-Njigba, Nabers and McMillan."
+          "Shough is the QB5 by fantasy points through two weeks, but PFN ranks him just 11th for Week 3, a gap between output and respect that his 30-day price spike has already run past",
+          "This league's 2027 2nd (Mid) picks have produced a median value of just 573 against a 1,631 market price"
         ],
         "get": [
-          "St. Brown: 19/27 targets, 209 yards, 4 TD through 2 games and leads the NFL with 6 red-zone targets.",
-          "Murray is a locked-in Vikings starter who fills my Superflex spot now while Caleb Williams (hamstring) sits out."
+          "Hampton was the Week 2 PPR RB7 (23 carries, 94 yards, a TD), yet his price is still down 22% over the past month, a hangover from a 2025 ankle injury even as he's opened this season healthy and productive",
+          "Helm now sits atop Tennessee's TE depth chart after Okonkwo left for Washington in free agency"
         ],
         "you": [
-          "St. Brown slots straight into a starting WR spot, a clear value and target-share upgrade over Flowers.",
-          "Murray covers the Caleb Williams absence this year without touching my dynasty QB pieces (McCarthy, Shough)."
+          "Hampton starts immediately at your thin RB spot",
+          "Helm adds a real body behind Loveland, who is producing far below his 87% snap share"
         ],
         "them": [
-          "Partner is QB-thin; Murray is a league-minimum, one-year deal they'd reasonably flip for a younger long-term arm in Maye.",
-          "Partner is WR-deep, so moving a productive but replaceable St. Brown for a buy-low Maye plus a flex piece is low-risk for them."
+          "The Galactic Empire is thin at QB and gets a proven Week 3 starter in Shough for a backup slot",
+          "They're deep at RB and WR, so moving Hampton and a TE stash for a positional need is a reasonable sell for them"
+        ],
+        "experts": [
+          "PFN's Week 3 outlook ranks Shough 11th at QB, calling his floor solid rather than exceptional with his receiving corps still thin",
+          "RotoBaller (9/25) projects Hampton for another low-end RB1 outing in Week 3 barring more fumbles"
         ]
       },
       "risks": [
-        "Maye could rebound if the Patriots' offensive line/scheme issues get fixed, making this look like an early sell.",
-        "Murray's dynasty value approaches zero after 2026 since it's only a one-year contract."
+        "Hampton has fumbled in both games to open the season",
+        "Helm still shares some run-blocking snaps with Daniel Bellinger, capping his floor early in the season"
       ],
       "sources": [
         {
-          "title": "Where's the Drake Maye we saw last year? - Boston Globe",
-          "url": "https://www.bostonglobe.com/2026/09/21/sports/patriots-offense-drake-maye-struggling/"
+          "title": "Tyler Shough Fantasy Week 3 Start or Sit",
+          "url": "https://www.profootballnetwork.com/fantasy-football/tyler-shough-fantasy-football-outlook-week-3-2026/"
         },
         {
-          "title": "Amon-Ra St. Brown Highlights Fantasy Football's Key Red Zone Targets For Week 3",
-          "url": "https://www.si.com/onsi/fantasy/rankings/amon-ra-st-brown-highlights-fantasy-football-s-key-red-zone-targets-for-week-3"
+          "title": "Omarion Hampton Week 3 Outlook for Fantasy Football (2026)",
+          "url": "https://www.rotoballer.com/player-news/omarion-hampton-viewed-as-rb2-in-week-3-vs-bills/1951428"
         },
         {
-          "title": "Kyler Murray signs with Vikings, 'cannot wait' to touch field - ESPN",
-          "url": "https://www.espn.com/nfl/story/_/id/48188052/kyler-murray-signs-one-year-deal-vikings"
-        },
-        {
-          "title": "Lamar Jackson Week 3 Outlook for Fantasy Football (2026) - RotoBaller",
-          "url": "https://www.rotoballer.com/player-news/lamar-jackson-is-a-locked-in-starter-against-the-cowboys-in-week-3/1951147"
+          "title": "Gunnar Helm Fantasy Football Outlook (2026)",
+          "url": "https://www.fantasypros.com/nfl/notes/419550/gunnar-helm-2026-outlook.php"
         }
       ]
     },
     {
-      "id": "1hhqy2n",
+      "id": "ivswqv",
+      "kind": "buy-low",
+      "picks": true,
       "partner": {
         "roster_id": 8,
         "name": "Beat My Kids Tour 2026",
@@ -212,71 +260,533 @@
       },
       "give": [
         {
-          "id": "11632",
-          "n": "Malik Nabers",
+          "id": "12526",
+          "n": "Tetairoa McMillan",
           "p": "WR",
-          "t": "NYG",
-          "v": 5617,
-          "pr": 7,
-          "trend": -988,
-          "status": null
+          "t": "CAR",
+          "v": 4606,
+          "pr": 10,
+          "trend": -340,
+          "trendPct": -0.07,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 2,
+            "ppg": 13.8,
+            "proj": 14.8,
+            "perf": 0.93,
+            "snap": 81,
+            "tgtShare": 27,
+            "tpg": 9,
+            "touches": null,
+            "rz": 2
+          }
         },
         {
-          "id": "12506",
-          "n": "Harold Fannin",
-          "p": "TE",
-          "t": "CLE",
-          "v": 2745,
-          "pr": 8,
-          "trend": -443,
-          "status": null
+          "id": "pick_2027_2_4",
+          "n": "2027 2nd (Late)",
+          "p": "PICK",
+          "t": "own",
+          "v": 1389,
+          "pr": null,
+          "trend": 95,
+          "trendPct": 0.07,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": null,
+          "isPick": true,
+          "season": 2027,
+          "round": 2,
+          "slot": "late",
+          "from": 4
         }
       ],
       "get": [
         {
-          "id": "6813",
-          "n": "Jonathan Taylor",
+          "id": "4034",
+          "n": "Christian McCaffrey",
           "p": "RB",
-          "t": "IND",
-          "v": 6048,
-          "pr": 4,
-          "trend": 460,
-          "status": null
+          "t": "SF",
+          "v": 4661,
+          "pr": 10,
+          "trend": 199,
+          "trendPct": 0.04,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 2,
+            "ppg": 18.2,
+            "proj": 19.8,
+            "perf": 0.92,
+            "snap": 54,
+            "tgtShare": 22,
+            "tpg": 6,
+            "touches": 14.5,
+            "rz": 3.5
+          }
         },
         {
-          "id": "2133",
-          "n": "Davante Adams",
+          "id": "8134",
+          "n": "Khalil Shakir",
           "p": "WR",
-          "t": "LAR",
-          "v": 2196,
-          "pr": 36,
-          "trend": 15,
-          "status": null
+          "t": "BUF",
+          "v": 1396,
+          "pr": 57,
+          "trend": 47,
+          "trendPct": 0.03,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 2,
+            "ppg": 7.9,
+            "proj": 10.6,
+            "perf": 0.74,
+            "snap": 51,
+            "tgtShare": 21,
+            "tpg": 6,
+            "touches": null,
+            "rz": 1.5
+          }
         }
       ],
       "value": {
-        "give": 8362,
-        "get": 8244,
-        "giveAdj": 7813,
-        "getAdj": 7805,
-        "diffPct": -0.001,
+        "give": 5995,
+        "get": 6057,
+        "giveAdj": 5717,
+        "getAdj": 5778,
+        "diffPct": 0.013,
         "fair": true,
         "verdict": "Even"
       },
       "you": {
-        "before": 54292,
-        "after": 54669,
-        "gainPct": 0.7,
+        "before": 53984,
+        "after": 53830,
+        "gainPct": -0.3,
         "changes": {
           "in": [
             {
-              "n": "Jonathan Taylor",
+              "n": "Christian McCaffrey",
+              "slot": "FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Tetairoa McMillan",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": {
+          "id": "4454",
+          "n": "Kendrick Bourne",
+          "p": "WR",
+          "v": 208
+        }
+      },
+      "them": {
+        "before": 40539,
+        "after": 40599,
+        "gainPct": 0.1,
+        "changes": {
+          "in": [
+            {
+              "n": "Tetairoa McMillan",
+              "slot": "WR"
+            }
+          ],
+          "out": [
+            {
+              "n": "Christian McCaffrey",
+              "slot": "RB"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "headline": "Move a fair-value WR and a 2nd for Christian McCaffrey while his price still reflects health worries",
+      "summary": "McMillan and a late 2027 2nd land a fully healthy, fully featured McCaffrey to fix your thin backfield.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "McMillan is producing right at his role (81% snaps, 27% target share), not a clear sell, but you're deep at WR",
+          "This league's 2027 2nd (Late) picks carry a 1,067 median value against a 1,389 market price, a modest overpay to sell into"
+        ],
+        "get": [
+          "McCaffrey led all backs in touches in Week 1 and scored twice in Week 2, with an 8-and-4 target line over those two weeks",
+          "He was a full practice participant Wednesday through Friday this week, not on the injury report",
+          "His FantasyCalc value (4,661) is depressed by age and workload concerns his current usage doesn't support: he turns 30 this year after a 339-touch season in 2023"
+        ],
+        "you": [
+          "McCaffrey starts immediately at your thin RB spot, a clear upgrade over your current committee",
+          "Khalil Shakir adds cheap, healthy WR depth"
+        ],
+        "them": [
+          "This trade partner is thin at TE and WR, so McMillan is a direct fit at a position they need",
+          "They're deep at RB and QB, so trading a workload-managed veteran for a younger WR at need makes sense for them"
+        ],
+        "experts": [
+          "SI's fantasy trade column names this stretch as likely McCaffrey's lowest trade value of the season, calling it a buy window before his price recovers"
+        ]
+      },
+      "risks": [
+        "McCaffrey's injury history is real, and his age-30 season is the one where workload concerns tend to show up",
+        "His per-carry efficiency has been below his career norms early this season"
+      ],
+      "sources": [
+        {
+          "title": "Updated Christian McCaffrey Fantasy Outlook 2026: Why Fear About 49ers Star's Health Is Fair",
+          "url": "https://sports.yahoo.com/articles/updated-christian-mccaffrey-fantasy-outlook-155040728.html"
+        },
+        {
+          "title": "Week 1 Touches Report: Despite Injury Scare, Christian McCaffrey Leads RBs in Week 1",
+          "url": "https://www.si.com/onsi/fantasy/nfl/week-1-touches-report-rbs-week-1-christian-mccaffrey"
+        }
+      ]
+    },
+    {
+      "id": "18c0b3w",
+      "kind": "sell-high + buy-low",
+      "picks": false,
+      "partner": {
+        "roster_id": 6,
+        "name": "28AllDay",
+        "user": "28AllDay",
+        "record": "2-0",
+        "thin": [
+          "TE",
+          "WR"
+        ],
+        "deep": [
+          "QB",
+          "RB"
+        ]
+      },
+      "give": [
+        {
+          "id": "8151",
+          "n": "Kenneth Walker",
+          "p": "RB",
+          "t": "KC",
+          "v": 5951,
+          "pr": 5,
+          "trend": 1578,
+          "trendPct": 0.36,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 2,
+            "ppg": 32,
+            "proj": 15.5,
+            "perf": 2.06,
+            "snap": 76,
+            "tgtShare": 24,
+            "tpg": 8,
+            "touches": 28,
+            "rz": 5
+          }
+        },
+        {
+          "id": "9997",
+          "n": "Zay Flowers",
+          "p": "WR",
+          "t": "BAL",
+          "v": 4197,
+          "pr": 13,
+          "trend": 383,
+          "trendPct": 0.1,
+          "status": "Questionable",
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 1,
+            "ppg": 32,
+            "proj": 15.7,
+            "perf": 2.04,
+            "snap": 29,
+            "tgtShare": 25,
+            "tpg": 6,
+            "touches": null,
+            "rz": 0
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "9493",
+          "n": "Puka Nacua",
+          "p": "WR",
+          "t": "LAR",
+          "v": 7367,
+          "pr": 4,
+          "trend": -743,
+          "trendPct": -0.09,
+          "status": "Doubtful",
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 1,
+            "ppg": 12.4,
+            "proj": 21,
+            "perf": 0.59,
+            "snap": 70,
+            "tgtShare": 33,
+            "tpg": 9,
+            "touches": null,
+            "rz": 1
+          }
+        },
+        {
+          "id": "5846",
+          "n": "DK Metcalf",
+          "p": "WR",
+          "t": "PIT",
+          "v": 1779,
+          "pr": 44,
+          "trend": -180,
+          "trendPct": -0.09,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 2,
+            "ppg": 7.4,
+            "proj": 12.6,
+            "perf": 0.58,
+            "snap": 96,
+            "tgtShare": 26,
+            "tpg": 9.5,
+            "touches": null,
+            "rz": 0
+          }
+        }
+      ],
+      "value": {
+        "give": 10148,
+        "get": 9146,
+        "giveAdj": 9309,
+        "getAdj": 8790,
+        "diffPct": -0.07,
+        "fair": true,
+        "verdict": "You pay a little more"
+      },
+      "you": {
+        "before": 53984,
+        "after": 54055,
+        "gainPct": 0.1,
+        "changes": {
+          "in": [
+            {
+              "n": "Cam Skattebo",
+              "slot": "RB"
+            },
+            {
+              "n": "Puka Nacua",
+              "slot": "WR"
+            }
+          ],
+          "out": [
+            {
+              "n": "Kenneth Walker",
+              "slot": "RB"
+            },
+            {
+              "n": "Zay Flowers",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "before": 35443,
+        "after": 36091,
+        "gainPct": 1.8,
+        "changes": {
+          "in": [
+            {
+              "n": "Kenneth Walker",
+              "slot": "RB"
+            },
+            {
+              "n": "Zay Flowers",
+              "slot": "WR"
+            },
+            {
+              "n": "Keon Coleman",
+              "slot": "WR"
+            }
+          ],
+          "out": [
+            {
+              "n": "Puka Nacua",
+              "slot": "WR"
+            },
+            {
+              "n": "DK Metcalf",
+              "slot": "WR"
+            },
+            {
+              "n": "Rhamondre Stevenson",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "headline": "Sell Walker and an injury-limited Zay Flowers for a short-term-doubtful Puka Nacua and DK Metcalf's volume",
+      "summary": "Selling both hot names opens your own RB1 spot for Cam Skattebo while buying two elite target earners at a dip.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Flowers is on a hamstring pitch count; CBS Sports (9/26) reported him at just a 30% chance to play, on top of missing a full game already",
+          "His snap share has fallen to 29% over his last two games",
+          "Walker's price is up 36% in 30 days on hype Yahoo itself questions matches his production history"
+        ],
+        "get": [
+          "Nacua is doubtful for Week 3 with hip and groin injuries and didn't practice all week, but Schefter reports he could return as early as Week 4",
+          "RotoStreetJournal (9/23) names him a buy-low target specifically because owners may panic-sell during his absence",
+          "Metcalf leads the NFL in deep targets and unrealized air yards; PFN calls his volume elite even though results have lagged"
+        ],
+        "you": [
+          "Walker's exit promotes Cam Skattebo into your starting RB spot, addressing your thin backfield without adding a new roster body",
+          "Nacua and Metcalf both plug into your WR/flex once healthy or matchups ease"
+        ],
+        "them": [
+          "28AllDay is thin at TE and WR; adding a workhorse in Walker plus an explosive slot piece in Flowers fits their deep RB/QB build",
+          "They're taking on two hot names at their peak trade value, which is the case that sells it to them"
+        ],
+        "experts": [
+          "CBS Sports (9/26): Flowers is 'on a pitch count if active,' with FantasyPros giving him just a 30% chance to play",
+          "PFN's Week 3 Metcalf outlook: elite usage but inconsistent play makes him hard to trust against a tough Bengals defense this week only"
+        ]
+      },
+      "risks": [
+        "Nacua is expected to be ruled out entirely for Week 3, so there's no immediate return",
+        "Metcalf's inconsistency is a real weekly floor concern, not just a matchup issue"
+      ],
+      "sources": [
+        {
+          "title": "Is Zay Flowers playing vs. Cowboys in Week 3? Ravens WR could be on pitch count",
+          "url": "https://www.cbssports.com/nfl/news/zay-flowers-cowboys-week-3-ravens-wr-status/"
+        },
+        {
+          "title": "Puka Nacua Injury Update: 3 Signs He Could Miss Week 3 Vs. Broncos",
+          "url": "https://www.yardbarker.com/nfl/articles/puka_nacua_injury_update_3_signs_he_could_miss_week_3_vs_broncos/s1_17702_44351170"
+        },
+        {
+          "title": "DK Metcalf Fantasy Week 3 Start or Sit: All the Volume, None of the Value",
+          "url": "https://www.profootballnetwork.com/fantasy-football/dk-metcalf-fantasy-football-outlook-week-3-2026/"
+        }
+      ]
+    },
+    {
+      "id": "meztn6",
+      "kind": "sell-high",
+      "picks": false,
+      "partner": {
+        "roster_id": 12,
+        "name": "The Galactic Empire",
+        "user": "HenryMyos",
+        "record": "2-0",
+        "thin": [
+          "TE",
+          "QB"
+        ],
+        "deep": [
+          "RB",
+          "WR"
+        ]
+      },
+      "give": [
+        {
+          "id": "9488",
+          "n": "Jaxon Smith-Njigba",
+          "p": "WR",
+          "t": "SEA",
+          "v": 10216,
+          "pr": 1,
+          "trend": 1217,
+          "trendPct": 0.14,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 2,
+            "ppg": 37.4,
+            "proj": 19.7,
+            "perf": 1.9,
+            "snap": 77,
+            "tgtShare": 44,
+            "tpg": 11,
+            "touches": null,
+            "rz": 3
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "9221",
+          "n": "Jahmyr Gibbs",
+          "p": "RB",
+          "t": "DET",
+          "v": 10092,
+          "pr": 1,
+          "trend": -64,
+          "trendPct": -0.01,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 2,
+            "ppg": 29.5,
+            "proj": 24.3,
+            "perf": 1.21,
+            "snap": 78,
+            "tgtShare": 17,
+            "tpg": 6.5,
+            "touches": 28,
+            "rz": 6
+          }
+        }
+      ],
+      "value": {
+        "give": 10216,
+        "get": 10092,
+        "giveAdj": 10216,
+        "getAdj": 10092,
+        "diffPct": -0.012,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "before": 53984,
+        "after": 53860,
+        "gainPct": -0.2,
+        "changes": {
+          "in": [
+            {
+              "n": "Jahmyr Gibbs",
               "slot": "RB"
             }
           ],
           "out": [
             {
-              "n": "Malik Nabers",
+              "n": "Jaxon Smith-Njigba",
               "slot": "WR"
             }
           ]
@@ -284,78 +794,355 @@
         "drop": null
       },
       "them": {
-        "before": 40357,
-        "after": 40633,
-        "gainPct": 0.7,
+        "before": 67887,
+        "after": 68011,
+        "gainPct": 0.2,
         "changes": {
           "in": [
             {
-              "n": "Malik Nabers",
+              "n": "Jaxon Smith-Njigba",
               "slot": "WR"
-            },
-            {
-              "n": "Harold Fannin",
-              "slot": "TE"
             }
           ],
           "out": [
             {
-              "n": "Jonathan Taylor",
+              "n": "Jahmyr Gibbs",
               "slot": "RB"
-            },
-            {
-              "n": "Kyle Pitts",
-              "slot": "TE"
             }
           ]
         },
         "drop": null
       },
-      "headline": "Sell Malik Nabers (post-Dart QB downgrade) and a buried Harold Fannin for bell-cow Jonathan Taylor and Davante Adams",
-      "summary": "Nabers' target share collapsed after Jaxson Dart's season-ending knee injury handed the Giants to Jameis Winston; flip him and a stuck rookie TE for a true workhorse RB and a proven red-zone WR.",
+      "headline": "Trade your deep-WR strength at fair value for Jahmyr Gibbs, the clear No. 1 overall running back",
+      "summary": "An even, one-for-one swap turns a position you're stacked at into the running back help you actually need.",
       "confidence": "medium",
       "why": {
         "give": [
-          "Nabers: 1-of-4 targets in Week 2 after Jaxson Dart's season-ending knee injury moved Jameis Winston to starting QB.",
-          "Fannin is Cleveland's clear third option in the passing game (17.3% target share, zero red-zone targets)."
+          "Smith-Njigba is drawing a legitimate 36-46% target share in a low-volume Seattle offense, not a fluke; this isn't a mispriced sell, it's using WR depth to fill a real roster need",
+          "He's questionable for Week 3 with an illness, adding short-term risk to holding him through this weekend"
         ],
         "get": [
-          "Taylor has back-to-back 90+ rushing yard, 2-TD games and remains the Colts' clear workhorse entering Week 3.",
-          "Adams is positioned for another high-volume role and led all WRs with 30 red-zone targets, 14 TDs in 2025."
+          "Gibbs is the clear-cut lead back in Detroit after the team traded David Montgomery and placed Isiah Pacheco on IR to open the season",
+          "He opened the year with 34 touches, 186 yards and 2 touchdowns in Week 1, and is averaging at least 21 PPR points per game across the past two years"
         ],
         "you": [
-          "Taylor fills my thin RB spot immediately behind a Walker/Achane pairing that is my only real RB depth.",
-          "Adams is plug-and-play WR depth behind a deep room, insurance if Zay Flowers' hamstring lingers."
+          "Gibbs takes over as your starting RB1, the clearest fix available for your thin backfield",
+          "Smith-Njigba leaves a WR room that is still deep even after the trade"
         ],
         "them": [
-          "Partner is TE/WR-thin; Nabers (WR1 talent) and Fannin (rookie TE) both address needs directly, RB/QB marked deep.",
-          "Adams, 33, is flagged as a regression candidate by Rams beat writers, an easy send in a youth-for-need swap."
+          "The Galactic Empire is deep at RB and WR already; moving Gibbs for a true WR1 upgrades a need position for them if they value receiver difference-makers"
+        ],
+        "experts": [
+          "Yahoo Sports' 2026 prediction says Smith-Njigba's 36% target share alone justifies a top-5 pick, underlining how good his role still is",
+          "PFF's outlook calls Gibbs fantasy's No. 1 running back regardless of contract noise, about as strong a return as a need trade gets"
         ]
       },
       "risks": [
-        "Taylor is a true RB1; a 2-0 team may resist moving him even from a stated-deep RB room.",
-        "Nabers' dip could reverse if Winston settles in or the Giants find a new starter, turning this into a sell-low."
+        "Smith-Njigba's role is arguably better than Gibbs' price tag reflects; this trade is a lateral value move, not an edge",
+        "You're giving up your best asset for a positional need rather than a mispricing, so only make this move if the RB hole is truly costing you games"
       ],
       "sources": [
         {
-          "title": "Giants' Malik Nabers: Major downturn in Week 2 loss - CBS Sports",
-          "url": "https://www.cbssports.com/fantasy/football/news/giants-malik-nabers-major-downturn-in-week-2-loss/"
+          "title": "Jaxon Smith-Njigba Fantasy Prediction 2026: A 36% Target Share Worth the No. 5 Pick",
+          "url": "https://sports.yahoo.com/articles/jaxon-smith-njigba-fantasy-prediction-120600932.html"
         },
         {
-          "title": "Jonathan Taylor Week 3 Outlook - Texans at Colts (2026) - FantasyPros",
-          "url": "https://www.fantasypros.com/nfl/notes/440991/jonathan-taylor-2026-week-3-outlook.php"
+          "title": "Jahmyr Gibbs fantasy outlook 2026: The contract talk doesn't change that he's the No. 1 pick",
+          "url": "https://www.pff.com/news/fantasy-football-jahmyr-gibbs-2026"
+        }
+      ]
+    },
+    {
+      "id": "1s2uwc3",
+      "kind": "buy-low",
+      "picks": true,
+      "partner": {
+        "roster_id": 11,
+        "name": "Katseye Dad",
+        "user": "jyouakim",
+        "record": "1-1",
+        "thin": [
+          "TE",
+          "QB"
+        ],
+        "deep": [
+          "RB",
+          "WR"
+        ]
+      },
+      "give": [
+        {
+          "id": "pick_2027_2_5",
+          "n": "2027 2nd (Mid)",
+          "p": "PICK",
+          "t": "via The Bedouin",
+          "v": 1631,
+          "pr": null,
+          "trend": 122,
+          "trendPct": 0.08,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": null,
+          "isPick": true,
+          "season": 2027,
+          "round": 2,
+          "slot": "mid",
+          "from": 5
+        }
+      ],
+      "get": [
+        {
+          "id": "9501",
+          "n": "DeMario Douglas",
+          "p": "WR",
+          "t": "NE",
+          "v": 434,
+          "pr": 101,
+          "trend": 182,
+          "trendPct": 0.72,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 2,
+            "ppg": 4.5,
+            "proj": 7.4,
+            "perf": 0.6,
+            "snap": 56,
+            "tgtShare": 17,
+            "tpg": 4.5,
+            "touches": null,
+            "rz": 0
+          }
         },
         {
-          "title": "Rams 13 personnel makes Davante Adams a regression candidate in 2026",
-          "url": "https://www.turfshowtimes.com/los-angeles-rams-roster/140556/rams-2026-season-regression-candidates"
+          "id": "pick_2028_2_8",
+          "n": "2028 2nd",
+          "p": "PICK",
+          "t": "via Beat My Kids Tour 2026",
+          "v": 1282,
+          "pr": null,
+          "trend": 12,
+          "trendPct": 0.01,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": null,
+          "isPick": true,
+          "season": 2028,
+          "round": 2,
+          "slot": null,
+          "from": 8
+        }
+      ],
+      "value": {
+        "give": 1631,
+        "get": 1716,
+        "giveAdj": 1631,
+        "getAdj": 1629,
+        "diffPct": -0.001,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "before": 53984,
+        "after": 53931,
+        "gainPct": -0.1,
+        "changes": {
+          "in": [],
+          "out": []
         },
+        "drop": {
+          "id": "4454",
+          "n": "Kendrick Bourne",
+          "p": "WR",
+          "v": 208
+        }
+      },
+      "them": {
+        "before": 19385,
+        "after": 19438,
+        "gainPct": 0.3,
+        "changes": {
+          "in": [],
+          "out": []
+        },
+        "drop": null
+      },
+      "headline": "Sell an overpriced 2027 2nd for a Patriots slot receiver and a later, cheaper 2nd",
+      "summary": "This league's mid-round rookie picks have busted far more than the market prices in, so trade the pick class, not the player.",
+      "confidence": "low",
+      "why": {
+        "give": [
+          "This league's 2027 2nd (Mid) picks have a median outcome of just 573 against a 1,631 market price, and a 25% bust rate across all 2nd-round picks",
+          "You already hold three future 2nd-round picks; this is a low-cost sell of the most expensive-to-acquire tier"
+        ],
+        "get": [
+          "Douglas projects as New England's starting slot receiver in 2026 after Stefon Diggs' departure, working with the first team through camp",
+          "A 2028 2nd-round pick, replacing near-term uncertainty with another shot next cycle"
+        ],
+        "you": [
+          "Doesn't change this week's lineup; this is a pure asset-quality trade, not a need play",
+          "Adds a cheap depth piece catching passes from your own QB (Drake Maye), giving you insight into his role all season"
+        ],
+        "them": [
+          "Katseye Dad is deep at RB and WR but thin at TE and QB; picking up an earlier pick and moving a bench piece is a reasonable value take for a team stacked at the skill positions already in play here"
+        ],
+        "experts": [
+          "RotoBaller's 2026 outlook has Douglas 'poised to make a jump' with a clearer path to targets behind Brown and Doubs"
+        ]
+      },
+      "risks": [
+        "Brown and Doubs will still lead New England's target tree; Douglas is a WR3 upside play, not a lock",
+        "This trade is about pick-value arbitrage, not a player-level buy-low or sell-high call"
+      ],
+      "sources": [
         {
-          "title": "Browns roster: TE depth chart and expectations - Dawgs By Nature",
-          "url": "https://www.dawgsbynature.com/cleveland-browns-roster-players/127770/browns-roster-te-depth-chart-predictions-harold-fannin-jack-stoll-joe-royer"
+          "title": "DeMario Douglas 2026 Fantasy Football Outlook: Poised to Make a Jump With Patriots",
+          "url": "https://www.rotoballer.com/player-news/demario-douglas-2026-fantasy-football-outlook-poised-to-make-a-jump-with-patriots-amid-clearer-path-to-targets-nfl-news-fantasy-football/1916316"
         }
       ]
     }
   ],
   "none_reason": null,
-  "started": "2026-09-27T14:07:57.622Z"
+  "short_reason": null,
+  "review": {
+    "checked": true,
+    "notes": [
+      "Dropped candidate 134c2cl (Kenneth Walker for Jeremiyah Love): it referenced a candidate id from an earlier, superseded engine run and doesn't exist in the final work file; no starts/leaves or fair-value check backs it.",
+      "Dropped candidate 1vyix1l (McMillan for Drake London + Hunter Henry): its entire thesis leaned on Michael Penix Jr.'s Week 3 return as a future trigger, but that Thursday game already happened (London went 9-194, a career high) before this was written, making the buy-low framing stale.",
+      "Fixed 1n6r7nv: removed a fabricated claim that Omarion Hampton's price dip was from a 2026 IR stint (his ankle injury was in 2025); corrected a misquoted Shough ranking (he's QB5 by points but ranked 11th, not 'outside the top 15'); cut an unverifiable Gunnar Helm target-rate stat and softened a Bellinger snap-split claim that contradicted the 'atop the depth chart' claim.",
+      "Fixed ivswqv: removed an unverifiable '413 touches last season' claim for McCaffrey and replaced it with his confirmed 339-touch 2023 season.",
+      "Added meztn6 (Smith-Njigba for Gibbs) and 1s2uwc3 (a 2027 2nd for Douglas + a 2028 2nd) to replace the two dropped trades, both framed honestly as need/asset-quality plays rather than mispricing edges.",
+      "Kept 18c0b3w as originally written; the reviewer verified all its injury and usage claims as accurate and current."
+    ]
+  },
+  "draft_history": {
+    "seasons": [
+      "2026",
+      "2025",
+      "2024",
+      "2023"
+    ],
+    "rounds": [
+      {
+        "round": 1,
+        "n": 48,
+        "median": 2986,
+        "early": 3525,
+        "mid": 2918,
+        "late": 2425,
+        "busts": 4,
+        "best": [
+          {
+            "name": "Jaxon Smith-Njigba",
+            "pos": "WR",
+            "season": "2023",
+            "pick": "1.07",
+            "v": 10216
+          },
+          {
+            "name": "Jahmyr Gibbs",
+            "pos": "RB",
+            "season": "2023",
+            "pick": "1.05",
+            "v": 10092
+          },
+          {
+            "name": "Bijan Robinson",
+            "pos": "RB",
+            "season": "2023",
+            "pick": "1.01",
+            "v": 9767
+          }
+        ],
+        "market": {
+          "early": 4809,
+          "mid": 3167,
+          "late": 2442,
+          "any": 2961
+        }
+      },
+      {
+        "round": 2,
+        "n": 48,
+        "median": 1245,
+        "early": 1789,
+        "mid": 573,
+        "late": 1067,
+        "busts": 25,
+        "best": [
+          {
+            "name": "Devon Achane",
+            "pos": "RB",
+            "season": "2023",
+            "pick": "2.03",
+            "v": 4749
+          },
+          {
+            "name": "Jaxson Dart",
+            "pos": "QB",
+            "season": "2025",
+            "pick": "2.02",
+            "v": 4453
+          },
+          {
+            "name": "Tyler Shough",
+            "pos": "QB",
+            "season": "2025",
+            "pick": "2.10",
+            "v": 4275
+          }
+        ],
+        "market": {
+          "early": 1964,
+          "mid": 1631,
+          "late": 1389,
+          "any": 1579
+        }
+      },
+      {
+        "round": 3,
+        "n": 48,
+        "median": 388,
+        "early": 514,
+        "mid": 126,
+        "late": 416,
+        "busts": 58,
+        "best": [
+          {
+            "name": "Chase Brown",
+            "pos": "RB",
+            "season": "2023",
+            "pick": "3.03",
+            "v": 4256
+          },
+          {
+            "name": "Bucky Irving",
+            "pos": "RB",
+            "season": "2024",
+            "pick": "3.02",
+            "v": 3282
+          },
+          {
+            "name": "Terrance Ferguson",
+            "pos": "TE",
+            "season": "2025",
+            "pick": "3.09",
+            "v": 1730
+          }
+        ],
+        "market": {
+          "early": 1203,
+          "mid": 1058,
+          "late": 977,
+          "any": 1044
+        }
+      }
+    ]
+  }
 }
