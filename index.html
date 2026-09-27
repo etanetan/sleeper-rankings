@@ -4,6 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Weekly Sleeper Rankings</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="theme-color" content="#b45309">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Rankings">
+<!-- No service worker on purpose: Chrome/Android no longer require one to
+     install, and a caching worker would fight the ?v=N cache-busting below
+     and could serve stale injury statuses. -->
 <link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>

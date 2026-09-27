@@ -137,5 +137,22 @@ check("trade data read from this repo's claude/trade-data branch",
 check("client never sends anything to claude.ai",
       bool(re.search(r"fetch\([^)]*claude\.ai|ROUTINES_URL\s*\)", client)), False)
 
+# --- PWA manifest (docs/ROADMAP.md task 2) -------------------------------
+import json
+check("manifest.webmanifest exists", os.path.exists("manifest.webmanifest"), True)
+if os.path.exists("manifest.webmanifest"):
+    try:
+        webmanifest = json.loads(open("manifest.webmanifest").read())
+        webmanifest_ok = True
+    except ValueError:
+        webmanifest, webmanifest_ok = {}, False
+    check("manifest.webmanifest is valid JSON", webmanifest_ok, True)
+    for icon in webmanifest.get("icons", []):
+        check(f"webmanifest icon {icon.get('src')} exists on disk",
+              os.path.exists(icon.get("src", "")), True)
+    check("webmanifest lists at least one icon", len(webmanifest.get("icons", [])) > 0, True)
+check("index.html links the webmanifest",
+      'rel="manifest" href="manifest.webmanifest"' in html, True)
+
 print(f"\n{sum(results)}/{len(results)} passed")
 sys.exit(0 if all(results) else 1)
