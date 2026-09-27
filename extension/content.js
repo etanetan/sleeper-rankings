@@ -45,13 +45,19 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
     const LEAGUE_RE = /\/leagues\/(\d+)/;
 
     // Adjust here if Sleeper's markup changes - this is the one place that
-    // knows about their DOM. Discovered from SleeperPlus/Better Sleeper-style
-    // extensions; verify against the live page and update as needed.
+    // knows about their DOM. `.team-roster-item` is confirmed against a live
+    // team page (and matches what SleeperPlus itself uses); the rest of
+    // `row` beyond it is an unverified guess at the Players/free-agent
+    // search page's row, since neither a live page nor another extension's
+    // source turned up its real class name. querySelectorAll silently
+    // ignores whichever guesses don't match, so this is zero-risk to try -
+    // but still needs checking against the real page and fixing from there.
     const SELECTORS = {
-      row: ".team-roster-item",
+      row: [".team-roster-item", ".player-row", ".players-table-row",
+            ".search-player-row", ".player-list-item"].join(", "),
       ariaAvatar: ".avatar-player[aria-label]",
       imgAvatar: 'img[src*="/players/"]',
-      name: "[class*='playerName'], [class*='player-name']",
+      name: "[class*='playerName' i], [class*='player-name' i]",
     };
 
     const storage = {
@@ -149,10 +155,14 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
           (view.current || []).map((e) => e.player && e.player.id).filter(Boolean));
         const bestIds = new Set(
           (view.best ? view.best.starters : []).map((s) => s.player.id));
-        const outIds = new Set(view.roster.filter((p) => unavailable(p)).map((p) => p.id));
+        // Every ranked player in the league, not just this user's roster, so
+        // free agents on the Players page and opponents on the matchup view
+        // get badged too - only starting/best/out are roster-specific.
+        const pool = view.pool || view.roster;
+        const outIds = new Set(pool.filter((p) => unavailable(p)).map((p) => p.id));
         const players = {};
         const byNameKey = {};
-        view.roster.forEach((p) => { players[p.id] = p; byNameKey[norm(p.n)] = p.id; });
+        pool.forEach((p) => { players[p.id] = p; byNameKey[norm(p.n)] = p.id; });
 
         CTX = { startingIds, bestIds, outIds, players, byNameKey, check: view.check };
         sweep();

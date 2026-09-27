@@ -234,6 +234,10 @@ function createLoader({ storage, onStatus } = {}) {
       trades: tradeWindow(lg, data.week),
       teRec: settings.bonus_rec_te || 0,
       roster, source, rostered, waivers,
+      // Every ranked player in the league, not just this user's roster - the
+      // extension's content script uses this to badge free agents on the
+      // Players page and opponents' rosters, not only the user's own team.
+      pool,
       current, check, best, locked, checkedAt,
       sleeperUrl: `https://sleeper.com/leagues/${lg.league_id}/team`,
     };
