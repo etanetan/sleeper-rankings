@@ -31,6 +31,7 @@ node trades/engine.js running|failed|finalize --league <id> --data <dir> ...
 
 ## Deploying
 
+- This is a personal project with one owner: no pull requests. Commit straight to the branch the work belongs on (usually `main`) and push - don't open a PR unless explicitly asked for one, and don't wait for approval to push.
 - Pages serves the `gh-pages` branch, a mirror of `main`: push both with `git push origin main main:gh-pages`.
 - Whenever `core.js`, `data.js`, `app.js` or `style.css` change, bump the `?v=N` on their tags in `index.html` (browsers otherwise keep serving the old file; `test_build.py` checks the versioning exists).
 - Whenever `core.js` or `data.js` change, also run `node extension/sync.js` and commit the updated `extension/lib/*.js` - `test_extension.js` fails if they drift from the root files.
