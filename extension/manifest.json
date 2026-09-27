@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Sleeper Rankings",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "description": "Weekly Sleeper rankings, lineup check and trade ideas, next to your own Sleeper leagues.",
   "icons": {
     "16": "icons/icon-16.png",
@@ -20,9 +20,9 @@
   },
   "background": {
     "service_worker": "bg.js",
-    "scripts": ["bg.js"]
+    "scripts": ["lib/core.js", "lib/data.js", "storage.js", "alerts.js", "bg.js"]
   },
-  "permissions": ["storage", "sidePanel"],
+  "permissions": ["storage", "sidePanel", "alarms", "notifications"],
   "host_permissions": [
     "https://api.sleeper.app/*",
     "https://api.sleeper.com/*",
@@ -31,7 +31,7 @@
   "content_scripts": [
     {
       "matches": ["https://sleeper.com/leagues/*"],
-      "js": ["lib/core.js", "lib/data.js", "content.js"],
+      "js": ["lib/core.js", "lib/data.js", "storage.js", "content.js"],
       "css": ["content.css"],
       "run_at": "document_idle"
     }
@@ -42,6 +42,10 @@
   "sidebar_action": {
     "default_panel": "panel.html",
     "default_title": "Sleeper Rankings"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
   },
   "browser_specific_settings": {
     "gecko": {

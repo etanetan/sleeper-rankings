@@ -5,6 +5,7 @@
 const fs = require("fs");
 const path = require("path");
 const C = require("./extension/content.js");
+const A = require("./extension/alerts.js");
 
 let pass = 0, fail = 0;
 function check(label, got, want) {
@@ -26,10 +27,22 @@ check("declares a gecko id for Firefox",
          manifest.browser_specific_settings.gecko.id), true);
 check("background declares both a service worker and a script",
       !!(manifest.background && manifest.background.service_worker && manifest.background.scripts), true);
+check("Firefox's background scripts load core/data/storage/alerts before bg.js",
+      manifest.background.scripts,
+      ["lib/core.js", "lib/data.js", "storage.js", "alerts.js", "bg.js"]);
 check("content script matches sleeper.com leagues",
       (manifest.content_scripts || []).some((cs) => (cs.matches || []).some((m) => m.includes("sleeper.com"))), true);
-check("content script loads core.js and data.js before content.js",
-      (manifest.content_scripts || [])[0].js, ["lib/core.js", "lib/data.js", "content.js"]);
+check("content script loads core.js, data.js and storage.js before content.js",
+      (manifest.content_scripts || [])[0].js, ["lib/core.js", "lib/data.js", "storage.js", "content.js"]);
+check("declares the alarms permission (game-day alerts)",
+      (manifest.permissions || []).includes("alarms"), true);
+check("declares the notifications permission (game-day alerts)",
+      (manifest.permissions || []).includes("notifications"), true);
+check("declares an options page",
+      !!(manifest.options_ui && manifest.options_ui.page), true);
+for (const f of ["storage.js", "alerts.js", "options.html", "options.js"]) {
+  check(`extension/${f} exists`, fs.existsSync(path.join(__dirname, "extension", f)), true);
+}
 
 // --- Firefox signing/release requirements (docs/ROADMAP.md task 1) --------
 const gecko = manifest.browser_specific_settings && manifest.browser_specific_settings.gecko;
@@ -157,6 +170,68 @@ check("a maxDepth too small for the real match returns null",
       C.rowFor(rowB.leaf, hasAvatar, 2), null);
 check("raising maxDepth reaches that same match",
       C.rowFor(rowB.leaf, hasAvatar, 3) === rowB.row, true);
+
+// --- game-day alerts (task 6) ----------------------------------------------
+const healthyP = { id: "h1", n: "Healthy", p: "RB", t: "SF", status: "", onBye: false };
+const outP = { id: "o1", n: "Out Guy", p: "WR", t: "MIA", status: "OUT", onBye: false };
+const byeP = { id: "b1", n: "Bye Guy", p: "TE", t: "DAL", status: "", onBye: true };
+
+function view(current, locked) {
+  return {
+    id: "555", week: 5, name: "Test League",
+    current, locked: locked || new Set(),
+    sleeperUrl: "https://sleeper.com/leagues/555/team",
+  };
+}
+
+check("a healthy starter gets no alert",
+      A.alertsFor(view([{ slot: "RB", player: healthyP }])), []);
+
+{
+  const alerts = A.alertsFor(view([{ slot: "WR", player: outP }]));
+  check("an OUT starter gets exactly one alert", alerts.length, 1);
+  check("the alert key embeds league, week, player id and status",
+        alerts[0].key, "555:5:o1:OUT");
+  check("the alert links to the league's Sleeper team page",
+        alerts[0].url, "https://sleeper.com/leagues/555/team");
+}
+
+check("a locked OUT starter (game already started) gets no alert - too late to act",
+      A.alertsFor(view([{ slot: "WR", player: outP }], new Set(["o1"]))), []);
+
+{
+  const alerts = A.alertsFor(view([{ slot: "TE", player: byeP }]));
+  check("a bye-week starter is flagged with a BYE status", alerts[0].key, "555:5:b1:BYE");
+  check("the bye reads as 'on bye' in the title, not the raw code",
+        alerts[0].title.includes("on bye"), true);
+}
+
+{
+  const alerts = A.alertsFor(view([{ slot: "FLEX", player: null }]));
+  check("an empty slot gets an alert keyed by the slot index, not a player id",
+        alerts[0].key, "555:5:slot0:empty");
+  check("an empty slot's message names the slot", alerts[0].message.includes("FLEX"), true);
+}
+
+{
+  // Same player, different status - a fresh key, so bg.js's "already
+  // alerted" check (by key) fires again for Q -> OUT the way the plan
+  // calls for, without alertsFor itself needing to know about "already
+  // alerted".
+  const asOut = A.alertsFor(view([{ slot: "RB", player: { ...outP, status: "OUT" } }]))[0].key;
+  const asIR = A.alertsFor(view([{ slot: "RB", player: { ...outP, status: "IR" } }]))[0].key;
+  check("a changed status produces a different key", asOut === asIR, false);
+}
+
+check("multiple problems in one lineup all get their own alert",
+      A.alertsFor(view([
+        { slot: "WR", player: outP },
+        { slot: "TE", player: byeP },
+        { slot: "FLEX", player: null },
+      ])).length, 3);
+
+check("an empty view.current is simply no alerts, not a crash",
+      A.alertsFor(view([])), []);
 
 console.log(`\n${pass}/${pass + fail} passed`);
 process.exit(fail ? 1 : 0);

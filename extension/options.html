@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sleeper Rankings settings</title>
+<style>
+  html,body{margin:0;background:#fff;color:#1a1a17;
+    font:14px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+  @media(prefers-color-scheme:dark){html,body{background:#16161a;color:#ececf0}}
+  .wrap{max-width:420px;margin:0 auto;padding:28px 20px}
+  h1{font-size:17px;margin:0 0 18px}
+  label{display:block;margin:0 0 6px;font-weight:600;font-size:13px}
+  input[type=text]{width:100%;box-sizing:border-box;padding:8px 10px;
+    border-radius:6px;border:1px solid #ccc;font:inherit;margin-bottom:18px;
+    background:#fff;color:inherit}
+  @media(prefers-color-scheme:dark){input[type=text]{background:#1e1e24;border-color:#3a3a44}}
+  .row{display:flex;align-items:flex-start;gap:8px;margin-bottom:20px}
+  .row input{margin-top:3px}
+  .row label{margin:0;font-weight:400}
+  button{padding:8px 16px;font:inherit;font-weight:600;border-radius:6px;
+    border:0;background:#b45309;color:#fff;cursor:pointer}
+  #status{font-size:12px;color:#6b6b63;margin-top:10px;min-height:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Sleeper Rankings settings</h1>
+  <label for="user">Sleeper username</label>
+  <input id="user" type="text" autocomplete="off" spellcheck="false" autocapitalize="none">
+  <div class="row">
+    <input id="alerts" type="checkbox">
+    <label for="alerts">Alert me when a starter is ruled out before kickoff</label>
+  </div>
+  <button id="save" type="button">Save</button>
+  <p id="status"></p>
+</div>
+<script src="options.js"></script>
+</body>
+</html>

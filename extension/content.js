@@ -1,9 +1,9 @@
 /* On-page badges for sleeper.com/leagues/*: a rank badge (e.g. "WR8") and a
  * start/sit color on every player row this page shows, plus a small pill
- * summarizing pending lineup changes. Runs after core.js and data.js (listed
- * before this file in manifest.json's content_scripts, so their top-level
- * functions are already in scope) and needs the Sleeper username set once
- * from the side panel's first-run field (chrome.storage.sync).
+ * summarizing pending lineup changes. Runs after core.js, data.js and
+ * storage.js (listed before this file in manifest.json's content_scripts,
+ * so their top-level functions are already in scope) and needs the Sleeper
+ * username set once from the side panel's first-run field (chrome.storage.sync).
  *
  * The pure id/class/text helpers are exported for Node tests; the
  * DOM-watching part below only runs on an actual sleeper.com page. If
@@ -125,14 +125,8 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
         (el.querySelector(SELECTORS.ariaAvatar) || el.querySelector(SELECTORS.imgAvatar)));
     }
 
-    const storage = {
-      async getItem(key) {
-        const obj = await chrome.storage.local.get(key);
-        return obj[key] != null ? obj[key] : null;
-      },
-      async setItem(key, value) { await chrome.storage.local.set({ [key]: value }); },
-      async removeItem(key) { await chrome.storage.local.remove(key); },
-    };
+    // `storage` comes from storage.js, loaded before this file (manifest's
+    // content_scripts js list) - shared with the background script now too.
     const loader = createLoader({ storage });
 
     let LEAGUE_ID = null;

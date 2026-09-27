@@ -300,7 +300,7 @@ function createLoader({ storage, onStatus } = {}) {
     } catch (e) { upcoming = []; }
 
     return {
-      name: lg.name, id: lg.league_id, slots,
+      name: lg.name, id: lg.league_id, week: data.week, slots,
       label: scoringLabel(settings),
       superflex: slots.includes("SUPER_FLEX"),
       trades: tradeWindow(lg, data.week),
