@@ -477,6 +477,25 @@ function waiverUpgrades(pool, rostered, best) {
   return out.slice(0, 5);
 }
 
+/* The bench player worth dropping for a waiver add: whoever isn't in the
+ * best lineup's starters and isn't stashed on IR/taxi (`reserveIds` - a
+ * reserve spot is a deliberate hold, not a throwaway), with the lowest
+ * `pts`. A player with no projection at all (`pts` null - unranked, or off
+ * the radar entirely) sorts below every ranked player, since an unknown
+ * quantity is exactly the kind of roster spot worth giving up first. Null
+ * when there's nothing eligible to drop (an empty bench, or everyone on
+ * it is starting or reserved). */
+function dropCandidate(roster, best, reserveIds) {
+  const startingIds = new Set(((best && best.starters) || []).map((s) => s.player.id));
+  const reserved = reserveIds || new Set();
+  const candidates = (roster || []).filter(
+    (p) => !startingIds.has(p.id) && !reserved.has(p.id));
+  if (!candidates.length) return null;
+
+  const key = (p) => (p.pts != null ? p.pts : -Infinity);
+  return candidates.reduce((worst, p) => (key(p) < key(worst) ? p : worst));
+}
+
 /* --- matchup: projected score and win chance ---------------------------- */
 
 /* Standard normal CDF via the Abramowitz-Stegun 7.1.26 erf approximation
@@ -594,7 +613,7 @@ if (typeof module !== "undefined") {
                     scoringLabel, scorePlayer,
                     rankPositions, consensusRanks,
                     pickLineup, currentLineup, lockedIds, lineupCheck, waiverUpgrades,
-                    projectedTotal, winProb, byeWeeks, upcomingHoles, recap,
+                    projectedTotal, winProb, byeWeeks, upcomingHoles, recap, dropCandidate,
                     posKey, flexKey, buildRoster, normStatus, tradeWindow,
                     SLOT_ELIGIBLE, SLOT_LABEL, SKIP_SLOTS, POS_ORDER, OUT_STATUSES,
                     ORDINAL, EVEN_PCT, isHttps, SECTIONS, sectionHeading, TRADE_FIELDS };

@@ -266,6 +266,12 @@ if (typeof document !== "undefined") {
     nameCell.appendChild(document.createTextNode(w.n));
     if (w.status) nameCell.appendChild(el("span", OUT_STATUSES.has(w.status) ? "out" : "q", w.status));
     nameCell.appendChild(el("span", "meta", ` ${w.t || "FA"} · over ${w.weakest.n}`));
+    if (w.drop) nameCell.appendChild(el("span", "meta", ` · drop ${w.drop.n}`));
+    // "hold" beats the weakest starter over the next 3 weeks too, not
+    // just this one - worth an actual roster spot, not just this week's
+    // matchup. "streamer" only beats them this week.
+    if (w.tag) nameCell.appendChild(el("span", `chip${w.tag === "hold" ? " good" : ""}`, w.tag));
+    if (w.next3 != null) nameCell.appendChild(el("span", "meta", ` · 3wk avg ${w.next3.toFixed(1)}`));
     if (w.add) nameCell.appendChild(el("span", "meta", ` · ${num(w.add)} adds today`));
     const fills = fillsUpcoming(w, upcoming);
     if (fills) {

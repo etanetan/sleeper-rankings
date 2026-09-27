@@ -108,7 +108,11 @@ function createLoader({ storage, onStatus } = {}) {
     return result;
   }
 
-  function clearRanksCache() { _ranksCache.clear(); _prevRanksCache.clear(); }
+  function clearRanksCache() {
+    _ranksCache.clear();
+    _prevRanksCache.clear();
+    _nextRanksCache.forEach((c) => c.clear());
+  }
 
   // Same idea, for last week's projections (recap()'s hindsight/what-the-
   // tool-picked comparison) - a separate cache since it's ranking a
@@ -123,6 +127,21 @@ function createLoader({ storage, onStatus } = {}) {
     if (_prevRanksCache.has(key)) return _prevRanksCache.get(key);
     const ranks = rankPositions(data.prevWeekProjections, data.players, settings);
     _prevRanksCache.set(key, ranks);
+    return ranks;
+  }
+
+  // Same idea, for the waivers tab's 3-week outlook - one week ahead and
+  // two weeks ahead each get their own cache, since they're ranking
+  // different projections sets under the same settings key.
+  const _nextRanksCache = [new Map(), new Map()];
+  function nextRanksFor(data, settings, weeksOut) {
+    const proj = weeksOut === 1 ? data.nextWeek1Projections : data.nextWeek2Projections;
+    if (!proj) return null;
+    const cache = _nextRanksCache[weeksOut - 1];
+    const key = JSON.stringify(settings || {});
+    if (cache.has(key)) return cache.get(key);
+    const ranks = rankPositions(proj, data.players, settings);
+    cache.set(key, ranks);
     return ranks;
   }
 
@@ -273,20 +292,28 @@ function createLoader({ storage, onStatus } = {}) {
       for (const row of rows || []) trending[row.player_id] = row.count;
     } catch (e) { trending = {}; }
 
-    // Last week's projections, for the recap (core.js's recap()): how the
-    // tool's picks would have done against what actually happened. Not
-    // league specific - shared the same way this week's projections are,
-    // each league scores them with its own settings later in
-    // buildLeagueView. Skipped before week 2 (no prior week to recap).
+    // Last week's projections (for the recap) and the next two weeks'
+    // (for the waivers tab's 3-week outlook) - none of these are league
+    // specific, so each is fetched once here and shared, the same way
+    // this week's projections are; each league scores them with its own
+    // settings later in buildLeagueView. Fired together since none
+    // depends on another. Skipped/tolerated failing independently -
+    // prevWeek before week 2 (no prior week), the others near the end of
+    // the season (there's no "week 19" to project).
     const prevWeek = week - 1;
-    let prevWeekProjections = null;
-    if (prevWeek >= 1) {
-      try { ({ projections: prevWeekProjections } = await loadProjections(season, prevWeek)); }
-      catch (e) { prevWeekProjections = null; }
-    }
+    const [prevResult, next1Result, next2Result] = await Promise.allSettled([
+      prevWeek >= 1 ? loadProjections(season, prevWeek) : Promise.resolve(null),
+      loadProjections(season, week + 1),
+      loadProjections(season, week + 2),
+    ]);
+    const prevWeekProjections =
+      prevResult.status === "fulfilled" && prevResult.value ? prevResult.value.projections : null;
+    const nextWeek1Projections = next1Result.status === "fulfilled" ? next1Result.value.projections : null;
+    const nextWeek2Projections = next2Result.status === "fulfilled" ? next2Result.value.projections : null;
 
     return { season, leagueSeason, week, players, projections, rankings, schedule, trending,
-             prevWeek, prevWeekProjections, playersFetched: fetched, liveStatuses };
+             prevWeek, prevWeekProjections, nextWeek1Projections, nextWeek2Projections,
+             playersFetched: fetched, liveStatuses };
   }
 
   async function fetchUser(username) {
@@ -416,8 +443,48 @@ function createLoader({ storage, onStatus } = {}) {
     // same best lineup the check does when there is one, so "weakest
     // starter" means the same thing in both places.
     const pool = buildRoster(Object.keys(ranks), data.players, ranks, data.week);
-    const waivers = waiverUpgrades(pool, rostered, best || pickLineup(roster, slots))
-      .map((w) => ({ ...w, add: (data.trending && data.trending[w.id]) || 0 }));
+    const effectiveBest = best || pickLineup(roster, slots);
+
+    // Who each add would cost you: the bench player with the lowest
+    // projection, excluding anyone stashed on IR/taxi (a reserve spot is a
+    // deliberate hold, not a throwaway). One shared recommendation for
+    // every suggestion below, same idea as "weakest starter" above.
+    const reserveIds = new Set([...(mine.reserve || []), ...(mine.taxi || [])]);
+    const drop = dropCandidate(roster, effectiveBest, reserveIds);
+
+    // 3-week outlook: this week's pts plus up to 2 future weeks' (skipped,
+    // not zeroed, if a future week's projections failed to load), so a
+    // one-week spike doesn't look like a real streamer suggestion.
+    const ranks1 = nextRanksFor(data, settings, 1);
+    const ranks2 = nextRanksFor(data, settings, 2);
+    const next3Avg = (pid, thisPts) => {
+      const vals = [thisPts != null ? thisPts : 0];
+      const addFrom = (r) => { if (r && r[pid] && r[pid].pts != null) vals.push(r[pid].pts); };
+      addFrom(ranks1);
+      addFrom(ranks2);
+      return vals.reduce((a, b) => a + b, 0) / vals.length;
+    };
+    if (effectiveBest.starters) {
+      effectiveBest.starters = effectiveBest.starters.map(
+        (s) => ({ ...s, next3: next3Avg(s.player.id, s.player.pts) }));
+    }
+
+    const waivers = waiverUpgrades(pool, rostered, effectiveBest).map((w) => {
+      const wNext3 = next3Avg(w.id, w.pts);
+      const weakestNext3 = next3Avg(w.weakest.id, w.weakest.pts);
+      return {
+        ...w,
+        add: (data.trending && data.trending[w.id]) || 0,
+        drop,
+        next3: wNext3,
+        weakestNext3,
+        // Every entry here already beats the weakest starter this week
+        // (that's how waiverUpgrades built the list) - "hold" only when
+        // it keeps winning over the next 3 weeks too, "streamer" when
+        // this week was the exception rather than the outlook.
+        tag: wNext3 > weakestNext3 ? "hold" : "streamer",
+      };
+    });
 
     // Bye/injury holes over the next few weeks. Own try/catch, same as the
     // matchup block above: a missing/empty schedule is already handled by

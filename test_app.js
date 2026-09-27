@@ -617,5 +617,41 @@ check("an empty roster recaps to all zeros but the actual score, not a crash",
 check("a null entry is handled the same as an empty one",
       app.recap(null, ["QB"], {}, {}), { actual: 0, ours: 0, best: 0 });
 
+/* --- dropCandidate: who to cut for a waiver add (Phase 8) --------------- */
+{
+  const starterQB = PL("s1", "Starter QB", "QB", 20);
+  const best = { starters: [{ slot: "QB", player: starterQB }] };
+  const bench1 = PL("b1", "Bench high", "RB", 9);
+  const bench2 = PL("b2", "Bench low", "RB", 3);
+  const roster = [starterQB, bench1, bench2];
+  check("picks the lowest-pts bench player, not a starter",
+        app.dropCandidate(roster, best, new Set()).id, "b2");
+}
+{
+  const starterQB = PL("s1", "Starter QB", "QB", 20);
+  const best = { starters: [{ slot: "QB", player: starterQB }] };
+  const irPlayer = PL("ir1", "Stashed on IR", "RB", 0);
+  const bench = PL("b1", "Bench", "RB", 5);
+  const roster = [starterQB, irPlayer, bench];
+  check("a reserved (IR/taxi) player is never suggested as the drop, even with the lowest pts",
+        app.dropCandidate(roster, best, new Set(["ir1"])).id, "b1");
+}
+{
+  const starterQB = PL("s1", "Starter QB", "QB", 20);
+  const best = { starters: [{ slot: "QB", player: starterQB }] };
+  const ranked = PL("r1", "Ranked bench", "RB", 4);
+  const unranked = PL("u1", "Unranked bench", "RB", null);
+  const roster = [starterQB, ranked, unranked];
+  check("an unranked (no projection) bench player is preferred as the drop over a ranked one",
+        app.dropCandidate(roster, best, new Set()).id, "u1");
+}
+check("nothing to drop when every roster player is starting",
+      app.dropCandidate([PL("s1", "S", "QB", 20)], { starters: [{ slot: "QB", player: PL("s1", "S", "QB", 20) }] }, new Set()),
+      null);
+check("nothing to drop from an empty roster",
+      app.dropCandidate([], { starters: [] }, new Set()), null);
+check("a missing reserveIds set doesn't throw - treated as nothing reserved",
+      app.dropCandidate([PL("b1", "B", "RB", 5)], { starters: [] }, undefined).id, "b1");
+
 console.log(`\n${results.filter(Boolean).length}/${results.length} passed`);
 process.exit(results.every(Boolean) ? 0 : 1);
