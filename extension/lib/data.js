@@ -193,16 +193,21 @@ function createLoader({ storage, onStatus } = {}) {
     const rostered = new Set();
     for (const r of rosters) for (const pid of r.players || []) rostered.add(pid);
 
-    // Team names by roster_id (metadata.team_name, falling back to the
-    // Sleeper display name) - used below for the opponent's name, and kept
-    // on the view for the waiver drop/power-rankings displays. Independent
-    // of the matchup fetch below: a league with no live matchup yet (or one
-    // this call fails to reach) should still get names.
+    // Team names (for the opponent's name below, and kept on the view for
+    // the waiver drop/power-rankings displays) and this week's matchups
+    // (for the lineup check below and the opponent's) - two independent
+    // calls, so fired together rather than one after the other; each is
+    // still tolerated failing on its own.
+    const [usersResult, matchupsResult] = await Promise.allSettled([
+      fetchJson(`${SLEEPER}/league/${lg.league_id}/users`),
+      fetchJson(`${SLEEPER}/league/${lg.league_id}/matchups/${data.week}`),
+    ]);
+
     let names = {};
     try {
-      const users = await fetchJson(`${SLEEPER}/league/${lg.league_id}/users`);
+      if (usersResult.status !== "fulfilled") throw usersResult.reason;
       const nameByUserId = {};
-      (users || []).forEach((u) => {
+      (usersResult.value || []).forEach((u) => {
         nameByUserId[u.user_id] = (u.metadata && u.metadata.team_name) || u.display_name || "Team";
       });
       rosters.forEach((r) => { names[r.roster_id] = nameByUserId[r.owner_id] || `Team ${r.roster_id}`; });
@@ -220,7 +225,8 @@ function createLoader({ storage, onStatus } = {}) {
     let matchups = null;
     let mm = null;
     try {
-      matchups = await fetchJson(`${SLEEPER}/league/${lg.league_id}/matchups/${data.week}`);
+      if (matchupsResult.status !== "fulfilled") throw matchupsResult.reason;
+      matchups = matchupsResult.value;
       mm = (matchups || []).find((m) => m.roster_id === mine.roster_id);
       if (mm) {
         current = currentLineup(mm.starters, slots, roster);

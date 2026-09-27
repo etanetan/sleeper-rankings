@@ -314,7 +314,11 @@ if (typeof document !== "undefined") {
     const started = m.myPts > 0 || m.oppPts > 0;
     const myShown = started ? m.myPts : m.myProj;
     const oppShown = started ? m.oppPts : m.oppProj;
-    const winPct = Math.round(m.win * 100);
+    // Recomputed from whichever numbers are on screen, not read off m.win -
+    // m.win is fixed at kickoff-time projections, so once live points take
+    // over up above, using it here would risk contradicting them (a real
+    // blowout paired with a stale "42% to win" from before the game).
+    const winPct = Math.round(winProb(myShown, oppShown) * 100);
 
     const head = el("p", "mu-head");
     head.appendChild(el("b", null, "You"));
