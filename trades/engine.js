@@ -17,7 +17,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { SLOT_ELIGIBLE, tradeWindow } = require("../app.js");
+const { SLOT_ELIGIBLE, tradeWindow, normStatus } = require("../app.js");
 
 const SLEEPER = "https://api.sleeper.app/v1";
 const FANTASYCALC = "https://api.fantasycalc.com/values/current";
@@ -39,6 +39,9 @@ const POOL_SIZE = 14;
 // leaves their lineup unchanged gives them no reason to accept.
 const THEIR_MIN_GAIN = 0.002;
 const LEAGUE_TYPES = { 0: "redraft", 1: "keeper", 2: "dynasty" };
+// Out for weeks, not days: these players can't help a lineup now, whatever
+// they're worth on the market. A one-week "Out" still counts.
+const LONG_OUT = new Set(["IR", "PUP", "SUS", "NA", "DNR"]);
 
 /* ------------------------------------------------------------- leagues */
 
@@ -82,7 +85,8 @@ function valueMap(rows) {
 
 /* A roster as tradeable pieces. Players FantasyCalc doesn't value (kickers,
  * defenses, deep bench) stay on the roster at zero so lineups are real.
- * Taxi and IR players are tradeable but don't use a roster spot. */
+ * Taxi and IR players are tradeable but don't use a roster spot, and anyone
+ * on IR or out long-term keeps his trade value but can't start. */
 function teamPlayers(ids, players, values, taxi, reserve) {
   const skip = new Set(taxi || []);
   const ir = new Set(reserve || []);
@@ -92,20 +96,24 @@ function teamPlayers(ids, players, values, taxi, reserve) {
     const val = values[id] || {};
     const pos = meta.p || val.p;
     if (!pos) continue;
+    const status = meta.i || null;
     out.push({
-      id: String(id), n: meta.n || val.n || String(id), p: pos,
-      t: meta.t || val.t || null, status: meta.i || null,
+      id: String(id), n: (meta.n || val.n || String(id)).trim(), p: pos,
+      t: meta.t || val.t || null, status,
       v: val.v || 0, pr: val.pr != null ? val.pr : null, trend: val.trend || 0,
-      taxi: skip.has(id), ir: ir.has(id),
+      taxi: skip.has(id), ir: ir.has(id), longOut: LONG_OUT.has(normStatus(status)),
     });
   }
   return out;
 }
 
+const sidelined = (p) => p.ir || p.longOut;
+
 /* Best lineup by value. Most restrictive slots first, like the site's
- * lineup, so a flex doesn't steal the only eligible TE. */
+ * lineup, so a flex doesn't steal the only eligible TE. Sidelined players
+ * never start: a slot with no healthy option stays empty. */
 function lineup(roster, slots) {
-  const avail = roster.filter((p) => !p.taxi);
+  const avail = roster.filter((p) => !p.taxi && !sidelined(p));
   const order = slots.map((s, i) => i)
     .sort((a, b) => (SLOT_ELIGIBLE[slots[a]] || []).length - (SLOT_ELIGIBLE[slots[b]] || []).length);
   const picked = [];
@@ -122,14 +130,14 @@ function lineup(roster, slots) {
   }
   const starters = [];
   slots.forEach((s, i) => { if (picked[i]) starters.push({ slot: s, player: picked[i] }); });
-  return { starters, bench: avail.concat(roster.filter((p) => p.taxi)) };
+  return { starters, bench: avail.concat(roster.filter((p) => p.taxi || sidelined(p))) };
 }
 
 /* One number for how good a roster is: starters, plus a little for depth. */
 function strength(roster, slots) {
   const { starters, bench } = lineup(roster, slots);
   const s = starters.reduce((a, x) => a + x.player.v, 0);
-  const depth = bench.filter((p) => !p.taxi).map((p) => p.v)
+  const depth = bench.filter((p) => !p.taxi && !sidelined(p)).map((p) => p.v)
     .sort((a, b) => b - a).slice(0, BENCH_DEPTH).reduce((a, v) => a + v, 0);
   return Math.round(s + BENCH_WEIGHT * depth);
 }
@@ -160,7 +168,9 @@ function fairness(giveVals, getVals) {
 
 function swap(roster, out, inn) {
   const gone = new Set(out.map((p) => p.id));
-  return roster.filter((p) => !gone.has(p.id)).concat(inn.map((p) => ({ ...p, taxi: false, ir: false })));
+  // Injuries travel with the player: someone in your IR slot is just as hurt
+  // on their roster. Only taxi status is the team's own choice.
+  return roster.filter((p) => !gone.has(p.id)).concat(inn.map((p) => ({ ...p, taxi: false })));
 }
 
 function combos(pool, max) {
@@ -199,7 +209,7 @@ function hashId(s) {
 }
 
 const slim = (p) => ({ id: p.id, n: p.n, p: p.p, t: p.t, v: p.v, pr: p.pr, trend: p.trend,
-                       status: p.status || null });
+                       status: p.status || null, sidelined: sidelined(p) });
 
 /* Every fair trade with one partner that makes both starting lineups better,
  * best first. `me` and `them` are roster arrays from teamPlayers. */
@@ -379,6 +389,8 @@ function leagueCandidates(ctx, opts) {
 /* ------------------------------------------------------------ finalize */
 
 const SECTIONS = ["give", "get", "you", "them"];
+// The page talks to the manager: "you", never "I" or "we".
+const FIRST_PERSON = /(^|[^\w'’])(I|I'm|I’m|I've|I’ve|I'd|I’d|[Mm]y|[Mm]ine|[Ww]e|[Ww]e're|[Ww]e’re|[Oo]ur|[Oo]urs|[Uu]s)(?=$|[^\w'’])/;
 
 /* Merge Claude's research into the candidates it chose. Every number comes
  * from the candidates file, never from the research, and a trade that isn't
@@ -416,6 +428,14 @@ function finalize(work, research, now) {
         errors.push(`${where}: sources[${j}] needs a title and an https url.`);
       }
     });
+    const prose = [["headline", r.headline], ["summary", r.summary]]
+      .concat(SECTIONS.flatMap((k) => (why[k] || []).map((b, j) => [`why.${k}[${j}]`, b])))
+      .concat((r.risks || []).map((b, j) => [`risks[${j}]`, b]));
+    for (const [field, text] of prose) {
+      if (typeof text === "string" && FIRST_PERSON.test(text)) {
+        errors.push(`${where}: ${field} says "${text.match(FIRST_PERSON)[2]}"; write to the manager as "you"/"your".`);
+      }
+    }
     if (r.confidence && !["high", "medium", "low"].includes(r.confidence)) {
       errors.push(`${where}: confidence must be high, medium or low.`);
     }
@@ -537,7 +557,7 @@ async function cmdCandidates(a) {
       return {
         roster_id: r.roster_id,
         user: u.display_name || null,
-        name: (u.metadata && u.metadata.team_name) || u.display_name || `Team ${r.roster_id}`,
+        name: ((u.metadata && u.metadata.team_name) || u.display_name || `Team ${r.roster_id}`).trim(),
         record: `${st.wins || 0}-${st.losses || 0}${st.ties ? `-${st.ties}` : ""}`,
         roster: teamPlayers(r.players, players, values, r.taxi, r.reserve),
       };

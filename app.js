@@ -971,17 +971,20 @@ if (typeof document !== "undefined") {
     const check = el("p", "vcheck");
     check.appendChild(el("span", verdictClass(v), v.verdict));
     let txt = ` FantasyCalc: you give ${num(v.give)}, you get ${num(v.get)}`;
-    if (!pct) txt += ". Dead even.";
-    else if (t.give.length !== t.get.length) {
-      txt += `. ${v.diffPct > 0 ? "You come" : "They come"} out ${pct}% ahead once the ` +
-        `extra player is discounted for the roster spot.`;
-    } else txt += ` (${v.diffPct > 0 ? "+" : "−"}${pct}% for you).`;
+    if (t.give.length === 1 && t.get.length === 1) {
+      txt += pct ? ` (${v.diffPct > 0 ? "+" : "−"}${pct}% for you).` : ". Dead even.";
+    } else {
+      // The verdict is on package-adjusted values, so say why raw totals that
+      // differ still count as even (or by how much they don't).
+      txt += ". Counting second pieces at a discount, ";
+      txt += pct ? `${v.diffPct > 0 ? "you come" : "they come"} out ${pct}% ahead.` : "it's dead even.";
+    }
     check.appendChild(document.createTextNode(txt));
     box.appendChild(check);
 
     const impact = el("p", "impact");
     impact.textContent = `Starting lineup value: yours ${signed(t.you.gainPct)}%, ` +
-      `${t.partner.name}'s ${signed(t.them.gainPct)}%.`;
+      `theirs ${signed(t.them.gainPct)}%.`;
     box.appendChild(impact);
     const ch = t.you.changes || {};
     const changes = [];

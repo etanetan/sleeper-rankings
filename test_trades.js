@@ -132,6 +132,37 @@ check("source is FantasyCalc", work.values_source.name, "FantasyCalc");
 const profile = T.positionProfile(teams, slots);
 check("Team B is deep at RB", profile[2].deep.includes("RB"), true);
 
+/* --- injured players ---------------------------------------------------- */
+const hurt = [P("h1", "QB", 8000), P("h2", "QB", 3000), P("h3", "RB", 5000), P("h4", "RB", 4000),
+              P("h5", "WR", 5000), P("h6", "WR", 4000), P("h7", "TE", 2000), P("h8", "WR", 3500)];
+const onIR = hurt.map((p) => (p.id === "h1" ? { ...p, longOut: true } : p));
+check("a player on IR doesn't start",
+  T.lineup(onIR, slots).starters.some((s) => s.player.id === "h1"), false);
+check("his backup starts instead",
+  T.lineup(onIR, slots).starters.find((s) => s.slot === "QB").player.id, "h2");
+check("an IR player adds nothing to lineup strength",
+  T.strength(onIR, slots) < T.strength(hurt, slots), true);
+check("empty slot when no healthy option",
+  T.lineup(onIR.filter((p) => p.id !== "h2"), slots).starters.some((s) => s.slot === "QB"), false);
+// Trading an injured player away can't be sold as helping the other side.
+const hurtMe = me.map((p) => (p.id === "w1" ? { ...p, ir: true } : p));
+{
+  // Give them w1 (hurt) plus someone healthy: w1 must add nothing to their lineup.
+  const gets = new Set(["r3"]);
+  const theirs = b.filter((p) => !gets.has(p.id));
+  const withHurt = theirs.concat([hurtMe.find((p) => p.id === "w1"), me.find((p) => p.id === "r2")]);
+  const without = theirs.concat([me.find((p) => p.id === "r2")]);
+  check("an injured player doesn't count as healthy on his new team",
+    T.strength(withHurt, slots), T.strength(without, slots));
+}
+const injuredOnly = T.tradesWith(hurtMe, b, slots, 12).filter((x) => x.give.length === 1 && x.give[0].id === "w1");
+check("an injured player alone buys nothing", injuredOnly.length, 0);
+check("long-term statuses flagged from Sleeper's words",
+  T.teamPlayers(["a", "b", "c"], { a: { n: "A", p: "RB", i: "IR" }, b: { n: "B", p: "RB", i: "Out" },
+    c: { n: "C", p: "RB", i: "Suspended" } }, {}).map((p) => p.longOut), [true, false, true]);
+check("sidelined flag carried to the work file",
+  T.teamPlayers(["a"], { a: { n: " A ", p: "RB", i: "PUP" } }, {}).map((p) => [p.n, p.longOut]), [["A", true]]);
+
 /* --- finalize: the research has to clear the numbers ------------------- */
 const cid = work.candidates[0].id;
 const good = {
@@ -170,6 +201,16 @@ check("unfair trade rejected even if the file says fair",
 
 check("empty needs a reason", T.finalize(work, { trades: [] }).errors.length, 1);
 check("empty with a reason is fine", T.finalize(work, { trades: [], none_reason: "Nothing fair." }).errors, []);
+for (const [label, bullet] of [["my", "Frees up my flex spot."], ["we", "We are deep at WR."],
+                               ["our", "Fills our RB2."], ["I", "I like this deal."]]) {
+  const fp = JSON.parse(JSON.stringify(good));
+  fp.trades[0].why.you = [bullet];
+  check(`first person rejected: "${label}"`, T.finalize(work, fp).errors.some((e) => /write to the manager/.test(e)), true);
+}
+const ok2 = JSON.parse(JSON.stringify(good));
+ok2.trades[0].why.you = ["Your RB2 improves; the U.S. Bank Stadium matchup is soft and yours to win."];
+check("second person and 'U.S.' are fine", T.finalize(work, ok2).errors, []);
+
 const dup = JSON.parse(JSON.stringify(good));
 dup.trades.push(dup.trades[0]);
 check("duplicate trade rejected", T.finalize(work, dup).errors.some((e) => /twice/.test(e)), true);

@@ -40,7 +40,9 @@ and bench with FantasyCalc values and 30-day trends, where you're thin or deep
 versus the league, and up to 12 candidate trades. Every candidate is already
 within 10% on FantasyCalc value (package-adjusted) and improves both starting
 lineups; each lists the partner's record and needs, who enters and leaves your
-lineup, and who you'd drop for roster space.
+lineup (`you.changes.in` / `out`), and who you'd drop for roster space.
+Players on IR, PUP or suspended are marked `sidelined`: they keep their trade
+value but never count as starters.
 
 If it fails with a 403 / `host_not_allowed` / connection error, the
 environment's network policy is blocking `api.sleeper.app` or
@@ -91,6 +93,10 @@ Prefer clear need-for-surplus swaps, buying low on players whose usage is
 strong but results aren't there yet, and selling high on touchdown-driven or
 otherwise unsustainable production.
 
+**Each trade stands alone.** Judge every one against the roster as it is
+today. Never assume another suggested trade happened ("alongside the Hurts you
+just got" is wrong — he may never arrive).
+
 ## 5. Write the research file
 
 `trades/work/<league_id>.research.json`:
@@ -118,8 +124,20 @@ otherwise unsustainable production.
 ```
 
 Bullets: 2–4 per section, 25 words max each, concrete — snap %, targets,
-touches, FantasyCalc value and trend, ranks, matchups. **Never invent a stat:**
-if you couldn't verify it, leave it out. Cite 2+ real pages you actually used.
+touches, FantasyCalc value and trend, ranks, matchups.
+
+- **Write to Ethan as "you"/"your".** Never "I", "my", "we" or "our";
+  finalize rejects it.
+- **Never invent a stat.** If you couldn't verify it, leave it out. Use the
+  source's own terms: target share, opportunity share and snap share are
+  different numbers.
+- **Lineup claims must match the work file.** Say who starts now from
+  `you.changes`; don't call a move lineup-neutral when a starter leaves.
+- Refer to the partner by `partner.name`.
+- No shorthand: "FantasyCalc value 1,201" and "QB5", not "v1201" or "PR5".
+- Cite 2+ real pages you actually used, about the players in that trade (or
+  the league-wide chart you relied on). Nothing unrelated.
+
 If no trade survives research, write `"trades": []` and a one-sentence
 `none_reason`.
 
