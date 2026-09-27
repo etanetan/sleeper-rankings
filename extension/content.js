@@ -101,12 +101,29 @@ if (typeof document !== "undefined" && typeof chrome !== "undefined" && chrome.s
       const badge = document.createElement("span");
       badge.className = "sr-badge" + (cls ? ` ${cls}` : "");
       badge.textContent = `${meta.p === "DEF" ? "DST" : meta.p}${meta.posRank}`;
-      // Anchor to the name, not the row: the row is one of Sleeper's own
-      // fixed-column layouts (avatar / name / own% / start% / pts), and
-      // appending there as an extra child shifts every column after it. The
-      // name element just wraps text, so a badge flows inline after it.
-      const anchor = row.querySelector(SELECTORS.name) || row;
-      anchor.appendChild(badge);
+
+      const nameEl = row.querySelector(SELECTORS.name);
+      if (!nameEl) { row.appendChild(badge); return; }
+
+      // Append inline after the name first - not the whole row - so it
+      // takes no extra slot in the row's own layout (avatar / name / own% /
+      // start% / pts) and can't shift those columns. Then, next frame,
+      // measure where that put it and switch to absolute positioning at
+      // that same x but vertically centered on the row's full height:
+      // pinned to the name's own line otherwise reads high, since the row
+      // is taller than one line (a game-info line sits under the name).
+      nameEl.appendChild(badge);
+      requestAnimationFrame(() => {
+        if (!badge.isConnected) return;
+        const rowRect = row.getBoundingClientRect();
+        const badgeRect = badge.getBoundingClientRect();
+        if (getComputedStyle(row).position === "static") row.style.position = "relative";
+        badge.style.position = "absolute";
+        badge.style.left = `${badgeRect.left - rowRect.left}px`;
+        badge.style.marginLeft = "0";
+        badge.style.top = "50%";
+        badge.style.transform = "translateY(-50%)";
+      });
     }
 
     function sweep() {
