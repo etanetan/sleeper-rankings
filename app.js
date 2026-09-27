@@ -130,6 +130,23 @@ if (typeof document !== "undefined") {
     }
   }
 
+  /* A matchup's current score and win chance, wherever they're shown
+   * together - the picker/strip suffix and the Matchup tab's header both
+   * call this rather than each computing their own, so the two can never
+   * disagree. Once either side has scored, live points are more telling
+   * than a projection frozen at kickoff (m.win, computed once in data.js);
+   * a real 0-0 is indistinguishable from "hasn't started" for the seconds
+   * before the first snap, an acceptable tradeoff for not needing a
+   * separate "has it started" signal from Sleeper. The win% is always
+   * recomputed from whichever score this returns, live or not, so it can
+   * never contradict the number sitting right next to it. */
+  function matchupNow(m) {
+    const started = m.myPts > 0 || m.oppPts > 0;
+    const myShown = started ? m.myPts : m.myProj;
+    const oppShown = started ? m.oppPts : m.oppProj;
+    return { started, myShown, oppShown, winPct: Math.round(winProb(myShown, oppShown) * 100) };
+  }
+
   /* A short suffix for the picker and the league strip: ✓ when Sleeper's
    * lineup already matches, otherwise how many changes are pending, or ⚠
    * when a starter needs attention (OUT/bye/empty) regardless of count -
@@ -145,7 +162,7 @@ if (typeof document !== "undefined") {
       }
     }
     if (lg.matchup) {
-      const winPct = Math.round(lg.matchup.win * 100);
+      const winPct = matchupNow(lg.matchup).winPct;
       suffix = suffix ? `${suffix} · ${winPct}%` : `${winPct}%`;
     }
     return suffix;
@@ -306,19 +323,7 @@ if (typeof document !== "undefined") {
       return panel;
     }
 
-    // Once either side has scored, that's more informative than a
-    // projection frozen at kickoff; a real 0-0 is indistinguishable from
-    // "hasn't started" for the seconds before the first snap, and that's
-    // an acceptable tradeoff for not needing a separate "has it started"
-    // signal from Sleeper.
-    const started = m.myPts > 0 || m.oppPts > 0;
-    const myShown = started ? m.myPts : m.myProj;
-    const oppShown = started ? m.oppPts : m.oppProj;
-    // Recomputed from whichever numbers are on screen, not read off m.win -
-    // m.win is fixed at kickoff-time projections, so once live points take
-    // over up above, using it here would risk contradicting them (a real
-    // blowout paired with a stale "42% to win" from before the game).
-    const winPct = Math.round(winProb(myShown, oppShown) * 100);
+    const { started, myShown, oppShown, winPct } = matchupNow(m);
 
     const head = el("p", "mu-head");
     head.appendChild(el("b", null, "You"));
