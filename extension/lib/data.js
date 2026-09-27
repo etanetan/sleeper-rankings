@@ -230,7 +230,7 @@ function createLoader({ storage, onStatus } = {}) {
     const [usersResult, matchupsResult, prevMatchupsResult] = await Promise.allSettled([
       fetchJson(`${SLEEPER}/league/${lg.league_id}/users`),
       fetchJson(`${SLEEPER}/league/${lg.league_id}/matchups/${data.week}`),
-      data.prevWeek >= 1
+      data.prevWeekProjections && data.prevWeek >= 1
         ? fetchJson(`${SLEEPER}/league/${lg.league_id}/matchups/${data.prevWeek}`)
         : Promise.resolve(null),
     ]);
