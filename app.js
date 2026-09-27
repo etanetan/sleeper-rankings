@@ -411,10 +411,11 @@ if (typeof document !== "undefined") {
     }
 
     // A failed load (network, a bad response) gets its own retry-able
-    // button rather than a dead-end line, and shouldn't read the same as
-    // "genuinely nothing to total up yet" (which this button's own guard
-    // above already makes unreachable in practice - by the time it's
-    // shown, week > 1, so there's always at least one week to try).
+    // button rather than a dead-end line. data.js's seasonRecapFor tells
+    // this apart from a roster that genuinely has no completed-week data
+    // (added mid-season, most likely) - that's a real, cacheable answer of
+    // "zero", not a failure, and reads differently below (no retry button:
+    // clicking it again would find the same nothing).
     function renderError() {
       wrap.innerHTML = "";
       wrap.appendChild(document.createTextNode("Couldn't load season totals. "));
@@ -435,8 +436,13 @@ if (typeof document !== "undefined") {
       try { result = await lg.seasonRecap(); } catch (e) { result = null; }
       if (!wrap.isConnected) return;   // switched leagues/tabs while loading
 
-      if (result) {
+      if (result && result.weeks > 0) {
         wrap.textContent = `Season (${result.weeks} wk${result.weeks === 1 ? "" : "s"}): ${recapText(result)}`;
+      } else if (result) {
+        // A real answer (every week's fetch succeeded), just an empty one -
+        // a roster added mid-season, most likely. Not a failure, so no
+        // retry button: clicking it again would find the same nothing.
+        wrap.textContent = "No completed weeks found for this roster yet.";
       } else {
         renderError();
       }

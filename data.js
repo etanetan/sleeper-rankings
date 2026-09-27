@@ -174,7 +174,7 @@ function createLoader({ storage, onStatus } = {}) {
    * from the cache. */
   async function seasonRecapFor(lg, data, settings, slots, rosterId) {
     const settingsHash = shortHash(JSON.stringify(settings || {}));
-    let actual = 0, ours = 0, best = 0, counted = 0;
+    let actual = 0, ours = 0, best = 0, counted = 0, hadError = false;
     for (let w = 1; w < data.week; w++) {
       const cacheKey = `${RECAP_CACHE_PREFIX}:${lg.league_id}:${rosterId}:${w}:${settingsHash}`;
       let weekResult = null;
@@ -194,7 +194,10 @@ function createLoader({ storage, onStatus } = {}) {
             try { await storage.setItem(cacheKey, JSON.stringify(weekResult)); }
             catch (e) { /* over quota or private mode; not worth failing over */ }
           }
-        } catch (e) { weekResult = null; }
+          // else: the fetch succeeded but this roster has no entry that
+          // week (added mid-season, a re-draft, ...) - a real, cacheable
+          // answer of "nothing to add", not a failure.
+        } catch (e) { hadError = true; }
       }
 
       if (weekResult) {
@@ -202,7 +205,12 @@ function createLoader({ storage, onStatus } = {}) {
         counted++;
       }
     }
-    return counted ? { actual, ours, best, weeks: counted } : null;
+    // Zero weeks counted is only treated as a failure (null, so the page
+    // offers a retry) when something actually threw; a roster that
+    // genuinely has no prior matchup data is a legitimate answer, not an
+    // error the owner can fix by clicking Retry.
+    if (counted === 0 && hadError) return null;
+    return { actual, ours, best, weeks: counted };
   }
 
   /* The season's shared data: the player list, this week's projections
