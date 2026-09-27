@@ -22,7 +22,7 @@
 const fs = require("fs");
 const path = require("path");
 const { SLOT_ELIGIBLE, tradeWindow, normStatus, scorePlayer,
-        ORDINAL, EVEN_PCT, isHttps, SECTIONS } = require("../app.js");
+        ORDINAL, EVEN_PCT, isHttps, SECTIONS } = require("../core.js");
 const { MIN_TRADES, markRunning, markFailed, reasonFor, pickNext } = require("../research.js");
 
 const SLEEPER = "https://api.sleeper.app/v1";

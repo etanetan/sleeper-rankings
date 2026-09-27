@@ -5,7 +5,7 @@ const os = require("os");
 const path = require("path");
 const { execFileSync } = require("child_process");
 const T = require("./trades/engine.js");
-const A = require("./app.js");
+const A = require("./core.js");
 const results = [];
 
 function check(label, got, want) {

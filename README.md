@@ -181,13 +181,47 @@ pacing and retries.
 
 FantasyPros ranks by player name, Sleeper rosters are player IDs, so the join
 runs through a normalized name - in Python in `build.py`, in JavaScript in
-`app.js`. If those drift the join fails silently and players just look
+`core.js`. If those drift the join fails silently and players just look
 unranked, so `test_norm_parity.py` runs both over the same names and compares.
+
+## Browser extension
+
+`extension/` is a Chrome + Firefox extension, built from the same `core.js`
+ranking logic as the page, that puts the site next to sleeper.com instead of
+in a separate tab:
+
+- A side panel (Chrome's `sidePanel`, Firefox's `sidebar_action`) frames the
+  live site (`?embed=1`), so a fix to the page reaches the extension without
+  reinstalling it. It follows whichever league the sleeper.com tab is on.
+- On a league page, a content script badges each player with their positional
+  rank (`WR8`) and colors starters/bench by whether they belong in the best
+  lineup, plus a small pill summarizing pending lineup changes.
+
+It never ships a store build automatically - load it yourself:
+
+1. `node extension/sync.js` (copies `core.js`/`data.js` into `extension/lib/`;
+   re-run it after changing either file).
+2. **Chrome**: `chrome://extensions` → enable Developer mode → *Load unpacked*
+   → select `extension/`.
+3. **Firefox**: `about:debugging#/runtime/this-firefox` → *Load Temporary
+   Add-on* → pick `extension/manifest.json`. This unloads on restart; for a
+   permanent install, sign it as an *unlisted* add-on on
+   [addons.mozilla.org](https://addons.mozilla.org) with `web-ext sign`
+   (free, no store listing required).
+4. Open the panel and enter your Sleeper username once - it's kept in
+   `chrome.storage.sync` so it follows you across the browser's synced devices.
+
+The content script's player-row selectors are guesses based on how
+similar extensions (SleeperPlus, Better Sleeper) find players in Sleeper's
+markup; if badges don't show up on a real league page, check `SELECTORS` in
+`extension/content.js` against the page's current HTML and adjust.
 
 ## Tests
 
 ```bash
-node test_app.js      # name matching, scoring, ranking, lineups
-node test_trades.js   # trade windows, fairness, candidate search, finalize gate
-python3 test_build.py # the optional build, hosts, secret hygiene
+node test_app.js         # name matching, scoring, ranking, lineups
+node test_trades.js      # trade windows, fairness, candidate search, finalize gate
+python3 test_build.py    # the optional build, hosts, secret hygiene
+python3 test_norm_parity.py  # build.py and core.js normalize names identically
+node test_extension.js   # manifest, extension/lib parity, content-script helpers
 ```

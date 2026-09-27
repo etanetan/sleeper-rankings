@@ -1,5 +1,5 @@
 /* Offline tests for the client-side scoring, ranking and lineup logic. */
-const app = require("./app.js");
+const app = require("./core.js");
 const results = [];
 
 function check(label, got, want) {
