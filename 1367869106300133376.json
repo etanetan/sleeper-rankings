@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "ready",
+  "status": "running",
   "league_id": "1367869106300133376",
   "league_name": "FCFFL",
   "season": "2026",
@@ -366,5 +366,6 @@
       ]
     }
   ],
-  "none_reason": null
+  "none_reason": null,
+  "started": "2026-09-27T02:45:11.035Z"
 }
