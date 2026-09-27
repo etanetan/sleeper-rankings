@@ -31,6 +31,39 @@ check("content script matches sleeper.com leagues",
 check("content script loads core.js and data.js before content.js",
       (manifest.content_scripts || [])[0].js, ["lib/core.js", "lib/data.js", "content.js"]);
 
+// --- Firefox signing/release requirements (docs/ROADMAP.md task 1) --------
+const gecko = manifest.browser_specific_settings && manifest.browser_specific_settings.gecko;
+check("declares a Firefox strict_min_version", typeof (gecko || {}).strict_min_version, "string");
+check("update_url is https on etanetan.github.io",
+      /^https:\/\/etanetan\.github\.io\//.test((gecko || {}).update_url || ""), true);
+check("declares data_collection_permissions.required as a non-empty array",
+      Array.isArray((gecko || {}).data_collection_permissions &&
+        gecko.data_collection_permissions.required) &&
+        gecko.data_collection_permissions.required.length > 0, true);
+
+const iconSizes = ["16", "32", "48", "128"];
+check("manifest lists an icon for every standard size",
+      iconSizes.every((s) => !!(manifest.icons && manifest.icons[s])), true);
+for (const s of iconSizes) {
+  const iconPath = manifest.icons && manifest.icons[s];
+  if (iconPath) {
+    check(`icon path ${iconPath} exists`,
+          fs.existsSync(path.join(__dirname, "extension", iconPath)), true);
+  }
+}
+
+const updatesPath = path.join(__dirname, "extension/updates.json");
+if (fs.existsSync(updatesPath)) {
+  const updates = JSON.parse(fs.readFileSync(updatesPath, "utf8"));
+  const geckoId = (gecko || {}).id;
+  const entry = updates.addons && updates.addons[geckoId];
+  check("updates.json's addon id matches the manifest's gecko id", !!entry, true);
+  const links = entry ? entry.updates.map((u) => u.update_link) : [];
+  check("every update_link is https under extension/dist/",
+        links.length > 0 && links.every((l) =>
+          /^https:\/\/etanetan\.github\.io\/sleeper-rankings\/extension\/dist\//.test(l)), true);
+}
+
 // --- lib/ stays in sync with the root files --------------------------------
 for (const name of ["core.js", "data.js"]) {
   const root = fs.readFileSync(path.join(__dirname, name), "utf8");

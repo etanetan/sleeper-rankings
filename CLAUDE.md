@@ -37,6 +37,35 @@ node trades/engine.js running|failed|finalize --league <id> --data <dir> ...
 - Whenever `core.js` or `data.js` change, also run `node extension/sync.js` and commit the updated `extension/lib/*.js` - `test_extension.js` fails if they drift from the root files.
 - No GitHub Actions: the session credential can't push `.github/workflows/`, and the owner doesn't want them.
 
+### Releasing the Firefox build
+
+Chrome needs nothing beyond a normal push - "Load unpacked" already persists
+across restarts. Firefox only keeps an extension installed if Mozilla has
+signed it, so a change to anything under `extension/` (not the site itself -
+the side panel is just an iframe of the live site) needs a new signed build
+before Firefox users see it:
+
+1. Bump `"version"` in `extension/manifest.json` (AMO refuses to re-sign an
+   already-signed version).
+2. On a machine with the owner's AMO API credentials (never in this session -
+   see `docs/ROADMAP.md` task 1c for how the owner gets them):
+   ```bash
+   export WEB_EXT_API_KEY='user:...'   WEB_EXT_API_SECRET='...'
+   node extension/release.js
+   ```
+   This syncs `extension/lib/`, signs an unlisted (self-distributed, not
+   publicly listed) build via `web-ext sign`, and writes
+   `extension/dist/sleeper-rankings-<version>.xpi` +
+   `extension/updates.json` (the update manifest `update_url` in the
+   manifest points at, so installed copies update themselves - Firefox
+   checks it roughly once a day).
+3. Commit `extension/dist/` and `extension/updates.json`, then push both
+   branches as usual.
+4. Lint locally with `npx --yes web-ext@8 lint --source-dir extension
+   --self-hosted` before releasing - the `--self-hosted` flag matters, since
+   plain `lint` wrongly hard-errors on `update_url` (it assumes AMO-listed
+   distribution by default).
+
 ## Architecture
 
 **Three files, one page.** `core.js` is pure logic (`norm`, `scorePlayer`, `rankPositions`, `pickLineup`, `lineupCheck`, `tradeWindow`, …), DOM-free and exported via `module.exports` for Node. `data.js` is the Sleeper API calls and the per-league view-model builder, also DOM-free: status goes through an `onStatus` callback and caching goes through a storage adapter (`{getItem,setItem,removeItem}`, each returning a promise) so the same `createLoader({storage, onStatus})` runs against `localStorage` on the site and `chrome.storage.local` in the extension. `app.js` is UI only, inside `if (typeof document !== "undefined")`. All three are loaded as plain `<script>` tags in that order in `index.html`, so `app.js` and `data.js` use `core.js`'s top-level functions directly with no import - classic scripts share one global lexical scope, the same reason `research.js`'s exports are already usable from `app.js` without a `require`. `trades/engine.js` requires `core.js` (not `app.js`) for shared definitions (`SLOT_ELIGIBLE`, `tradeWindow`, `normStatus`, `scorePlayer`), so changes there affect the engine, the page and the extension together.

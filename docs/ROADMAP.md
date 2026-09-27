@@ -83,10 +83,20 @@ the live site, so site features reach Firefox without re-signing.
    non-empty array. If `extension/updates.json` exists, check its addon id
    equals the gecko id and every `update_link` is https under
    `https://etanetan.github.io/sleeper-rankings/extension/dist/`.
-4. Lint: `npx --yes web-ext@8 lint --source-dir extension`. Fix errors.
-   Expected, acceptable warnings: `sidePanel` permission unknown to Firefox,
-   `background.service_worker` ignored by Firefox (the manifest carries both
-   on purpose - see `bg.js`). Mention any others to the owner.
+4. Lint: `npx --yes web-ext@8 lint --source-dir extension --self-hosted`. The
+   `--self-hosted` flag matters: without it, `lint` assumes AMO-listed
+   distribution and hard-errors on `update_url` (`MANIFEST_UPDATE_URL`,
+   "not allowed for Mozilla-hosted add-ons") even though it's exactly right
+   for a self-distributed/unlisted extension - `--self-hosted` turns that
+   off. Fix any other errors. Expected, acceptable warnings: `sidePanel`
+   permission unknown to Firefox, `background.service_worker` ignored by
+   Firefox (the manifest carries both on purpose - see `bg.js`), and the two
+   `sidePanel.setPanelBehavior is not supported` notices from `bg.js` (same
+   cause - it's feature-detected there and is dead code on Firefox).
+   Mention any others to the owner. `web-ext sign` (task 1b) validates
+   against AMO's real API instead of this local ruleset and has no
+   `--self-hosted` equivalent - it accepts `update_url` for an unlisted
+   submission without it.
 
 ### 1b. Release script (agent)
 
