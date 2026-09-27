@@ -1,7 +1,212 @@
 {
   "version": 1,
+  "status": "ready",
   "league_id": "1312115063020081152",
-  "trades": [],
-  "status": "running",
-  "started": "2026-09-27T02:29:27.089Z"
+  "league_name": "UMN Dynasty League 🧨",
+  "season": "2026",
+  "week": 3,
+  "generated": "2026-09-27T02:33:15.994Z",
+  "values_source": {
+    "name": "FantasyCalc",
+    "url": "https://fantasycalc.com",
+    "api": "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=2&numTeams=10&ppr=0.5",
+    "fetched": "2026-09-27T02:29:21.710Z"
+  },
+  "me": {
+    "name": "UnWorthy Opponent",
+    "record": "0-2",
+    "thin": [
+      "WR",
+      "QB"
+    ],
+    "deep": [
+      "TE",
+      "RB"
+    ]
+  },
+  "trades": [
+    {
+      "id": "1j773eh",
+      "partner": {
+        "roster_id": 4,
+        "name": "🏆 2025 League Champion",
+        "user": "PapaGart",
+        "record": "2-0",
+        "thin": [
+          "TE",
+          "QB"
+        ],
+        "deep": [
+          "WR",
+          "RB"
+        ]
+      },
+      "give": [
+        {
+          "id": "9509",
+          "n": "Bijan Robinson",
+          "p": "RB",
+          "t": "ATL",
+          "v": 9292,
+          "pr": 2,
+          "trend": -899,
+          "status": null
+        },
+        {
+          "id": "5012",
+          "n": "Mark Andrews",
+          "p": "TE",
+          "t": "BAL",
+          "v": 901,
+          "pr": 11,
+          "trend": 162,
+          "status": null
+        }
+      ],
+      "get": [
+        {
+          "id": "6786",
+          "n": "CeeDee Lamb",
+          "p": "WR",
+          "t": "DAL",
+          "v": 7768,
+          "pr": 4,
+          "trend": 840,
+          "status": null
+        },
+        {
+          "id": "8167",
+          "n": "Christian Watson",
+          "p": "WR",
+          "t": "GB",
+          "v": 2839,
+          "pr": 17,
+          "trend": 1377,
+          "status": null
+        }
+      ],
+      "value": {
+        "give": 10193,
+        "get": 10607,
+        "giveAdj": 10013,
+        "getAdj": 10039,
+        "diffPct": 0.003,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "before": 35324,
+        "after": 35738,
+        "gainPct": 1.2,
+        "changes": {
+          "in": [
+            {
+              "n": "CeeDee Lamb",
+              "slot": "WR"
+            },
+            {
+              "n": "Christian Watson",
+              "slot": "FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Bijan Robinson",
+              "slot": "RB"
+            },
+            {
+              "n": "Mark Andrews",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "before": 38157,
+        "after": 38450,
+        "gainPct": 0.8,
+        "changes": {
+          "in": [
+            {
+              "n": "Bijan Robinson",
+              "slot": "RB"
+            },
+            {
+              "n": "Mike Evans",
+              "slot": "WR"
+            },
+            {
+              "n": "Mark Andrews",
+              "slot": "TE"
+            }
+          ],
+          "out": [
+            {
+              "n": "CeeDee Lamb",
+              "slot": "WR"
+            },
+            {
+              "n": "Juwan Johnson",
+              "slot": "TE"
+            },
+            {
+              "n": "Christian Watson",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "headline": "Flip RB/TE surplus (Bijan Robinson, Mark Andrews) for CeeDee Lamb + Christian Watson to fix your worst position, WR",
+      "summary": "You're deep at RB/TE and thin at WR; this converts a luxury FLEX (Andrews, behind league-best McBride) plus Bijan into two immediate starting-caliber WRs while a 2-0 contender fills its real TE hole.",
+      "confidence": "high",
+      "why": {
+        "give": [
+          "Bijan Robinson's target share fell from 53% (Wk1) to 28% (Wk2); you still keep James Cook and Quinshon Judkins at RB.",
+          "Mark Andrews is only a FLEX option behind Trey McBride (PR1, value 6611, trend +901), so moving him costs no lineup spot.",
+          "Andrews' hot start (10-of-13 targets) came with Zay Flowers out; sell now before Flowers' return trims his share."
+        ],
+        "get": [
+          "CeeDee Lamb: 13 catches, 197 yards, 3 TDs through two games, PR4, FantasyCalc value 7768 and rising (+840 trend).",
+          "Christian Watson has a team-high 19 targets and 76% snap share over two games with 3 TDs, GB's clear WR1.",
+          "Both start over your current WR2 Terry McLaurin (PR33, trend -845), a direct upgrade at your only thin skill slot."
+        ],
+        "you": [
+          "Fills your lone 'thin' non-QB slot (WR) by trimming a 'deep' RB/TE corps that still starts Cook plus Judkins.",
+          "Starting lineup value rises 35,324 to 35,738 (+1.2%) with Lamb and Watson both plugged into the lineup now.",
+          "Keeps McBride as a clean top-tier TE starter; no lineup hole is created by moving Andrews out."
+        ],
+        "them": [
+          "PapaGart is 2-0 and buying the best player available; Bijan Robinson (RB, PR2 value) upgrades a contender's backfield.",
+          "Andrews directly fixes their listed 'thin TE' need, replacing streaming option Juwan Johnson in the lineup.",
+          "They still start Mike Evans after moving Lamb/Watson out, so their deep WR room absorbs the trade with no hole."
+        ]
+      },
+      "risks": [
+        "Bijan Robinson's Week 1 workload (29 touches, 72.6% of Falcons' offense) shows league-winning upside if his role stays that heavy.",
+        "Watson shares targets with Matthew Golden (12 targets in Wk1); a bigger Golden role could cap Watson's ceiling.",
+        "Mark Andrews' value could keep climbing if Zay Flowers is out longer than the team currently expects."
+      ],
+      "sources": [
+        {
+          "title": "Fantasy Football Trade Value Chart: Week 3 (2026) - FantasyPros",
+          "url": "https://www.fantasypros.com/2026/09/fantasy-football-trade-value-chart-week-3-2026/"
+        },
+        {
+          "title": "Bijan Robinson's 29 Touches Signal Panthers' Run Defense Nightmare - Yahoo Sports",
+          "url": "https://ca.sports.yahoo.com/news/bijan-robinson-29-touches-signal-143000656.html"
+        },
+        {
+          "title": "Fantasy Football Deep Dive on Christian Watson: The Packers' Clear WR1 - Fantasy Life",
+          "url": "https://www.fantasylife.com/articles/fantasy/fantasy-football-deep-dive-on-christian-watson"
+        },
+        {
+          "title": "Mark Andrews Week 3 Outlook for Fantasy Football (2026) - RotoBaller",
+          "url": "https://www.rotoballer.com/player-news/mark-andrews-hoping-to-turn-opportunities-into-fantasy-points-in-week-3/1951130"
+        }
+      ]
+    }
+  ],
+  "none_reason": null
 }

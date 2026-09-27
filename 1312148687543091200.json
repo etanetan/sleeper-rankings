@@ -1,7 +1,372 @@
 {
   "version": 1,
+  "status": "ready",
   "league_id": "1312148687543091200",
-  "trades": [],
-  "status": "running",
-  "started": "2026-09-27T02:29:26.947Z"
+  "league_name": "HTB DYNASTY",
+  "season": "2026",
+  "week": 3,
+  "generated": "2026-09-27T02:36:00.142Z",
+  "values_source": {
+    "name": "FantasyCalc",
+    "url": "https://fantasycalc.com",
+    "api": "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&numTeams=10&ppr=0",
+    "fetched": "2026-09-27T02:29:21.373Z"
+  },
+  "me": {
+    "name": "etanetan",
+    "record": "1-1",
+    "thin": [
+      "RB",
+      "TE"
+    ],
+    "deep": [
+      "WR",
+      "QB"
+    ]
+  },
+  "trades": [
+    {
+      "id": "e4o5z8",
+      "partner": {
+        "roster_id": 6,
+        "name": "Njgriffin",
+        "user": "Njgriffin",
+        "record": "0-2",
+        "thin": [
+          "TE",
+          "QB"
+        ],
+        "deep": [
+          "RB",
+          "WR"
+        ]
+      },
+      "give": [
+        {
+          "id": "12508",
+          "n": "Jaxson Dart",
+          "p": "QB",
+          "t": "NYG",
+          "v": 4325,
+          "pr": 12,
+          "trend": -314,
+          "status": "IR"
+        },
+        {
+          "id": "11635",
+          "n": "Ladd McConkey",
+          "p": "WR",
+          "t": "LAC",
+          "v": 3537,
+          "pr": 17,
+          "trend": -202,
+          "status": null
+        }
+      ],
+      "get": [
+        {
+          "id": "12507",
+          "n": "Omarion Hampton",
+          "p": "RB",
+          "t": "LAC",
+          "v": 4936,
+          "pr": 8,
+          "trend": -1329,
+          "status": null
+        },
+        {
+          "id": "4892",
+          "n": "Baker Mayfield",
+          "p": "QB",
+          "t": "TB",
+          "v": 2801,
+          "pr": 21,
+          "trend": -382,
+          "status": null
+        }
+      ],
+      "value": {
+        "give": 7862,
+        "get": 7737,
+        "giveAdj": 7155,
+        "getAdj": 7177,
+        "diffPct": 0.004,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "before": 41097,
+        "after": 42352,
+        "gainPct": 3.1,
+        "changes": {
+          "in": [
+            {
+              "n": "Omarion Hampton",
+              "slot": "RB"
+            },
+            {
+              "n": "Michael Wilson",
+              "slot": "FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Jonah Coleman",
+              "slot": "RB"
+            },
+            {
+              "n": "Ladd McConkey",
+              "slot": "WR"
+            }
+          ]
+        },
+        "drop": {
+          "id": "11435",
+          "n": "Emanuel Wilson",
+          "p": "RB",
+          "v": 846
+        }
+      },
+      "them": {
+        "before": 29466,
+        "after": 29591,
+        "gainPct": 0.4,
+        "changes": {
+          "in": [
+            {
+              "n": "Jaxson Dart",
+              "slot": "QB"
+            },
+            {
+              "n": "Ladd McConkey",
+              "slot": "WR"
+            }
+          ],
+          "out": [
+            {
+              "n": "Omarion Hampton",
+              "slot": "RB"
+            },
+            {
+              "n": "Baker Mayfield",
+              "slot": "SUPER_FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "headline": "Turn a season-ending Dart and banged-up McConkey into a healthy, ascending RB1 in Omarion Hampton",
+      "summary": "Dart needs season-ending knee surgery and won't help until 2027, and we're deep enough at WR to move McConkey; Hampton is fully healthy and stepping into a lead role for a rebuilding Njgriffin squad.",
+      "confidence": "high",
+      "why": {
+        "give": [
+          "Dart suffered MCL/PCL/meniscus damage in Week 2, needs season-ending surgery, and isn't expected back until 2027.",
+          "McConkey is nursing a Week 1 rib injury; we're deep at WR (Nacua, Odunze, Lemon, M. Wilson) and can absorb the loss."
+        ],
+        "get": [
+          "Hampton says his rookie-year ankle injuries are behind him and is set for a bigger workload in year two (FantasyCalc rank 8).",
+          "Mayfield fought through a Week 3 illness but had a full practice Friday and is not on the injury report."
+        ],
+        "you": [
+          "Fills our thinnest position (RB) with a clear breakout-caliber back, replacing IR'd Jonah Coleman in the lineup.",
+          "Adds Superflex QB depth behind Hurts/Maye without touching either current starter."
+        ],
+        "them": [
+          "0-2 Njgriffin is thin at QB/TE and deep at RB/WR, so moving a surplus RB for a high-capital rookie QB fits a rebuild.",
+          "They bank Dart's long-term upside (ACL intact) for 2027 while adding a WR (McConkey) to their deep receiver room."
+        ]
+      },
+      "risks": [
+        "Giants HC left open a slim chance Dart returns in the 2026 postseason, which would make this look like an early sell.",
+        "Hampton is still building back to a full workload post-injury, so touches could stay inconsistent for a few more weeks."
+      ],
+      "sources": [
+        {
+          "title": "Sources: Giants QB Jaxson Dart out for extended period",
+          "url": "https://www.espn.com/nfl/story/_/id/50007211/sources-giants-qb-jaxson-dart-extended-period"
+        },
+        {
+          "title": "Jaxson Dart Out For Season With Knee Injury, Latest NFL Rumors on Giants QB's Timeline to Return",
+          "url": "https://bleacherreport.com/articles/25502255-jaxson-dart-out-season-knee-injury-latest-nfl-rumors-giants-qbs-timeline-return"
+        },
+        {
+          "title": "Can Omarion Hampton be guy for Chargers after injury-riddled season?",
+          "url": "https://sports.yahoo.com/articles/omarion-hampton-guy-chargers-injury-205536540.html"
+        },
+        {
+          "title": "Baker Mayfield set to play in Week 3",
+          "url": "https://sports.yahoo.com/articles/baker-mayfield-set-play-week-191917057.html"
+        },
+        {
+          "title": "Ladd McConkey Injured, Latest Updates on Chargers WR's Status",
+          "url": "https://bleacherreport.com/articles/25499535-ladd-mcconkey-injured-latest-updates-chargers-wrs-status-vs-raiders-after-loss-cardinals"
+        }
+      ]
+    },
+    {
+      "id": "1pw7epj",
+      "partner": {
+        "roster_id": 1,
+        "name": "THE CREAM TEAM",
+        "user": "brodywade",
+        "record": "2-0",
+        "thin": [
+          "TE",
+          "WR"
+        ],
+        "deep": [
+          "QB",
+          "RB"
+        ]
+      },
+      "give": [
+        {
+          "id": "11564",
+          "n": "Drake Maye",
+          "p": "QB",
+          "t": "NE",
+          "v": 6256,
+          "pr": 4,
+          "trend": -1898,
+          "status": null
+        }
+      ],
+      "get": [
+        {
+          "id": "9226",
+          "n": "De'Von Achane",
+          "p": "RB",
+          "t": "MIA",
+          "v": 4900,
+          "pr": 9,
+          "trend": -1160,
+          "status": null
+        },
+        {
+          "id": "12487",
+          "n": "Terrance Ferguson",
+          "p": "TE",
+          "t": "LAR",
+          "v": 1684,
+          "pr": 14,
+          "trend": 89,
+          "status": null
+        }
+      ],
+      "value": {
+        "give": 6256,
+        "get": 6584,
+        "giveAdj": 6256,
+        "getAdj": 6247,
+        "diffPct": -0.001,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "before": 41097,
+        "after": 41981,
+        "gainPct": 2.2,
+        "changes": {
+          "in": [
+            {
+              "n": "De'Von Achane",
+              "slot": "RB"
+            },
+            {
+              "n": "Jaxson Dart",
+              "slot": "SUPER_FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Drake Maye",
+              "slot": "QB"
+            },
+            {
+              "n": "Jonah Coleman",
+              "slot": "RB"
+            }
+          ]
+        },
+        "drop": {
+          "id": "11435",
+          "n": "Emanuel Wilson",
+          "p": "RB",
+          "v": 846
+        }
+      },
+      "them": {
+        "before": 49551,
+        "after": 50125,
+        "gainPct": 1.2,
+        "changes": {
+          "in": [
+            {
+              "n": "Javonte Williams",
+              "slot": "FLEX"
+            },
+            {
+              "n": "Drake Maye",
+              "slot": "SUPER_FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "De'Von Achane",
+              "slot": "RB"
+            },
+            {
+              "n": "Dak Prescott",
+              "slot": "SUPER_FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "headline": "Sell a turnover-prone Maye for a bell-cow in Achane plus the Rams' new TE1 Ferguson",
+      "summary": "Maye has been erratic through two games and we're deep at QB, while Achane anchors Miami's backfield and Ferguson just took over as Sean McVay's clear TE1 — a real plus under your te_premium scoring.",
+      "confidence": "high",
+      "why": {
+        "give": [
+          "Maye threw 3 INTs and lost a fumble in Week 1; we already start Hurts and roster Brissett/Young/Milroe behind him.",
+          "QB is our deepest position, so moving a Superflex QB2 doesn't touch our starting lineup at all."
+        ],
+        "get": [
+          "Achane is Miami's clear lead back; he took a full practice Friday despite a questionable hip tag and profiles as an all-but-certain starter.",
+          "Ferguson logged 58% snaps, a 31% target share and 6 catches on 9 targets in Week 2, taking over the Rams' TE1 job — extra value with te_premium."
+        ],
+        "you": [
+          "Directly fills both roster-thin spots (RB and TE) in a single trade, replacing IR'd Coleman and pairing Ferguson with Warren.",
+          "Leaves Hurts in place as our Superflex starter, so the current lineup doesn't get worse anywhere."
+        ],
+        "them": [
+          "2-0 CREAM TEAM is deep at QB/RB and thin at WR/TE, moving a buried TE (Ferguson) for a true Superflex starter in Maye.",
+          "Their own lineup math shows a gain from swapping Dak Prescott to Maye in Superflex (+1.2% team value)."
+        ]
+      },
+      "risks": [
+        "Maye limited his Week 2 turnovers (win over Pittsburgh) and could still hit his ceiling, making this a sell-low if he stabilizes.",
+        "Achane's hip is a game-time watch; a setback this week would blunt the immediate return on this deal."
+      ],
+      "sources": [
+        {
+          "title": "Drake Maye, New England Patriots, QB - 2026-27 Game Log",
+          "url": "https://www.cbssports.com/nfl/players/26695757/drake-maye/game-log/"
+        },
+        {
+          "title": "De'Von Achane is Carrying a Heavy Workload in Miami",
+          "url": "https://www.rotoballer.com/player-news/devon-achane-is-carrying-a-heavy-workload-in-miami/1951181"
+        },
+        {
+          "title": "Rams snap count review: Terrance Ferguson stakes a claim for TE#1",
+          "url": "https://sports.yahoo.com/articles/rams-snap-count-review-terrance-223500168.html"
+        },
+        {
+          "title": "L.A. Rams snap count review: Terrance Ferguson claims TE#1 role",
+          "url": "https://www.turfshowtimes.com/los-angeles-rams-scores-results/149624/rams-snap-counts-terrance-ferguson"
+        }
+      ]
+    }
+  ],
+  "none_reason": null
 }

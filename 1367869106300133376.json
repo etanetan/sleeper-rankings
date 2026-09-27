@@ -1,7 +1,370 @@
 {
   "version": 1,
+  "status": "ready",
   "league_id": "1367869106300133376",
-  "trades": [],
-  "status": "running",
-  "started": "2026-09-27T02:29:26.664Z"
+  "league_name": "FCFFL",
+  "season": "2026",
+  "week": 3,
+  "generated": "2026-09-27T02:38:41.770Z",
+  "values_source": {
+    "name": "FantasyCalc",
+    "url": "https://fantasycalc.com",
+    "api": "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=1&numTeams=12&ppr=1",
+    "fetched": "2026-09-27T02:29:20.621Z"
+  },
+  "me": {
+    "name": "Young Blood",
+    "record": "1-1",
+    "thin": [
+      "QB",
+      "TE"
+    ],
+    "deep": [
+      "WR",
+      "RB"
+    ]
+  },
+  "trades": [
+    {
+      "id": "1csuv2f",
+      "partner": {
+        "roster_id": 9,
+        "name": "Ben Hur Returns",
+        "user": "BenHur",
+        "record": "0-2",
+        "thin": [
+          "TE",
+          "WR"
+        ],
+        "deep": [
+          "RB",
+          "QB"
+        ]
+      },
+      "give": [
+        {
+          "id": "5859",
+          "n": "A.J. Brown",
+          "p": "WR",
+          "t": "NE",
+          "v": 2623,
+          "pr": 22,
+          "trend": -3431,
+          "status": "IR"
+        },
+        {
+          "id": "2449",
+          "n": "Stefon Diggs",
+          "p": "WR",
+          "t": "WAS",
+          "v": 1201,
+          "pr": 32,
+          "trend": 91,
+          "status": null
+        }
+      ],
+      "get": [
+        {
+          "id": "6904",
+          "n": "Jalen Hurts",
+          "p": "QB",
+          "t": "PHI",
+          "v": 2084,
+          "pr": 5,
+          "trend": -544,
+          "status": null
+        },
+        {
+          "id": "11646",
+          "n": "Jalen Coker",
+          "p": "WR",
+          "t": "CAR",
+          "v": 1871,
+          "pr": 27,
+          "trend": 1379,
+          "status": "Questionable"
+        }
+      ],
+      "value": {
+        "give": 3824,
+        "get": 3955,
+        "giveAdj": 3584,
+        "getAdj": 3581,
+        "diffPct": -0.001,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "before": 23691,
+        "after": 24519,
+        "gainPct": 3.5,
+        "changes": {
+          "in": [
+            {
+              "n": "Jalen Hurts",
+              "slot": "QB"
+            },
+            {
+              "n": "Jalen Coker",
+              "slot": "FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Jayden Daniels",
+              "slot": "QB"
+            },
+            {
+              "n": "A.J. Brown",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": {
+          "id": "13301",
+          "n": "Antonio Williams",
+          "p": "WR",
+          "v": 9
+        }
+      },
+      "them": {
+        "before": 26228,
+        "after": 26401,
+        "gainPct": 0.7,
+        "changes": {
+          "in": [
+            {
+              "n": "Tyler Shough",
+              "slot": "QB"
+            },
+            {
+              "n": "A.J. Brown",
+              "slot": "WR"
+            },
+            {
+              "n": "Stefon Diggs",
+              "slot": "FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Jalen Hurts",
+              "slot": "QB"
+            },
+            {
+              "n": "Jalen Coker",
+              "slot": "FLEX"
+            },
+            {
+              "n": "Denzel Boston",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "headline": "Flip a dead IR body (A.J. Brown) and buried Stefon Diggs for a true starting QB in Jalen Hurts.",
+      "summary": "A.J. Brown is stuck on IR for ~6 weeks and Stefon Diggs is buried on a deep WR bench, so send both to Ben Hur Returns for Jalen Hurts, who becomes your starter with Jayden Daniels' return date unclear.",
+      "confidence": "high",
+      "why": {
+        "give": [
+          "A.J. Brown (ankle) is on IR and expected out ~6 weeks per Ian Rapoport, producing nothing for you in the meantime.",
+          "Stefon Diggs (v1201) sits buried on your bench behind a WR group the league already rates as your deep position."
+        ],
+        "get": [
+          "Jalen Hurts (v2084, PR5) is an every-week starting QB1, filling your thinnest roster spot the moment you need it.",
+          "Hurts' rushing floor is the buy-in case; analysts project positive regression after under 500 rush yards in a down 2025.",
+          "Jalen Coker (ankle, Questionable) was a limited-but-full practice participant Friday and is trending toward playing Week 3."
+        ],
+        "you": [
+          "Hurts starts immediately at QB in place of Jayden Daniels, who dislocated his elbow again and has no firm return date.",
+          "Coker becomes a second-FLEX flier; you lose nothing in practice from A.J. Brown, who wasn't playing on IR anyway.",
+          "Converts a dead IR roster spot and a bench-only WR into a legitimate starting quarterback."
+        ],
+        "them": [
+          "Ben Hur Returns (0-2) is thin at WR/TE and adds Brown plus Diggs, even if Brown's snaps don't start for weeks.",
+          "They already roster Tyler Shough as a starter-capable backup QB, so moving Hurts doesn't leave their lineup empty."
+        ]
+      },
+      "risks": [
+        "Daniels dislocated the same elbow last year too and missed only 4 weeks then; a similarly quick return would make this look redundant.",
+        "Philadelphia lost O-line coach Jeff Stoutland and graded outside the top 16 on the line in 2025, a real threat to Hurts' rushing floor.",
+        "Coker's ankle has flared up multiple times already this season and could resurface in a later week."
+      ],
+      "sources": [
+        {
+          "title": "Patriots reportedly expected to miss more than 4 weeks due to ankle injury",
+          "url": "https://www.boston.com/sports/new-england-patriots/2026/09/13/new-england-patriots-a-j-brown-injury-update-ir-timeline-ankle-sprain/"
+        },
+        {
+          "title": "Week 3 Friday Injury Report: Jalen Coker questionable",
+          "url": "https://www.panthers.com/news/week-3-friday-injury-report-three-ruled-out-for-cleveland-devin-lloyd-jalen-coker-questionable"
+        },
+        {
+          "title": "Jalen Hurts Fantasy Prediction 2026: Rushing Floor Is the Whole Case",
+          "url": "https://sports.yahoo.com/articles/jalen-hurts-fantasy-prediction-2026-101000863.html"
+        },
+        {
+          "title": "Jayden Daniels injury update: Commanders QB avoids surgery after dislocated elbow",
+          "url": "https://www.cbssports.com/nfl/news/jayden-daniels-injury-update-commanders-qb-elbow-2026/"
+        }
+      ]
+    },
+    {
+      "id": "tzskqj",
+      "partner": {
+        "roster_id": 2,
+        "name": "Strikes",
+        "user": "DStruyk",
+        "record": "0-2",
+        "thin": [
+          "RB",
+          "QB"
+        ],
+        "deep": [
+          "TE",
+          "WR"
+        ]
+      },
+      "give": [
+        {
+          "id": "5846",
+          "n": "DK Metcalf",
+          "p": "WR",
+          "t": "PIT",
+          "v": 991,
+          "pr": 36,
+          "trend": -345,
+          "status": null
+        },
+        {
+          "id": "11566",
+          "n": "Jayden Daniels",
+          "p": "QB",
+          "t": "WAS",
+          "v": 427,
+          "pr": 20,
+          "trend": -2433,
+          "status": "Out"
+        }
+      ],
+      "get": [
+        {
+          "id": "9228",
+          "n": "Bryce Young",
+          "p": "QB",
+          "t": "CAR",
+          "v": 1133,
+          "pr": 14,
+          "trend": 979,
+          "status": null
+        },
+        {
+          "id": "11435",
+          "n": "Emanuel Wilson",
+          "p": "RB",
+          "t": "SEA",
+          "v": 237,
+          "pr": 50,
+          "trend": 237,
+          "status": null
+        }
+      ],
+      "value": {
+        "give": 1418,
+        "get": 1370,
+        "giveAdj": 1333,
+        "getAdj": 1323,
+        "diffPct": -0.009,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "before": 23691,
+        "after": 24323,
+        "gainPct": 2.7,
+        "changes": {
+          "in": [
+            {
+              "n": "Bryce Young",
+              "slot": "QB"
+            }
+          ],
+          "out": [
+            {
+              "n": "Jayden Daniels",
+              "slot": "QB"
+            }
+          ]
+        },
+        "drop": {
+          "id": "13301",
+          "n": "Antonio Williams",
+          "p": "WR",
+          "v": 9
+        }
+      },
+      "them": {
+        "before": 26528,
+        "after": 26643,
+        "gainPct": 0.4,
+        "changes": {
+          "in": [
+            {
+              "n": "DK Metcalf",
+              "slot": "FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Deebo Samuel",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "headline": "Sell hurt Jayden Daniels and an inefficient DK Metcalf for Bryce Young's hot 648-yard, 6-TD start.",
+      "summary": "Daniels' elbow has no firm timeline and DK Metcalf can't turn target volume into yards, so both go to Strikes for Bryce Young, who's off to a top-14 caliber start, plus a depth running back.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Jayden Daniels dislocated the same elbow for a second time in 11 months; no surgery planned, but no firm return date either.",
+          "DK Metcalf led Pittsburgh in targets in Week 2 (9) but caught just 4 for 27 yards with a drop, shadowed by top corners."
+        ],
+        "get": [
+          "Bryce Young has thrown for 648 yards, 6 TDs and just 1 INT through two games, in start-worthy Week 3 conversation.",
+          "Emanuel Wilson adds a depth flier at RB behind your already-deep Jonathan Taylor/Quinshon Judkins duo."
+        ],
+        "you": [
+          "Young gives you a proven, in-form starter alongside newly acquired Jalen Hurts while Daniels' recovery stays open-ended.",
+          "Sheds Daniels' downside risk (repeat elbow dislocation, no set return) before further bad news erodes his value more."
+        ],
+        "them": [
+          "Strikes are 0-2 and may be selling Young's hot two-game stretch for a bigger name in Metcalf plus a talent stash in Daniels.",
+          "They plug Metcalf straight into their flex spot as an upgrade over Deebo Samuel there, per their own lineup math."
+        ]
+      },
+      "risks": [
+        "Bryce Young's 648-yard, 6-TD start over two games may not hold up once Carolina faces tougher pass defenses.",
+        "Emanuel Wilson's role in Seattle is unsettled; reports conflict on whether he or Jadarian Price leads the backfield.",
+        "Daniels missed only 4 weeks with this same elbow injury last year; a similarly quick return gives Strikes real value."
+      ],
+      "sources": [
+        {
+          "title": "Jayden Daniels injury update: Commanders QB avoids surgery after dislocated elbow",
+          "url": "https://www.cbssports.com/nfl/news/jayden-daniels-injury-update-commanders-qb-elbow-2026/"
+        },
+        {
+          "title": "Fantasy Football Start or Sit Week 3: Bryce Young, Chuba Hubbard, Darren Waller",
+          "url": "https://sports.yahoo.com/articles/fantasy-football-start-sit-week-155157040.html"
+        },
+        {
+          "title": "DK Metcalf totals 27 yards on nine targets",
+          "url": "https://www.nbcsports.com/fantasy/football/player-news/2026-09-20/dk-metcalf-totals-27-yards-on-nine-targets"
+        }
+      ]
+    }
+  ],
+  "none_reason": null
 }

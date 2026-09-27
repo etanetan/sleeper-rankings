@@ -1,7 +1,360 @@
 {
   "version": 1,
+  "status": "ready",
   "league_id": "1312076332460425216",
-  "trades": [],
-  "status": "running",
-  "started": "2026-09-27T02:29:26.803Z"
+  "league_name": "Family Dynasty",
+  "season": "2026",
+  "week": 3,
+  "generated": "2026-09-27T02:37:12.585Z",
+  "values_source": {
+    "name": "FantasyCalc",
+    "url": "https://fantasycalc.com",
+    "api": "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&numTeams=12&ppr=1",
+    "fetched": "2026-09-27T02:29:21.009Z"
+  },
+  "me": {
+    "name": "Bob’s Dynasty",
+    "record": "1-1",
+    "thin": [
+      "TE",
+      "RB"
+    ],
+    "deep": [
+      "WR",
+      "QB"
+    ]
+  },
+  "trades": [
+    {
+      "id": "wog3zj",
+      "partner": {
+        "roster_id": 2,
+        "name": "Mother Theresa’s child ",
+        "user": "paigie123456789",
+        "record": "1-1",
+        "thin": [
+          "RB",
+          "QB"
+        ],
+        "deep": [
+          "TE",
+          "WR"
+        ]
+      },
+      "give": [
+        {
+          "id": "11564",
+          "n": "Drake Maye",
+          "p": "QB",
+          "t": "NE",
+          "v": 6535,
+          "pr": 4,
+          "trend": -1898,
+          "status": null
+        },
+        {
+          "id": "9997",
+          "n": "Zay Flowers",
+          "p": "WR",
+          "t": "BAL",
+          "v": 4275,
+          "pr": 13,
+          "trend": 569,
+          "status": "Questionable"
+        }
+      ],
+      "get": [
+        {
+          "id": "7547",
+          "n": "Amon-Ra St. Brown",
+          "p": "WR",
+          "t": "DET",
+          "v": 7877,
+          "pr": 3,
+          "trend": 331,
+          "status": null
+        },
+        {
+          "id": "5849",
+          "n": "Kyler Murray",
+          "p": "QB",
+          "t": "MIN",
+          "v": 2723,
+          "pr": 23,
+          "trend": -207,
+          "status": null
+        }
+      ],
+      "value": {
+        "give": 10810,
+        "get": 10600,
+        "giveAdj": 9955,
+        "getAdj": 10055,
+        "diffPct": 0.013,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "before": 54292,
+        "after": 55536,
+        "gainPct": 2.3,
+        "changes": {
+          "in": [
+            {
+              "n": "Amon-Ra St. Brown",
+              "slot": "WR"
+            },
+            {
+              "n": "Tyler Shough",
+              "slot": "SUPER_FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Zay Flowers",
+              "slot": "FLEX"
+            },
+            {
+              "n": "Drake Maye",
+              "slot": "SUPER_FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "before": 41977,
+        "after": 42187,
+        "gainPct": 0.5,
+        "changes": {
+          "in": [
+            {
+              "n": "Drake Maye",
+              "slot": "QB"
+            },
+            {
+              "n": "Zay Flowers",
+              "slot": "WR"
+            }
+          ],
+          "out": [
+            {
+              "n": "Amon-Ra St. Brown",
+              "slot": "WR"
+            },
+            {
+              "n": "Kyler Murray",
+              "slot": "SUPER_FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "headline": "Sell a struggling Drake Maye + banged-up Zay Flowers for red-zone monster Amon-Ra St. Brown and a QB bridge",
+      "summary": "Maye is turnover-prone and benched-in-all-but-name right now, while Kyler Murray is only a one-year rental for the partner; flip both plus Flowers for St. Brown's elite target share and a Superflex fill-in while Caleb Williams is hurt.",
+      "confidence": "high",
+      "why": {
+        "give": [
+          "Maye has thrown 4 INTs in 2 games and looks 'scared' per analysts; Patriots offense scored just 10 and 13 points.",
+          "Flowers is questionable (hamstring) and is only my WR4/flex depth behind Smith-Njigba, Nabers and McMillan."
+        ],
+        "get": [
+          "St. Brown: 19/27 targets, 209 yards, 4 TD through 2 games and leads the NFL with 6 red-zone targets.",
+          "Murray is a locked-in Vikings starter who fills my Superflex spot now while Caleb Williams (hamstring) sits out."
+        ],
+        "you": [
+          "St. Brown slots straight into a starting WR spot, a clear value and target-share upgrade over Flowers.",
+          "Murray covers the Caleb Williams absence this year without touching my dynasty QB pieces (McCarthy, Shough)."
+        ],
+        "them": [
+          "Partner is QB-thin; Murray is a league-minimum, one-year deal they'd reasonably flip for a younger long-term arm in Maye.",
+          "Partner is WR-deep, so moving a productive but replaceable St. Brown for a buy-low Maye plus a flex piece is low-risk for them."
+        ]
+      },
+      "risks": [
+        "Maye could rebound if the Patriots' offensive line/scheme issues get fixed, making this look like an early sell.",
+        "Murray's dynasty value approaches zero after 2026 since it's only a one-year contract."
+      ],
+      "sources": [
+        {
+          "title": "Where's the Drake Maye we saw last year? - Boston Globe",
+          "url": "https://www.bostonglobe.com/2026/09/21/sports/patriots-offense-drake-maye-struggling/"
+        },
+        {
+          "title": "Amon-Ra St. Brown Highlights Fantasy Football's Key Red Zone Targets For Week 3",
+          "url": "https://www.si.com/onsi/fantasy/rankings/amon-ra-st-brown-highlights-fantasy-football-s-key-red-zone-targets-for-week-3"
+        },
+        {
+          "title": "Kyler Murray signs with Vikings, 'cannot wait' to touch field - ESPN",
+          "url": "https://www.espn.com/nfl/story/_/id/48188052/kyler-murray-signs-one-year-deal-vikings"
+        },
+        {
+          "title": "Lamar Jackson Week 3 Outlook for Fantasy Football (2026) - RotoBaller",
+          "url": "https://www.rotoballer.com/player-news/lamar-jackson-is-a-locked-in-starter-against-the-cowboys-in-week-3/1951147"
+        }
+      ]
+    },
+    {
+      "id": "1hhqy2n",
+      "partner": {
+        "roster_id": 8,
+        "name": "Beat My Kids Tour 2026",
+        "user": "davemyos",
+        "record": "2-0",
+        "thin": [
+          "TE",
+          "WR"
+        ],
+        "deep": [
+          "RB",
+          "QB"
+        ]
+      },
+      "give": [
+        {
+          "id": "11632",
+          "n": "Malik Nabers",
+          "p": "WR",
+          "t": "NYG",
+          "v": 5617,
+          "pr": 7,
+          "trend": -988,
+          "status": null
+        },
+        {
+          "id": "12506",
+          "n": "Harold Fannin",
+          "p": "TE",
+          "t": "CLE",
+          "v": 2745,
+          "pr": 8,
+          "trend": -443,
+          "status": null
+        }
+      ],
+      "get": [
+        {
+          "id": "6813",
+          "n": "Jonathan Taylor",
+          "p": "RB",
+          "t": "IND",
+          "v": 6048,
+          "pr": 4,
+          "trend": 460,
+          "status": null
+        },
+        {
+          "id": "2133",
+          "n": "Davante Adams",
+          "p": "WR",
+          "t": "LAR",
+          "v": 2196,
+          "pr": 36,
+          "trend": 15,
+          "status": null
+        }
+      ],
+      "value": {
+        "give": 8362,
+        "get": 8244,
+        "giveAdj": 7813,
+        "getAdj": 7805,
+        "diffPct": -0.001,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "before": 54292,
+        "after": 54669,
+        "gainPct": 0.7,
+        "changes": {
+          "in": [
+            {
+              "n": "Jonathan Taylor",
+              "slot": "RB"
+            }
+          ],
+          "out": [
+            {
+              "n": "Malik Nabers",
+              "slot": "WR"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "before": 40357,
+        "after": 40633,
+        "gainPct": 0.7,
+        "changes": {
+          "in": [
+            {
+              "n": "Malik Nabers",
+              "slot": "WR"
+            },
+            {
+              "n": "Harold Fannin",
+              "slot": "TE"
+            }
+          ],
+          "out": [
+            {
+              "n": "Jonathan Taylor",
+              "slot": "RB"
+            },
+            {
+              "n": "Kyle Pitts",
+              "slot": "TE"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "headline": "Sell Malik Nabers (post-Dart QB downgrade) and a buried Harold Fannin for bell-cow Jonathan Taylor and Davante Adams",
+      "summary": "Nabers' target share collapsed after Jaxson Dart's season-ending knee injury handed the Giants to Jameis Winston; flip him and a stuck rookie TE for a true workhorse RB and a proven red-zone WR.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Nabers: 1-of-4 targets in Week 2 after Jaxson Dart's season-ending knee injury moved Jameis Winston to starting QB.",
+          "Fannin is Cleveland's clear third option in the passing game (17.3% target share, zero red-zone targets)."
+        ],
+        "get": [
+          "Taylor has back-to-back 90+ rushing yard, 2-TD games and remains the Colts' clear workhorse entering Week 3.",
+          "Adams is positioned for another high-volume role and led all WRs with 30 red-zone targets, 14 TDs in 2025."
+        ],
+        "you": [
+          "Taylor fills my thin RB spot immediately behind a Walker/Achane pairing that is my only real RB depth.",
+          "Adams is plug-and-play WR depth behind a deep room, insurance if Zay Flowers' hamstring lingers."
+        ],
+        "them": [
+          "Partner is TE/WR-thin; Nabers (WR1 talent) and Fannin (rookie TE) both address needs directly, RB/QB marked deep.",
+          "Adams, 33, is flagged as a regression candidate by Rams beat writers, an easy send in a youth-for-need swap."
+        ]
+      },
+      "risks": [
+        "Taylor is a true RB1; a 2-0 team may resist moving him even from a stated-deep RB room.",
+        "Nabers' dip could reverse if Winston settles in or the Giants find a new starter, turning this into a sell-low."
+      ],
+      "sources": [
+        {
+          "title": "Giants' Malik Nabers: Major downturn in Week 2 loss - CBS Sports",
+          "url": "https://www.cbssports.com/fantasy/football/news/giants-malik-nabers-major-downturn-in-week-2-loss/"
+        },
+        {
+          "title": "Jonathan Taylor Week 3 Outlook - Texans at Colts (2026) - FantasyPros",
+          "url": "https://www.fantasypros.com/nfl/notes/440991/jonathan-taylor-2026-week-3-outlook.php"
+        },
+        {
+          "title": "Rams 13 personnel makes Davante Adams a regression candidate in 2026",
+          "url": "https://www.turfshowtimes.com/los-angeles-rams-roster/140556/rams-2026-season-regression-candidates"
+        },
+        {
+          "title": "Browns roster: TE depth chart and expectations - Dawgs By Nature",
+          "url": "https://www.dawgsbynature.com/cleveland-browns-roster-players/127770/browns-roster-te-depth-chart-predictions-harold-fannin-jack-stoll-joe-royer"
+        }
+      ]
+    }
+  ],
+  "none_reason": null
 }
