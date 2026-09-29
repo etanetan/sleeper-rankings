@@ -1,23 +1,23 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1312115063020081152",
   "league_name": "UMN Dynasty League 🧨",
   "season": "2026",
-  "week": 3,
-  "generated": "2026-09-27T02:33:15.994Z",
+  "week": 4,
+  "generated": "2026-09-29T12:57:08.663Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=2&numTeams=10&ppr=0.5",
-    "fetched": "2026-09-27T02:29:21.710Z"
+    "fetched": "2026-09-29T12:55:39.306Z"
   },
   "me": {
     "name": "UnWorthy Opponent",
-    "record": "0-2",
+    "record": "1-2",
     "thin": [
-      "WR",
-      "QB"
+      "QB",
+      "WR"
     ],
     "deep": [
       "TE",
@@ -26,12 +26,216 @@
   },
   "trades": [
     {
-      "id": "1j773eh",
+      "id": "1uiv7gi",
       "partner": {
-        "roster_id": 4,
-        "name": "🏆 2025 League Champion",
-        "user": "PapaGart",
-        "record": "2-0",
+        "roster_id": 9,
+        "name": "The Chuzz",
+        "user": "adamdickey",
+        "record": "1-2",
+        "thin": [
+          "WR",
+          "RB"
+        ],
+        "deep": [
+          "QB",
+          "TE"
+        ]
+      },
+      "give": [
+        {
+          "id": "8146",
+          "n": "Garrett Wilson",
+          "p": "WR",
+          "t": "NYJ",
+          "v": 3575,
+          "pr": 12,
+          "trend": 311,
+          "trendPct": 0.1,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 15.6,
+            "proj": 12.6,
+            "perf": 1.24,
+            "snap": 86,
+            "tgtShare": 28,
+            "tpg": 9,
+            "touches": null,
+            "rz": 0.3
+          }
+        },
+        {
+          "id": "13346",
+          "n": "Denzel Boston",
+          "p": "WR",
+          "t": "CLE",
+          "v": 896,
+          "pr": 36,
+          "trend": 736,
+          "trendPct": 4.6,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 13,
+            "proj": 7.2,
+            "perf": 1.81,
+            "snap": 91,
+            "tgtShare": 18,
+            "tpg": 5,
+            "touches": null,
+            "rz": 1
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "11632",
+          "n": "Malik Nabers",
+          "p": "WR",
+          "t": "NYG",
+          "v": 2648,
+          "pr": 18,
+          "trend": -2702,
+          "trendPct": -0.51,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 5.2,
+            "proj": 11,
+            "perf": 0.47,
+            "snap": 68,
+            "tgtShare": 23,
+            "tpg": 6.3,
+            "touches": null,
+            "rz": 1
+          }
+        },
+        {
+          "id": "11635",
+          "n": "Ladd McConkey",
+          "p": "WR",
+          "t": "LAC",
+          "v": 2105,
+          "pr": 23,
+          "trend": -1315,
+          "trendPct": -0.38,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 10.1,
+            "proj": 11.1,
+            "perf": 0.91,
+            "snap": 62,
+            "tgtShare": 17,
+            "tpg": 5,
+            "touches": null,
+            "rz": 0.7
+          }
+        }
+      ],
+      "value": {
+        "give": 4471,
+        "get": 4753,
+        "giveAdj": 4292,
+        "getAdj": 4332,
+        "diffPct": 0.011,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "gainPct": 0.8,
+        "changes": {
+          "in": [
+            {
+              "n": "Malik Nabers",
+              "slot": "WR"
+            },
+            {
+              "n": "Ladd McConkey",
+              "slot": "WR"
+            }
+          ],
+          "out": [
+            {
+              "n": "Garrett Wilson",
+              "slot": "WR"
+            },
+            {
+              "n": "Denzel Boston",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "gainPct": -1
+      },
+      "headline": "Sell Boston's rookie heater and Wilson, buy Nabers and McConkey while both sit below projection",
+      "summary": "Boston is scoring far above his projection on an unsettled Browns offense. Nabers and McConkey are scoring under theirs with roles that are still there.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Denzel Boston is scoring 13 points a game against a 7.2 projection (1.81 of projection) and his FantasyCalc value is up 460% in 30 days: peak price.",
+          "Preseason coverage flagged Cleveland's offense as weak with an unsettled quarterback, which makes a rookie's hot start hard to sustain.",
+          "Garrett Wilson is at 1.24 of projection with a 28% target share; the price is fair, so he is the piece you can spare in a two-for-two."
+        ],
+        "get": [
+          "Malik Nabers is at 5.2 points a game against an 11 projection (0.47) with 68% of snaps and a 23% target share: the role is there, the results are not.",
+          "His FantasyCalc value fell 51% in 30 days, so a lot of the bad start is already priced in.",
+          "Ladd McConkey is at 10.1 points against 11.1 projected (0.91) and down 38% in value, though his 62% snap share and 17% target share are modest."
+        ],
+        "you": [
+          "Nabers and McConkey both start at WR, replacing Wilson and Boston, and your lineup value rises about 0.8%.",
+          "Your WR group is your thinnest spot; this swaps two overperformers for two players due a rebound."
+        ],
+        "them": [
+          "The Chuzz is thin at WR and RB, and Wilson and Boston are the hottest names in the deal.",
+          "Their team value drops only 1%, so it reads as an even swap on the trade chart."
+        ],
+        "experts": [
+          "Preseason (July/August) outlooks, not this week's: 4for4 called McConkey a bargain as the Chargers' clear target leader under Mike McDaniel.",
+          "Nabers' preseason buy-low case rested on ACL recovery; snap and target numbers this season show he is playing."
+        ]
+      },
+      "risks": [
+        "Nabers is coming back from a complicated ACL recovery and could keep underproducing on a weak Giants offense.",
+        "Boston could keep scoring and Wilson's target share could hold, making this a sale too early."
+      ],
+      "sources": [
+        {
+          "title": "Ladd McConkey Is A Fantasy Football Bargain (4for4)",
+          "url": "https://www.4for4.com/2026/preseason/ladd-mcconkey-fantasy-football-bargain"
+        },
+        {
+          "title": "Malik Nabers (FantasyPros)",
+          "url": "https://www.fantasypros.com/nfl/players/malik-nabers.php"
+        },
+        {
+          "title": "Denzel Boston (Fantasy Football Calculator)",
+          "url": "https://fantasyfootballcalculator.com/players/denzel-boston"
+        }
+      ]
+    },
+    {
+      "id": "jz3izr",
+      "partner": {
+        "roster_id": 5,
+        "name": "Charity Case",
+        "user": "samt00",
+        "record": "1-2",
         "thin": [
           "TE",
           "QB"
@@ -43,79 +247,137 @@
       },
       "give": [
         {
-          "id": "9509",
-          "n": "Bijan Robinson",
-          "p": "RB",
-          "t": "ATL",
-          "v": 9292,
-          "pr": 2,
-          "trend": -899,
-          "status": null
+          "id": "8146",
+          "n": "Garrett Wilson",
+          "p": "WR",
+          "t": "NYJ",
+          "v": 3575,
+          "pr": 12,
+          "trend": 311,
+          "trendPct": 0.1,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 15.6,
+            "proj": 12.6,
+            "perf": 1.24,
+            "snap": 86,
+            "tgtShare": 28,
+            "tpg": 9,
+            "touches": null,
+            "rz": 0.3
+          }
         },
         {
-          "id": "5012",
-          "n": "Mark Andrews",
-          "p": "TE",
-          "t": "BAL",
-          "v": 901,
-          "pr": 11,
-          "trend": 162,
-          "status": null
+          "id": "13346",
+          "n": "Denzel Boston",
+          "p": "WR",
+          "t": "CLE",
+          "v": 896,
+          "pr": 36,
+          "trend": 736,
+          "trendPct": 4.6,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 13,
+            "proj": 7.2,
+            "perf": 1.81,
+            "snap": 91,
+            "tgtShare": 18,
+            "tpg": 5,
+            "touches": null,
+            "rz": 1
+          }
         }
       ],
       "get": [
         {
-          "id": "6786",
-          "n": "CeeDee Lamb",
-          "p": "WR",
-          "t": "DAL",
-          "v": 7768,
-          "pr": 4,
-          "trend": 840,
-          "status": null
+          "id": "421",
+          "n": "Matthew Stafford",
+          "p": "QB",
+          "t": "LAR",
+          "v": 3158,
+          "pr": 13,
+          "trend": -791,
+          "trendPct": -0.2,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 18.4,
+            "proj": 18.5,
+            "perf": 0.99,
+            "snap": 95,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 0.7
+          }
         },
         {
-          "id": "8167",
-          "n": "Christian Watson",
-          "p": "WR",
-          "t": "GB",
-          "v": 2839,
-          "pr": 17,
-          "trend": 1377,
-          "status": null
+          "id": "10859",
+          "n": "Sam LaPorta",
+          "p": "TE",
+          "t": "DET",
+          "v": 1488,
+          "pr": 7,
+          "trend": -360,
+          "trendPct": -0.19,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 9.1,
+            "proj": 10,
+            "perf": 0.91,
+            "snap": 90,
+            "tgtShare": 18,
+            "tpg": 6.3,
+            "touches": null,
+            "rz": 1.7
+          }
         }
       ],
       "value": {
-        "give": 10193,
-        "get": 10607,
-        "giveAdj": 10013,
-        "getAdj": 10039,
-        "diffPct": 0.003,
+        "give": 4471,
+        "get": 4646,
+        "giveAdj": 4292,
+        "getAdj": 4348,
+        "diffPct": 0.016,
         "fair": true,
         "verdict": "Even"
       },
       "you": {
-        "before": 35324,
-        "after": 35738,
-        "gainPct": 1.2,
+        "gainPct": 0.5,
         "changes": {
           "in": [
             {
-              "n": "CeeDee Lamb",
-              "slot": "WR"
+              "n": "Sam LaPorta",
+              "slot": "FLEX"
             },
             {
-              "n": "Christian Watson",
-              "slot": "FLEX"
+              "n": "Matthew Stafford",
+              "slot": "SUPER_FLEX"
             }
           ],
           "out": [
             {
-              "n": "Bijan Robinson",
-              "slot": "RB"
+              "n": "Garrett Wilson",
+              "slot": "WR"
             },
             {
-              "n": "Mark Andrews",
+              "n": "Denzel Boston",
               "slot": "FLEX"
             }
           ]
@@ -123,91 +385,405 @@
         "drop": null
       },
       "them": {
-        "before": 38157,
-        "after": 38450,
-        "gainPct": 0.8,
+        "gainPct": -0.9
+      },
+      "headline": "Turn Boston and Wilson into a starting superflex QB and TE upgrade in Stafford and LaPorta",
+      "summary": "You sell two overperformers and fill your superflex spot with Stafford and your flex with LaPorta. Both are priced below where their offenses suggest.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Boston is at 1.81 of projection with value up 460% in 30 days on a rookie-heavy, low-scoring Cleveland offense.",
+          "Wilson is at 1.24 of projection; his 28% target share is real, but at a price you can cash out in a package."
+        ],
+        "get": [
+          "Matthew Stafford is at 18.4 points a game, right on his 18.5 projection, with 95% of snaps; his value is down 20% in 30 days.",
+          "Sam LaPorta has 90% of snaps and an 18% target share but is at 9.1 points against 10 projected (0.91); his value is down 19%."
+        ],
+        "you": [
+          "Stafford moves into your SUPER_FLEX and LaPorta into your FLEX, replacing Wilson and Boston; lineup value rises about 0.5%.",
+          "Your QB slot is thin, and Stafford covers it while Trevor Lawrence stays on hold."
+        ],
+        "them": [
+          "Charity Case is thin at TE and QB but deep at WR and RB, so Wilson fills a need while Isaiah Likely covers TE.",
+          "Their team value dips 0.9%, so it looks even for them."
+        ],
+        "experts": [
+          "July preseason coverage (Rotostreet Journal) tied LaPorta's rebound to new Lions coordinator Drew Petzing after he was cleared from a herniated disc.",
+          "Preseason draft sites had Stafford as a strong QB2 in fantasy with Detroit-quality weapons, not a hot name now."
+        ]
+      },
+      "risks": [
+        "LaPorta's back history could flare, and his target tree is crowded.",
+        "Stafford is an aging QB with limited rushing upside if the offense stalls."
+      ],
+      "sources": [
+        {
+          "title": "Sam LaPorta fantasy outlook (Rotostreet Journal)",
+          "url": "https://www.rotostreetjournal.com/2026/07/24/sam-laporta-fantasy-outlook-top-2026-tight-end-target-after-lions-add-te-whisperer-oc-drew-petzing/"
+        },
+        {
+          "title": "Who Should I Draft? Matthew Stafford or Sam LaPorta",
+          "url": "https://fantasyfootballcalculator.com/who-to-draft/matthew-stafford-or-sam-laporta"
+        }
+      ]
+    },
+    {
+      "id": "10gh25w",
+      "partner": {
+        "roster_id": 9,
+        "name": "The Chuzz",
+        "user": "adamdickey",
+        "record": "1-2",
+        "thin": [
+          "WR",
+          "RB"
+        ],
+        "deep": [
+          "QB",
+          "TE"
+        ]
+      },
+      "give": [
+        {
+          "id": "8146",
+          "n": "Garrett Wilson",
+          "p": "WR",
+          "t": "NYJ",
+          "v": 3575,
+          "pr": 12,
+          "trend": 311,
+          "trendPct": 0.1,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 15.6,
+            "proj": 12.6,
+            "perf": 1.24,
+            "snap": 86,
+            "tgtShare": 28,
+            "tpg": 9,
+            "touches": null,
+            "rz": 0.3
+          }
+        },
+        {
+          "id": "13346",
+          "n": "Denzel Boston",
+          "p": "WR",
+          "t": "CLE",
+          "v": 896,
+          "pr": 36,
+          "trend": 736,
+          "trendPct": 4.6,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 13,
+            "proj": 7.2,
+            "perf": 1.81,
+            "snap": 91,
+            "tgtShare": 18,
+            "tpg": 5,
+            "touches": null,
+            "rz": 1
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "11632",
+          "n": "Malik Nabers",
+          "p": "WR",
+          "t": "NYG",
+          "v": 2648,
+          "pr": 18,
+          "trend": -2702,
+          "trendPct": -0.51,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 5.2,
+            "proj": 11,
+            "perf": 0.47,
+            "snap": 68,
+            "tgtShare": 23,
+            "tpg": 6.3,
+            "touches": null,
+            "rz": 1
+          }
+        },
+        {
+          "id": "5892",
+          "n": "David Montgomery",
+          "p": "RB",
+          "t": "HOU",
+          "v": 1914,
+          "pr": 20,
+          "trend": -612,
+          "trendPct": -0.24,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 12.2,
+            "proj": 14.5,
+            "perf": 0.84,
+            "snap": 54,
+            "tgtShare": 6,
+            "tpg": 2.3,
+            "touches": 14.7,
+            "rz": 2.7
+          }
+        }
+      ],
+      "value": {
+        "give": 4471,
+        "get": 4562,
+        "giveAdj": 4292,
+        "getAdj": 4179,
+        "diffPct": -0.032,
+        "fair": true,
+        "verdict": "You pay a little more"
+      },
+      "you": {
+        "gainPct": 0.3,
         "changes": {
           "in": [
             {
-              "n": "Bijan Robinson",
-              "slot": "RB"
-            },
-            {
-              "n": "Mike Evans",
+              "n": "Malik Nabers",
               "slot": "WR"
             },
             {
-              "n": "Mark Andrews",
-              "slot": "TE"
+              "n": "David Montgomery",
+              "slot": "FLEX"
             }
           ],
           "out": [
             {
-              "n": "CeeDee Lamb",
+              "n": "Garrett Wilson",
               "slot": "WR"
             },
             {
-              "n": "Juwan Johnson",
-              "slot": "TE"
-            },
-            {
-              "n": "Christian Watson",
+              "n": "Denzel Boston",
               "slot": "FLEX"
             }
           ]
         },
         "drop": null
       },
-      "headline": "Flip RB/TE surplus (Bijan Robinson, Mark Andrews) for CeeDee Lamb + Christian Watson to fix your worst position, WR",
-      "summary": "You're deep at RB/TE and thin at WR; this converts a luxury FLEX (Andrews, behind league-best McBride) plus Bijan into two immediate starting-caliber WRs while a 2-0 contender fills its real TE hole.",
-      "confidence": "high",
+      "them": {
+        "gainPct": -0.3
+      },
+      "headline": "Sell Boston and Wilson at peak for Nabers and Montgomery, a lower-confidence variant with a small overpay",
+      "summary": "Same sell side as the Nabers deal, but Montgomery is a touch-heavy back at a discount rather than a receiver.",
+      "confidence": "low",
       "why": {
         "give": [
-          "Bijan Robinson's target share fell from 53% (Wk1) to 28% (Wk2); you still keep James Cook and Quinshon Judkins at RB.",
-          "Mark Andrews is only a FLEX option behind Trey McBride (PR1, value 6611, trend +901), so moving him costs no lineup spot.",
-          "Andrews' hot start (10-of-13 targets) came with Zay Flowers out; sell now before Flowers' return trims his share."
+          "Boston's 1.81 of projection and 460% 30-day value jump is the least sustainable number on your roster.",
+          "Wilson's 1.24 of projection is priced in, and this trade uses that price."
         ],
         "get": [
-          "CeeDee Lamb: 13 catches, 197 yards, 3 TDs through two games, PR4, FantasyCalc value 7768 and rising (+840 trend).",
-          "Christian Watson has a team-high 19 targets and 76% snap share over two games with 3 TDs, GB's clear WR1.",
-          "Both start over your current WR2 Terry McLaurin (PR33, trend -845), a direct upgrade at your only thin skill slot."
+          "Nabers has 68% of snaps and a 23% target share at 0.47 of projection, with his value down 51% in 30 days.",
+          "David Montgomery gets 14.7 touches a game and 2.7 red-zone looks a game, though he plays only 54% of snaps and is at 0.84 of projection."
         ],
         "you": [
-          "Fills your lone 'thin' non-QB slot (WR) by trimming a 'deep' RB/TE corps that still starts Cook plus Judkins.",
-          "Starting lineup value rises 35,324 to 35,738 (+1.2%) with Lamb and Watson both plugged into the lineup now.",
-          "Keeps McBride as a clean top-tier TE starter; no lineup hole is created by moving Andrews out."
+          "Nabers and Montgomery start in place of Wilson and Boston; lineup value rises about 0.3%.",
+          "You pay about 3% more in FantasyCalc value, so this is the marginal version of the Nabers deal."
         ],
         "them": [
-          "PapaGart is 2-0 and buying the best player available; Bijan Robinson (RB, PR2 value) upgrades a contender's backfield.",
-          "Andrews directly fixes their listed 'thin TE' need, replacing streaming option Juwan Johnson in the lineup.",
-          "They still start Mike Evans after moving Lamb/Watson out, so their deep WR room absorbs the trade with no hole."
+          "The Chuzz is thin at WR and RB, so getting Wilson and Boston fills real needs.",
+          "Their team value moves only 0.3%."
+        ],
+        "experts": [
+          "Nabers was a widely cited preseason buy-low target because of ACL recovery; that call is not from this week.",
+          "No current-week analyst source was found for Montgomery, so treat his role as unconfirmed beyond the numbers."
         ]
       },
       "risks": [
-        "Bijan Robinson's Week 1 workload (29 touches, 72.6% of Falcons' offense) shows league-winning upside if his role stays that heavy.",
-        "Watson shares targets with Matthew Golden (12 targets in Wk1); a bigger Golden role could cap Watson's ceiling.",
-        "Mark Andrews' value could keep climbing if Zay Flowers is out longer than the team currently expects."
+        "Montgomery's 54% snap share leaves him one injury or game script away from a smaller role.",
+        "Nabers' injury history remains the main risk."
       ],
       "sources": [
         {
-          "title": "Fantasy Football Trade Value Chart: Week 3 (2026) - FantasyPros",
-          "url": "https://www.fantasypros.com/2026/09/fantasy-football-trade-value-chart-week-3-2026/"
+          "title": "Malik Nabers (FantasyPros)",
+          "url": "https://www.fantasypros.com/nfl/players/malik-nabers.php"
         },
         {
-          "title": "Bijan Robinson's 29 Touches Signal Panthers' Run Defense Nightmare - Yahoo Sports",
-          "url": "https://ca.sports.yahoo.com/news/bijan-robinson-29-touches-signal-143000656.html"
+          "title": "Denzel Boston (Fantasy Football Calculator)",
+          "url": "https://fantasyfootballcalculator.com/players/denzel-boston"
+        }
+      ]
+    },
+    {
+      "id": "1qkst9z",
+      "partner": {
+        "roster_id": 4,
+        "name": "🏆 2025 League Champion",
+        "user": "PapaGart",
+        "record": "3-0",
+        "thin": [
+          "TE",
+          "QB"
+        ],
+        "deep": [
+          "WR",
+          "RB"
+        ]
+      },
+      "give": [
+        {
+          "id": "10213",
+          "n": "Tre Tucker",
+          "p": "WR",
+          "t": "LV",
+          "v": 403,
+          "pr": 51,
+          "trend": 306,
+          "trendPct": 3.15,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 10.3,
+            "proj": 7.8,
+            "perf": 1.32,
+            "snap": 62,
+            "tgtShare": 17,
+            "tpg": 5,
+            "touches": null,
+            "rz": 0.3
+          }
         },
         {
-          "title": "Fantasy Football Deep Dive on Christian Watson: The Packers' Clear WR1 - Fantasy Life",
-          "url": "https://www.fantasylife.com/articles/fantasy/fantasy-football-deep-dive-on-christian-watson"
+          "id": "13345",
+          "n": "Jonah Coleman",
+          "p": "RB",
+          "t": "DEN",
+          "v": 177,
+          "pr": 47,
+          "trend": 8,
+          "trendPct": 0.05,
+          "status": "IR",
+          "sidelined": true,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 2,
+            "ppg": 6.7,
+            "proj": 4.2,
+            "perf": 1.59,
+            "snap": 25,
+            "tgtShare": 5,
+            "tpg": 1.5,
+            "touches": 6.5,
+            "rz": 1.5
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "4037",
+          "n": "Chris Godwin",
+          "p": "WR",
+          "t": "TB",
+          "v": 546,
+          "pr": 42,
+          "trend": -286,
+          "trendPct": -0.34,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 5.9,
+            "proj": 8.6,
+            "perf": 0.69,
+            "snap": 77,
+            "tgtShare": 12,
+            "tpg": 3.7,
+            "touches": null,
+            "rz": 0
+          }
+        }
+      ],
+      "value": {
+        "give": 580,
+        "get": 546,
+        "giveAdj": 545,
+        "getAdj": 546,
+        "diffPct": 0.002,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "gainPct": 0,
+        "changes": {
+          "in": [],
+          "out": []
+        },
+        "drop": null
+      },
+      "them": {
+        "gainPct": 0
+      },
+      "headline": "Cash in Tre Tucker's spike and an injured RB for Chris Godwin, a bench-only swap",
+      "summary": "Tucker's value is up 315% in 30 days on a role that is smaller than his results. Godwin plays more and is cheaper.",
+      "confidence": "low",
+      "why": {
+        "give": [
+          "Tre Tucker is at 10.3 points a game against 7.8 projected (1.32) on 62% of snaps and a 17% target share.",
+          "Jonah Coleman is on IR, so he cannot help your lineup."
+        ],
+        "get": [
+          "Chris Godwin plays 77% of snaps but is at 5.9 points against 8.6 projected (0.69), with a 12% target share.",
+          "His FantasyCalc value is down 34% in 30 days."
+        ],
+        "you": [
+          "No starter changes: Tucker is on your bench and Godwin would replace him there.",
+          "You swap a spike for a player with a bigger snap role."
+        ],
+        "them": [
+          "The 2025 League Champion team is thin at TE and QB but deep at WR, and gets a hotter name plus a depth piece.",
+          "Values are even, so they lose nothing on the chart."
+        ],
+        "experts": [
+          "Preseason coverage described Tucker as a trustworthy but non-WR1 receiver, which fits a role smaller than his results.",
+          "No current-week source was found on Godwin."
+        ]
+      },
+      "risks": [
+        "Godwin's 12% target share is low, and he may stay a bench piece.",
+        "Tucker could keep producing."
+      ],
+      "sources": [
+        {
+          "title": "Tre Tucker (Rotowire)",
+          "url": "https://www.rotowire.com/football/player/tre-tucker-16694"
         },
         {
-          "title": "Mark Andrews Week 3 Outlook for Fantasy Football (2026) - RotoBaller",
-          "url": "https://www.rotoballer.com/player-news/mark-andrews-hoping-to-turn-opportunities-into-fantasy-points-in-week-3/1951130"
+          "title": "Tre Tucker (CBS Sports)",
+          "url": "https://www.cbssports.com/nfl/players/3121848/tucker/fantasy"
         }
       ]
     }
   ],
-  "none_reason": null,
-  "started": "2026-09-29T12:55:43.659Z"
+  "short_reason": "Only four candidates held up: the Bijan Robinson deals sell an every-down back with a huge stable role, and the Jefferson and Brian Thomas targets are hurt or losing snaps.",
+  "review": {
+    "checked": false
+  },
+  "draft_history": null
 }
