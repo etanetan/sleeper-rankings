@@ -1,44 +1,44 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1367869106300133376",
   "league_name": "FCFFL",
   "season": "2026",
-  "week": 3,
-  "generated": "2026-09-27T02:51:51.805Z",
+  "week": 4,
+  "generated": "2026-09-29T22:58:44.189Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=1&numTeams=12&ppr=1",
-    "fetched": "2026-09-27T02:45:04.775Z"
+    "fetched": "2026-09-29T22:55:20.902Z"
   },
   "me": {
     "name": "Young Blood",
-    "record": "1-1",
+    "record": "1-2",
     "thin": [
       "QB",
       "TE"
     ],
     "deep": [
-      "RB",
-      "WR"
+      "WR",
+      "RB"
     ]
   },
   "trades": [
     {
-      "id": "1bhjtcb",
+      "id": "9qgi2b",
       "partner": {
-        "roster_id": 6,
-        "name": "The Bedouin",
-        "user": "CJ129",
-        "record": "1-1",
+        "roster_id": 10,
+        "name": "ChampaignTornadoes",
+        "user": "ChampaignTornadoes",
+        "record": "1-2",
         "thin": [
-          "WR",
-          "QB"
-        ],
-        "deep": [
           "RB",
           "TE"
+        ],
+        "deep": [
+          "QB",
+          "WR"
         ]
       },
       "give": [
@@ -47,65 +47,305 @@
           "n": "Josh Downs",
           "p": "WR",
           "t": "IND",
-          "v": 1226,
-          "pr": 30,
-          "trend": 347,
+          "v": 1206,
+          "pr": 33,
+          "trend": 432,
+          "trendPct": 0.56,
           "status": null,
-          "sidelined": false
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 10.9,
+            "proj": 11.3,
+            "perf": 0.96,
+            "snap": 79,
+            "tgtShare": 26,
+            "tpg": 8,
+            "touches": null,
+            "rz": 1.3
+          }
+        },
+        {
+          "id": "2449",
+          "n": "Stefon Diggs",
+          "p": "WR",
+          "t": "WAS",
+          "v": 968,
+          "pr": 35,
+          "trend": -181,
+          "trendPct": -0.16,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 14.8,
+            "proj": 10.7,
+            "perf": 1.39,
+            "snap": 58,
+            "tgtShare": 24,
+            "tpg": 7.3,
+            "touches": null,
+            "rz": 1
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "5927",
+          "n": "Terry McLaurin",
+          "p": "WR",
+          "t": "WAS",
+          "v": 1531,
+          "pr": 29,
+          "trend": -1017,
+          "trendPct": -0.4,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 10,
+            "proj": 12,
+            "perf": 0.84,
+            "snap": 78,
+            "tgtShare": 24,
+            "tpg": 7.3,
+            "touches": null,
+            "rz": 0.7
+          }
+        },
+        {
+          "id": "6797",
+          "n": "Justin Herbert",
+          "p": "QB",
+          "t": "LAC",
+          "v": 712,
+          "pr": 16,
+          "trend": -1473,
+          "trendPct": -0.67,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 14.7,
+            "proj": 19.8,
+            "perf": 0.74,
+            "snap": 100,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 1.3
+          }
+        }
+      ],
+      "value": {
+        "give": 2174,
+        "get": 2243,
+        "giveAdj": 1980,
+        "getAdj": 2101,
+        "diffPct": 0.079,
+        "fair": true,
+        "verdict": "Slightly in your favor"
+      },
+      "you": {
+        "gainPct": 3.8,
+        "changes": {
+          "in": [
+            {
+              "n": "Justin Herbert",
+              "slot": "QB"
+            },
+            {
+              "n": "Terry McLaurin",
+              "slot": "FLEX"
+            },
+            {
+              "n": "DK Metcalf",
+              "slot": "FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Daniel Jones",
+              "slot": "QB"
+            },
+            {
+              "n": "Josh Downs",
+              "slot": "FLEX"
+            },
+            {
+              "n": "Stefon Diggs",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "gainPct": -0.5
+      },
+      "headline": "Sell Josh Downs and Stefon Diggs for Terry McLaurin and Justin Herbert, your QB fix",
+      "summary": "You cash in two risers and get a QB upgrade plus a receiver with a bigger role than his results show.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Diggs is at 14.8 points per game against a 10.7 projection on 58% of snaps, with two touchdowns in week 2.",
+          "Downs' FantasyCalc value is up 56% in 30 days while he scores right on his projection."
+        ],
+        "get": [
+          "McLaurin has a 24% target share and 78% of snaps but is at 10.0 points per game against a 12.0 projection; his value is down about 40% in 30 days.",
+          "He drew 9 targets and three end-zone looks in week 2, but only 0.7 red-zone looks per game overall.",
+          "Herbert is at 14.7 points per game against a 19.8 projection; his value is down 67% in 30 days."
+        ],
+        "you": [
+          "Herbert replaces Daniel Jones at QB; McLaurin and Metcalf take the flex spots.",
+          "Your lineup value rises about 3.8%."
+        ],
+        "them": [
+          "ChampaignTornadoes is 1-2 and gets two receivers who are producing now.",
+          "The trade is within 8% on FantasyCalc value, in their favor."
+        ],
+        "experts": [
+          "Draft Sharks says McLaurin isn't helping fantasy teams yet, which is the low price you are buying.",
+          "The Commanders' offensive coordinator has said he wants McLaurin at 10 targets a game, though Diggs' arrival may cap that."
+        ]
+      },
+      "risks": [
+        "Daniels is out, so the Washington passing game is at risk and McLaurin still shares targets with Diggs.",
+        "Herbert is underproducing his projection; this and 1oaelbm are alternatives, not a pair."
+      ],
+      "sources": [
+        {
+          "title": "Terry McLaurin isn't helping your fantasy team, yet (Draft Sharks)",
+          "url": "https://www.draftsharks.com/fantasy-football-news/82791/terry-mclaurin-isnt-helping-your-fantasy-team-yet"
+        },
+        {
+          "title": "Stefon Diggs looks to be a major piece of Commanders offense (RotoBaller)",
+          "url": "https://rotoballer.com/player-news/stefon-diggs-looks-to-be-a-major-piece-of-commanders-offense/1932887"
+        },
+        {
+          "title": "Fantasy football 2026 Chargers deep dive (CBS Sports)",
+          "url": "https://new.cbssports.com/fantasy/football/news/fantasy-football-2026-chargers-deep-dive-players-outlooks/"
+        }
+      ]
+    },
+    {
+      "id": "80jrob",
+      "partner": {
+        "roster_id": 9,
+        "name": "Ben Hur Returns",
+        "user": "BenHur",
+        "record": "1-2",
+        "thin": [
+          "TE",
+          "WR"
+        ],
+        "deep": [
+          "RB",
+          "QB"
+        ]
+      },
+      "give": [
+        {
+          "id": "9500",
+          "n": "Josh Downs",
+          "p": "WR",
+          "t": "IND",
+          "v": 1206,
+          "pr": 33,
+          "trend": 432,
+          "trendPct": 0.56,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 10.9,
+            "proj": 11.3,
+            "perf": 0.96,
+            "snap": 79,
+            "tgtShare": 26,
+            "tpg": 8,
+            "touches": null,
+            "rz": 1.3
+          }
         },
         {
           "id": "7002",
           "n": "Juwan Johnson",
           "p": "TE",
           "t": "NO",
-          "v": 757,
-          "pr": 12,
-          "trend": 368,
+          "v": 1015,
+          "pr": 10,
+          "trend": 677,
+          "trendPct": 2,
           "status": null,
-          "sidelined": false
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 16.8,
+            "proj": 10.2,
+            "perf": 1.64,
+            "snap": 68,
+            "tgtShare": 15,
+            "tpg": 6.3,
+            "touches": null,
+            "rz": 1.7
+          }
         }
       ],
       "get": [
         {
-          "id": "7523",
-          "n": "Trevor Lawrence",
+          "id": "6904",
+          "n": "Jalen Hurts",
           "p": "QB",
-          "t": "JAX",
-          "v": 1585,
-          "pr": 9,
-          "trend": -96,
+          "t": "PHI",
+          "v": 2096,
+          "pr": 5,
+          "trend": -676,
+          "trendPct": -0.24,
           "status": null,
-          "sidelined": false
-        },
-        {
-          "id": "13414",
-          "n": "Kaelon Black",
-          "p": "RB",
-          "t": "SF",
-          "v": 399,
-          "pr": 42,
-          "trend": 324,
-          "status": null,
-          "sidelined": false
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 20.9,
+            "proj": 22.5,
+            "perf": 0.93,
+            "snap": 98,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 1
+          }
         }
       ],
       "value": {
-        "give": 1983,
-        "get": 1984,
-        "giveAdj": 1832,
-        "getAdj": 1904,
-        "diffPct": 0.045,
+        "give": 2221,
+        "get": 2096,
+        "giveAdj": 2018,
+        "getAdj": 2096,
+        "diffPct": 0.037,
         "fair": true,
         "verdict": "Slightly in your favor"
       },
       "you": {
-        "before": 21879,
-        "after": 22912,
-        "gainPct": 4.7,
+        "gainPct": 5.7,
         "changes": {
           "in": [
             {
-              "n": "Trevor Lawrence",
+              "n": "Jalen Hurts",
               "slot": "QB"
             },
             {
@@ -135,241 +375,57 @@
         "drop": null
       },
       "them": {
-        "before": 26695,
-        "after": 26761,
-        "gainPct": 0.2,
-        "changes": {
-          "in": [
-            {
-              "n": "Jared Goff",
-              "slot": "QB"
-            },
-            {
-              "n": "Josh Downs",
-              "slot": "WR"
-            }
-          ],
-          "out": [
-            {
-              "n": "Trevor Lawrence",
-              "slot": "QB"
-            },
-            {
-              "n": "Michael Wilson",
-              "slot": "WR"
-            }
-          ]
-        },
-        "drop": null
+        "gainPct": 1
       },
-      "headline": "Turn Downs and Johnson into Trevor Lawrence, playing the best football of his career",
-      "summary": "Sends receiver and tight end surplus to a WR/QB-thin rival for a red-hot dual-threat starter at your weakest position.",
-      "confidence": "high",
+      "headline": "Sell TD-fueled Juwan Johnson and Josh Downs for Jalen Hurts, a real QB upgrade on Daniel Jones",
+      "summary": "You sell two players whose prices jumped this month for a QB who is producing near projection at a discounted price. Schultz and Metcalf fill the spots they leave.",
+      "confidence": "medium",
       "why": {
         "give": [
-          "Downs' 29% target share only opened up after Alec Pierce got hurt; Colts split targets with Tyler Warren, capping him as WR depth you don't need.",
-          "Johnson's role is easily replaced by Dalton Schultz, who has outproduced him the last two weeks as a top-5 fantasy tight end."
+          "Johnson is scoring 16.8 points per game against a 10.2 projection on a 15% target share; his FantasyCalc value is up 200% in 30 days.",
+          "Downs' value is up 56% in 30 days, but he is scoring right on his projection (10.9 vs 11.3), so the price has run ahead of the output.",
+          "Johnson's 2025 TE10 finish came on volume with only 3 touchdowns; this year he is scoring 60% over projection on a 15% target share."
         ],
         "get": [
-          "Lawrence leads the NFL in average depth of target (11.1 yards) and was named AFC Offensive Player of the Week entering Week 3.",
-          "Black has out-touched Christian McCaffrey 21-20 through two weeks in a real committee, giving him standalone flex value."
+          "Hurts is at 20.9 points per game against a 22.5 projection with 98% of snaps and 1 red-zone look per game; his FantasyCalc value is down 24% in 30 days.",
+          "His price fell on summer worries about a new offense, but he is already producing at about 93% of projection."
         ],
         "you": [
-          "Lawrence becomes your starting QB, replacing Daniel Jones' 132 FantasyCalc value and -78 trend outright.",
-          "Dalton Schultz (687 value, +517 trend) steps into the starting TE spot Johnson vacates, so the position doesn't downgrade."
+          "Jones is at 13.8 points per game against a 16.7 projection and Jayden Daniels is out, so QB is your weakest spot.",
+          "Hurts replaces Daniel Jones (FantasyCalc value 130, down 40% in 30 days) at QB, your thinnest spot.",
+          "Dalton Schultz moves into the TE slot and DK Metcalf into a flex spot; your lineup value rises about 5.7%."
         ],
         "them": [
-          "The Bedouin (1-1) are thin at WR and QB; adding Downs fills their receiver need in a lateral QB swap to Goff.",
-          "They're deep at TE already, so absorbing Johnson as WR/QB-thin depth costs them nothing on the bench."
+          "Ben Hur Returns is 1-2 and thin at TE and WR; they get two players producing this month, but they lose their QB and would start Tyler Shough.",
+          "The package is within 4% on FantasyCalc value, so they may still balk at losing their QB."
+        ],
+        "experts": [
+          "Johnson coverage credits volume rather than touchdowns for last year's finish and flags rookie competition for targets.",
+          "Downs is expected to take on a bigger role after the Pittman trade, which is why his value has risen."
         ]
       },
       "risks": [
-        "Lawrence completes just 35.3% of throws under pressure, a soft spot a good pass rush could exploit.",
-        "If Alec Pierce returns healthy in Indianapolis, Downs' target share (and the Colts' incentive to deal him) could shrink back down."
+        "Hurts may keep trending up, so his price may not stay this low.",
+        "Johnson could keep scoring and the TE spot would then be worse for you."
       ],
       "sources": [
         {
-          "title": "Why pressuring Trevor Lawrence is likely key to Patriots beating Jaguars",
-          "url": "https://www.nbcsportsboston.com/nfl/new-england-patriots/trevor-lawrence-jaguars-stats-patriots-preview-week-3/804070/"
+          "title": "Saints playmaker generating buzz as fantasy sleeper (SI)",
+          "url": "https://www.si.com/nfl/saints/onsi/news/saints-playmaker-generating-buzz-as-fantasy-football-sleeper-option-zach3"
         },
         {
-          "title": "Jaguar Report: Trevor Lawrence named AFC Offensive Player of the Week",
-          "url": "https://www.si.com/nfl/jaguars/news/trevor-lawrence-named-afc-offensive-player-of-the-week-after-performance-vs-chargers"
-        },
-        {
-          "title": "How Colts are planning to grow Josh Downs' role within offense in 2026",
-          "url": "https://www.colts.com/news/josh-downs-wide-receiver-fantasy-football-usage-snap-counts-targets-2026-season"
-        },
-        {
-          "title": "Meet Kaelon Black, the 49ers RB irking fantasy owners by taking snaps away from Christian McCaffrey",
-          "url": "https://sports.yahoo.com/articles/meet-kaelon-black-49ers-rb-020359620.html"
+          "title": "Colts HC Steichen hints at increased role for Josh Downs (FantasyNerds)",
+          "url": "https://fantasynerds.com/news/story/2026/07/28/colts-hc-steichen-hints-at-increased-role-for-wr-josh-downs-1582276"
         }
       ]
     },
     {
-      "id": "1sovqly",
-      "partner": {
-        "roster_id": 9,
-        "name": "Ben Hur Returns",
-        "user": "BenHur",
-        "record": "0-2",
-        "thin": [
-          "TE",
-          "WR"
-        ],
-        "deep": [
-          "RB",
-          "QB"
-        ]
-      },
-      "give": [
-        {
-          "id": "5846",
-          "n": "DK Metcalf",
-          "p": "WR",
-          "t": "PIT",
-          "v": 991,
-          "pr": 36,
-          "trend": -345,
-          "status": null,
-          "sidelined": false
-        },
-        {
-          "id": "5001",
-          "n": "Dalton Schultz",
-          "p": "TE",
-          "t": "HOU",
-          "v": 687,
-          "pr": 14,
-          "trend": 517,
-          "status": null,
-          "sidelined": false
-        }
-      ],
-      "get": [
-        {
-          "id": "12545",
-          "n": "Tyler Shough",
-          "p": "QB",
-          "t": "NO",
-          "v": 1342,
-          "pr": 11,
-          "trend": 877,
-          "status": null,
-          "sidelined": false
-        },
-        {
-          "id": "12487",
-          "n": "Terrance Ferguson",
-          "p": "TE",
-          "t": "LAR",
-          "v": 216,
-          "pr": 21,
-          "trend": 162,
-          "status": null,
-          "sidelined": false
-        }
-      ],
-      "value": {
-        "give": 1678,
-        "get": 1558,
-        "giveAdj": 1541,
-        "getAdj": 1515,
-        "diffPct": -0.019,
-        "fair": true,
-        "verdict": "Even"
-      },
-      "you": {
-        "before": 21879,
-        "after": 22956,
-        "gainPct": 4.9,
-        "changes": {
-          "in": [
-            {
-              "n": "Tyler Shough",
-              "slot": "QB"
-            }
-          ],
-          "out": [
-            {
-              "n": "Daniel Jones",
-              "slot": "QB"
-            }
-          ]
-        },
-        "drop": null
-      },
-      "them": {
-        "before": 26226,
-        "after": 26353,
-        "gainPct": 0.5,
-        "changes": {
-          "in": [
-            {
-              "n": "Dalton Schultz",
-              "slot": "TE"
-            }
-          ],
-          "out": [
-            {
-              "n": "Kyle Pitts",
-              "slot": "TE"
-            }
-          ]
-        },
-        "drop": null
-      },
-      "headline": "Sell high on a hot tight end, buy the NFL's passing-yardage leader Tyler Shough",
-      "summary": "Moves an underperforming Metcalf and a spiked Schultz to a QB-deep rebuilder for Shough and a rookie TE1 replacement.",
-      "confidence": "high",
-      "why": {
-        "give": [
-          "Metcalf has 4 drops and 2 needless offensive pass interference calls on just 19 targets through two games.",
-          "Schultz is riding a TE5, 26-point week with Nico Collins out; moving him now cashes in that spike before touches normalize."
-        ],
-        "get": [
-          "Shough leads the NFL with 662 passing yards through two weeks and delivered a go-ahead rushing touchdown against Baltimore.",
-          "Ferguson has claimed the Rams' TE1 job: 71.4% route share, 26.9% target share, and a TE8 finish last week."
-        ],
-        "you": [
-          "Shough takes the QB slot outright from Daniel Jones, a clear upgrade at your thinnest position.",
-          "Ferguson fills the flex/TE spot Schultz vacates so the position isn't left empty."
-        ],
-        "them": [
-          "Ben Hur Returns (0-2) are thin at TE and WR and deep at QB, so trading Shough away costs them a surplus piece.",
-          "Metcalf and Schultz fill two real holes for a rebuilding roster hunting difference-makers at receiver and tight end."
-        ]
-      },
-      "risks": [
-        "Shough's production is heavily fourth-quarter-driven (350 of his yards there); a low-scoring week could look different.",
-        "Ferguson still shares some early-down snaps with Tyler Higbee, which can cap his floor in a given week."
-      ],
-      "sources": [
-        {
-          "title": "Morning Break: Tyler Shough leads NFL in passing yards as Saints enter Week 3",
-          "url": "https://www.neworleanssaints.com/news/morning-break-tyler-shough-leads-nfl-in-passing-yards-as-saints-enter-week-3-new-orleans-news-headlines-9-23-2026"
-        },
-        {
-          "title": "Tyler Shough Has Earned Must-Start Fantasy Football Status in Week 3",
-          "url": "https://twsn.net/2026/09/25/tyler-shough-has-earned-must-start-fantasy-football-status-in-week-3"
-        },
-        {
-          "title": "Rams snap count review: Terrance Ferguson stakes a claim for TE#1",
-          "url": "https://sports.yahoo.com/articles/rams-snap-count-review-terrance-223500168.html"
-        },
-        {
-          "title": "DK Metcalf carries a low floor into Week 3",
-          "url": "https://www.rotoballer.com/player-news/dk-metcalf-carries-a-low-floor-into-week-3/1950103"
-        }
-      ]
-    },
-    {
-      "id": "1vtpviu",
+      "id": "1oaelbm",
       "partner": {
         "roster_id": 10,
         "name": "ChampaignTornadoes",
         "user": "ChampaignTornadoes",
-        "record": "1-1",
+        "record": "1-2",
         "thin": [
           "RB",
           "TE"
@@ -381,48 +437,128 @@
       },
       "give": [
         {
+          "id": "7002",
+          "n": "Juwan Johnson",
+          "p": "TE",
+          "t": "NO",
+          "v": 1015,
+          "pr": 10,
+          "trend": 677,
+          "trendPct": 2,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 16.8,
+            "proj": 10.2,
+            "perf": 1.64,
+            "snap": 68,
+            "tgtShare": 15,
+            "tpg": 6.3,
+            "touches": null,
+            "rz": 1.7
+          }
+        },
+        {
           "id": "2449",
           "n": "Stefon Diggs",
           "p": "WR",
           "t": "WAS",
-          "v": 1201,
-          "pr": 32,
-          "trend": 91,
+          "v": 968,
+          "pr": 35,
+          "trend": -181,
+          "trendPct": -0.16,
           "status": null,
-          "sidelined": false
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 14.8,
+            "proj": 10.7,
+            "perf": 1.39,
+            "snap": 58,
+            "tgtShare": 24,
+            "tpg": 7.3,
+            "touches": null,
+            "rz": 1
+          }
         }
       ],
       "get": [
+        {
+          "id": "9484",
+          "n": "Tucker Kraft",
+          "p": "TE",
+          "t": "GB",
+          "v": 1281,
+          "pr": 8,
+          "trend": -866,
+          "trendPct": -0.4,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 6.5,
+            "proj": 11.3,
+            "perf": 0.58,
+            "snap": 79,
+            "tgtShare": 14,
+            "tpg": 5.7,
+            "touches": null,
+            "rz": 0.3
+          }
+        },
         {
           "id": "6797",
           "n": "Justin Herbert",
           "p": "QB",
           "t": "LAC",
-          "v": 1143,
-          "pr": 13,
-          "trend": -964,
+          "v": 712,
+          "pr": 16,
+          "trend": -1473,
+          "trendPct": -0.67,
           "status": null,
-          "sidelined": false
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 14.7,
+            "proj": 19.8,
+            "perf": 0.74,
+            "snap": 100,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 1.3
+          }
         }
       ],
       "value": {
-        "give": 1201,
-        "get": 1143,
-        "giveAdj": 1201,
-        "getAdj": 1143,
-        "diffPct": -0.048,
+        "give": 1983,
+        "get": 1993,
+        "giveAdj": 1789,
+        "getAdj": 1851,
+        "diffPct": 0.048,
         "fair": true,
-        "verdict": "You pay a little more"
+        "verdict": "Slightly in your favor"
       },
       "you": {
-        "before": 21879,
-        "after": 22594,
-        "gainPct": 3.3,
+        "gainPct": 3.5,
         "changes": {
           "in": [
             {
               "n": "Justin Herbert",
               "slot": "QB"
+            },
+            {
+              "n": "Tucker Kraft",
+              "slot": "TE"
             },
             {
               "n": "DK Metcalf",
@@ -435,6 +571,10 @@
               "slot": "QB"
             },
             {
+              "n": "Juwan Johnson",
+              "slot": "TE"
+            },
+            {
               "n": "Stefon Diggs",
               "slot": "FLEX"
             }
@@ -443,66 +583,222 @@
         "drop": null
       },
       "them": {
-        "before": 28074,
-        "after": 28213,
-        "gainPct": 0.5,
+        "gainPct": -0.2
+      },
+      "headline": "Sell Juwan Johnson and Stefon Diggs at their peak for Justin Herbert and Tucker Kraft",
+      "summary": "Two players outscoring their projections turn into a QB1 and a TE who is scoring under his projection while his role holds.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Johnson is at 16.8 points per game against a 10.2 projection, with his FantasyCalc value up 200% in 30 days.",
+          "Diggs is at 14.8 against a 10.7 projection on only 58% of snaps, with two touchdowns in his week 2 game."
+        ],
+        "get": [
+          "Herbert is at 14.7 points per game against a 19.8 projection with 1.3 red-zone looks per game; his FantasyCalc value is down 67% in 30 days (712).",
+          "Kraft is at 6.5 against an 11.3 projection with 79% of snaps and a 14% target share; his value is down about 40% in 30 days."
+        ],
+        "you": [
+          "Herbert replaces Daniel Jones at QB and Kraft replaces Johnson at TE; Metcalf moves into a flex spot.",
+          "Your lineup value rises about 3.5%."
+        ],
+        "them": [
+          "ChampaignTornadoes is 1-2 and gets two players producing right now in exchange for a QB and TE that have been slow.",
+          "The trade is within 5% on FantasyCalc value."
+        ],
+        "experts": [
+          "Kraft is back from an ACL tear and has played 79% of snaps through 3 games, so a snap-count limit looks like a small worry.",
+          "CBS's preview calls Herbert a QB1 in all leagues, though he is scoring below that so far."
+        ]
+      },
+      "risks": [
+        "Kraft's 14% target share is low for a TE1 and Herbert is underproducing his projection.",
+        "This deal and 9qgi2b both chase Herbert with the same partner and Diggs, so you can only do one."
+      ],
+      "sources": [
+        {
+          "title": "Fantasy football 2026 Chargers deep dive (CBS Sports)",
+          "url": "https://new.cbssports.com/fantasy/football/news/fantasy-football-2026-chargers-deep-dive-players-outlooks/"
+        },
+        {
+          "title": "Tucker Kraft poised for TE1 fantasy production in 2026 (FantasyNerds)",
+          "url": "https://www.fantasynerds.com/news/story/2026/08/06/tucker-kraft-poised-for-te1-fantasy-production-in-2026-1589742"
+        }
+      ]
+    },
+    {
+      "id": "3mlhri",
+      "partner": {
+        "roster_id": 2,
+        "name": "Strikes",
+        "user": "DStruyk",
+        "record": "1-2",
+        "thin": [
+          "QB",
+          "RB"
+        ],
+        "deep": [
+          "TE",
+          "WR"
+        ]
+      },
+      "give": [
+        {
+          "id": "5001",
+          "n": "Dalton Schultz",
+          "p": "TE",
+          "t": "HOU",
+          "v": 654,
+          "pr": 13,
+          "trend": 475,
+          "trendPct": 2.65,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 13.2,
+            "proj": 10.4,
+            "perf": 1.26,
+            "snap": 63,
+            "tgtShare": 22,
+            "tpg": 8.3,
+            "touches": null,
+            "rz": 0.3
+          }
+        },
+        {
+          "id": "7567",
+          "n": "Kenny Gainwell",
+          "p": "RB",
+          "t": "TB",
+          "v": 237,
+          "pr": 46,
+          "trend": -405,
+          "trendPct": -0.63,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 3,
+            "ppg": 3.4,
+            "proj": 9.4,
+            "perf": 0.37,
+            "snap": 42,
+            "tgtShare": 11,
+            "tpg": 3.3,
+            "touches": 5.3,
+            "rz": 1
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "11563",
+          "n": "Bo Nix",
+          "p": "QB",
+          "t": "DEN",
+          "v": 901,
+          "pr": 15,
+          "trend": -686,
+          "trendPct": -0.43,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 18.3,
+            "proj": 19.3,
+            "perf": 0.94,
+            "snap": 100,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 1.7
+          }
+        }
+      ],
+      "value": {
+        "give": 891,
+        "get": 901,
+        "giveAdj": 844,
+        "getAdj": 901,
+        "diffPct": 0.063,
+        "fair": true,
+        "verdict": "Slightly in your favor"
+      },
+      "you": {
+        "gainPct": 3.3,
         "changes": {
           "in": [
             {
-              "n": "Stefon Diggs",
-              "slot": "FLEX"
+              "n": "Bo Nix",
+              "slot": "QB"
             }
           ],
           "out": [
             {
-              "n": "Blake Corum",
-              "slot": "FLEX"
+              "n": "Daniel Jones",
+              "slot": "QB"
             }
           ]
         },
         "drop": null
       },
-      "headline": "Sell Diggs at his touchdown-fueled peak, buy a struggling Herbert before positive regression",
-      "summary": "Cashes in Diggs' hot start right as his QB situation downgrades, for a talented Herbert stuck in an 0-2 execution slump.",
-      "confidence": "medium",
+      "them": {
+        "gainPct": -0.1
+      },
+      "headline": "Move Dalton Schultz and a dead-weight RB for Bo Nix, a low-cost QB upgrade",
+      "summary": "Schultz is a bench TE whose value jumped 265% in a month; Nix costs less and upgrades your QB spot.",
+      "confidence": "low",
       "why": {
         "give": [
-          "Diggs has 3 touchdowns on just 15 targets through two games, scoring pace well ahead of his 21.7% target share.",
-          "Washington just lost Jayden Daniels (elbow) to backup Marcus Mariota, a real downgrade to the QB play Diggs has been producing behind."
+          "Schultz is at 13.2 points per game against a 10.4 projection with a 22% target share, and his value is up 265% in 30 days, but he sits on your bench.",
+          "Kenny Gainwell has 42% of snaps and is scoring 3.4 points per game, so he is a spare part for you."
         ],
         "get": [
-          "Both Chargers losses have come by the same 26-14 score with clear execution issues (drops, false starts) rather than a talent shortfall.",
-          "Herbert and OC Mike McDaniel are meeting more to fix a 28th-ranked scoring offense, a buy-low window before it turns."
+          "Nix is at 18.3 points per game against a 19.3 projection with 100% of snaps and 1.7 red-zone looks per game; his value is down 43% in 30 days.",
+          "He rushed for 356 yards and five touchdowns last year, which is where his upside comes from."
         ],
         "you": [
-          "Herbert takes over as your starting QB, replacing Daniel Jones' -78 trend outright.",
-          "You keep DK Metcalf and Josh Downs as receiver depth after moving only Diggs out of the flex spot."
+          "Nix replaces Daniel Jones at QB; nothing else in your lineup changes.",
+          "Your lineup value rises about 3.3%."
         ],
         "them": [
-          "ChampaignTornadoes (1-1) are deep at QB and WR but thin at RB and TE, and are still adding scoring punch at receiver.",
-          "Diggs' current touchdown pace makes him an appealing rental for a team already stacked at the position."
+          "Strikes is thin at QB and RB but deep at TE, so they get a TE upgrade for their QB; they would have to drop Emanuel Wilson.",
+          "The trade is within 6% on FantasyCalc value."
+        ],
+        "experts": [
+          "RotoBaller noted Nix rebounded in week 2 but has run very little so far, which holds down his upside.",
+          "Nix's early schedule is tough, which is why his price is low."
         ]
       },
       "risks": [
-        "Herbert has yet to complete a single pass of 20+ air yards this season, a sign the buy-low could be early.",
-        "Diggs may keep producing regardless of QB, since Washington's passing game now runs through him as the clear No. 2 option."
+        "Nix's rushing has been low, which cuts his weekly ceiling.",
+        "Denver's schedule stays hard for several more weeks."
       ],
       "sources": [
         {
-          "title": "Stefon Diggs Week 3 Outlook for Fantasy Football (2026)",
-          "url": "https://www.rotoballer.com/player-news/stefon-diggs-looking-to-stay-hot-in-week-3-against-seattle/1951504"
+          "title": "Bo Nix rebounds after ugly season opener (RotoBaller)",
+          "url": "https://www.rotoballer.com/?p=1949310"
         },
         {
-          "title": "2026 Fantasy Football Fallout: Stefon Diggs changes the Commanders outlooks for McLaurin and Daniels",
-          "url": "https://www.cbssports.com/fantasy/football/news/stefon-diggs-washington-commanders-fantasy-football-2026-outlook/"
-        },
-        {
-          "title": "'We got some growing pains': What's going on with the Chargers' offense through two games?",
-          "url": "https://www.espn.com/nfl/story/_/id/50024098/los-angeles-chargers-offense-troubles-jim-harbaugh-mike-mcdaniel"
+          "title": "Bo Nix expected to be good to go (RotoBaller)",
+          "url": "https://www.rotoballer.com/player-news/bo-nix-expected-to-be-good-to-go-for-start-of-training-camp/1895166"
         }
       ]
     }
   ],
-  "none_reason": null,
-  "started": "2026-09-29T22:55:24.347Z"
+  "short_reason": "Only four trades passed review. The other candidates either sell Garrett Wilson, who has a 28% target share, or change nothing in your lineup; the four here also overlap on Diggs, Johnson and Herbert, so treat them as alternatives.",
+  "review": {
+    "checked": true,
+    "notes": [
+      "Dropped the Wilson, Higgins and Burrow deal because Wilson has a large stable role and fresh news points to more targets.",
+      "Replaced the stale August Hurts preview, added Herbert's and Nix's real numbers, and updated Kraft's snap data.",
+      "Noted that the Herbert deals overlap and cannot both be done."
+    ]
+  },
+  "draft_history": null
 }
