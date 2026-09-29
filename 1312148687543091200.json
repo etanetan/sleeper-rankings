@@ -1,20 +1,20 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1312148687543091200",
   "league_name": "HTB DYNASTY",
   "season": "2026",
-  "week": 3,
-  "generated": "2026-09-27T02:36:00.142Z",
+  "week": 4,
+  "generated": "2026-09-29T17:59:06.711Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&numTeams=10&ppr=0",
-    "fetched": "2026-09-27T02:29:21.373Z"
+    "fetched": "2026-09-29T17:55:24.083Z"
   },
   "me": {
     "name": "etanetan",
-    "record": "1-1",
+    "record": "1-2",
     "thin": [
       "RB",
       "TE"
@@ -26,41 +26,451 @@
   },
   "trades": [
     {
-      "id": "e4o5z8",
+      "id": "ovl0mo",
       "partner": {
-        "roster_id": 6,
-        "name": "Njgriffin",
-        "user": "Njgriffin",
-        "record": "0-2",
+        "roster_id": 9,
+        "name": "stplohasz",
+        "user": "stplohasz",
+        "record": "3-0",
         "thin": [
-          "TE",
-          "QB"
+          "QB",
+          "RB"
         ],
         "deep": [
-          "RB",
+          "TE",
           "WR"
         ]
       },
       "give": [
         {
-          "id": "12508",
-          "n": "Jaxson Dart",
+          "id": "9228",
+          "n": "Bryce Young",
           "p": "QB",
-          "t": "NYG",
-          "v": 4325,
-          "pr": 12,
-          "trend": -314,
-          "status": "IR"
+          "t": "CAR",
+          "v": 3668,
+          "pr": 16,
+          "trend": 1233,
+          "trendPct": 0.51,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 24.4,
+            "proj": 15.5,
+            "perf": 1.57,
+            "snap": 95,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 1
+          }
         },
+        {
+          "id": "3257",
+          "n": "Jacoby Brissett",
+          "p": "QB",
+          "t": "ARI",
+          "v": 1482,
+          "pr": 31,
+          "trend": 96,
+          "trendPct": 0.07,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 16.2,
+            "proj": 12.9,
+            "perf": 1.26,
+            "snap": 100,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 1
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "4866",
+          "n": "Saquon Barkley",
+          "p": "RB",
+          "t": "PHI",
+          "v": 3682,
+          "pr": 13,
+          "trend": -496,
+          "trendPct": -0.12,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 6.5,
+            "proj": 15.1,
+            "perf": 0.43,
+            "snap": 48,
+            "tgtShare": 7,
+            "tpg": 2,
+            "touches": 12.3,
+            "rz": 1.7
+          }
+        },
+        {
+          "id": "pick_2027_2_9",
+          "n": "2027 2nd (Late)",
+          "p": "PICK",
+          "t": "own",
+          "v": 1430,
+          "pr": null,
+          "trend": 11,
+          "trendPct": 0.01,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": null,
+          "isPick": true,
+          "season": 2027,
+          "round": 2,
+          "slot": "late",
+          "from": 9
+        }
+      ],
+      "value": {
+        "give": 5150,
+        "get": 5112,
+        "giveAdj": 4854,
+        "getAdj": 4826,
+        "diffPct": -0.008,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "gainPct": 4.9,
+        "changes": {
+          "in": [
+            {
+              "n": "Saquon Barkley",
+              "slot": "RB"
+            }
+          ],
+          "out": [
+            {
+              "n": "Kyle Monangai",
+              "slot": "RB"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "gainPct": -0.5
+      },
+      "headline": "Sell Bryce Young and Jacoby Brissett at their peak for Saquon Barkley, a starting back priced 12% lower than a month ago",
+      "summary": "Two bench quarterbacks scoring well over projection buy you a starting back whose price fell 12% in 30 days. Your thinnest position gets fixed, with real role risk.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Bryce Young scores 24.4 points per game against a 15.5 projection, and his FantasyCalc value is up 51% in 30 days.",
+          "Brissett is at 16.2 against 12.9 projected. Both sit on your bench, so their peak price costs your lineup nothing."
+        ],
+        "get": [
+          "Barkley scores 6.5 points per game against a 15.1 projection, with 12.3 touches per game and 1.7 red-zone looks per game.",
+          "The bet is that his carries hold and the line recovers. His 48% snap share and 7% target share are real concerns."
+        ],
+        "you": [
+          "Barkley replaces Kyle Monangai at RB, your thinnest position, and your team value rises about 4.9%.",
+          "Jalen Hurts and Drake Maye remain your healthy quarterbacks. Maye is a hold, so do not trade him."
+        ],
+        "them": [
+          "stplohasz is thin at QB and RB, and Young steps into their Superflex slot.",
+          "The second-round pick is a late pick, priced at 1,430 and in line with this league's late second-round median of 1,460."
+        ],
+        "experts": [
+          "After week 1, FantasyNerds flagged Barkley's weak route participation and line trouble, and cautioned his owners against selling low (September 14).",
+          "Footballguys' April preview had Young as a fringe starter, so 24.4 points per game is well above what analysts expected."
+        ]
+      },
+      "risks": [
+        "Guard Landon Dickerson is on injured reserve and cannot return before mid-October, so the line may stay poor for several games.",
+        "Barkley had one catch on two targets after week 1, so a weak passing role could cap him.",
+        "If Young keeps producing, you gave up a Superflex option."
+      ],
+      "sources": [
+        {
+          "title": "Saquon Barkley's early Eagles usage raises concerns despite solid yards (FantasyNerds)",
+          "url": "https://www.fantasynerds.com/news/story/2026/09/14/saquon-barkleys-early-eagles-usage-raises-concerns-despite-solid-yards-1623666"
+        },
+        {
+          "title": "Will Bryce Young Finally Be Fantasy Relevant? (Footballguys)",
+          "url": "https://www.footballguys.com/article/2026-will-bryce-young-finally-fantasy-relevant"
+        }
+      ]
+    },
+    {
+      "id": "z1xoo3",
+      "partner": {
+        "roster_id": 5,
+        "name": "Evening News Team",
+        "user": "MLew234",
+        "record": "1-2",
+        "thin": [
+          "RB",
+          "QB"
+        ],
+        "deep": [
+          "TE",
+          "WR"
+        ]
+      },
+      "give": [
+        {
+          "id": "9228",
+          "n": "Bryce Young",
+          "p": "QB",
+          "t": "CAR",
+          "v": 3668,
+          "pr": 16,
+          "trend": 1233,
+          "trendPct": 0.51,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 24.4,
+            "proj": 15.5,
+            "perf": 1.57,
+            "snap": 95,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 1
+          }
+        },
+        {
+          "id": "13301",
+          "n": "Antonio Williams",
+          "p": "WR",
+          "t": "WAS",
+          "v": 1496,
+          "pr": 48,
+          "trend": 58,
+          "trendPct": 0.04,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 6.9,
+            "proj": 3.9,
+            "perf": 1.76,
+            "snap": 42,
+            "tgtShare": 12,
+            "tpg": 3.7,
+            "touches": null,
+            "rz": 0.7
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "10229",
+          "n": "Rashee Rice",
+          "p": "WR",
+          "t": "KC",
+          "v": 2980,
+          "pr": 23,
+          "trend": -683,
+          "trendPct": -0.19,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 10.5,
+            "proj": 10.5,
+            "perf": 1,
+            "snap": 80,
+            "tgtShare": 19,
+            "tpg": 5.7,
+            "touches": null,
+            "rz": 1.3
+          }
+        },
+        {
+          "id": "12522",
+          "n": "Cam Ward",
+          "p": "QB",
+          "t": "TEN",
+          "v": 2420,
+          "pr": 24,
+          "trend": -839,
+          "trendPct": -0.26,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 13.7,
+            "proj": 13.5,
+            "perf": 1.01,
+            "snap": 100,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 1.3
+          }
+        }
+      ],
+      "value": {
+        "give": 5164,
+        "get": 5400,
+        "giveAdj": 4865,
+        "getAdj": 4916,
+        "diffPct": 0.014,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "gainPct": 1.5,
+        "changes": {
+          "in": [
+            {
+              "n": "Rashee Rice",
+              "slot": "FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Makai Lemon",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": {
+          "id": "11435",
+          "n": "Emanuel Wilson",
+          "p": "RB",
+          "v": 638
+        }
+      },
+      "them": {
+        "gainPct": 1.1
+      },
+      "headline": "Trade Bryce Young and Antonio Williams at their highs for Rashee Rice and Cam Ward",
+      "summary": "Two overperformers turn into a starting flex receiver and a young quarterback, both priced 19% to 26% below where they were a month ago.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Young is at 24.4 points per game against 15.5 projected, up 51% in value. Williams scores 6.9 against 3.9 on a 42% snap share.",
+          "Williams has a 12% target share, which does not support his scoring pace."
+        ],
+        "get": [
+          "Rice has an 80% snap share, 19% target share and 1.3 red-zone looks per game, and his value fell 19% in 30 days.",
+          "Ward plays every snap and scores about as projected, but his value fell 26%, which makes him a cheap Superflex piece."
+        ],
+        "you": [
+          "Rice starts at flex in place of Makai Lemon, and your team value rises about 1.5%.",
+          "You drop Emanuel Wilson to make the roster spot."
+        ],
+        "them": [
+          "Evening News Team is thin at RB and QB. They get a quarterback scoring 24.4 points per game and a receiver who is outproducing his role."
+        ],
+        "experts": [
+          "The Fantasy Footballers noted Rice had a 26.5% target share and 18 red-zone targets over his 2025 games (August).",
+          "Footballguys' April preview had Young as a fringe starter, so his current pace looks unsustainable."
+        ]
+      },
+      "risks": [
+        "Rice's 19% target share is down from 26.5% in 2025, so his role is smaller than last year's.",
+        "Young could keep producing, which would make this a sell too early."
+      ],
+      "sources": [
+        {
+          "title": "Fantasy Court: The Case FOR Rashee Rice in 2026 (The Fantasy Footballers)",
+          "url": "https://www.thefantasyfootballers.com/analysis/fantasy-court-the-case-for-rashee-rice-in-2026-fantasy-football/"
+        },
+        {
+          "title": "Will Bryce Young Finally Be Fantasy Relevant? (Footballguys)",
+          "url": "https://www.footballguys.com/article/2026-will-bryce-young-finally-fantasy-relevant"
+        }
+      ]
+    },
+    {
+      "id": "koze95",
+      "partner": {
+        "roster_id": 6,
+        "name": "Njgriffin",
+        "user": "Njgriffin",
+        "record": "0-3",
+        "thin": [
+          "TE",
+          "WR"
+        ],
+        "deep": [
+          "RB",
+          "QB"
+        ]
+      },
+      "give": [
         {
           "id": "11635",
           "n": "Ladd McConkey",
           "p": "WR",
           "t": "LAC",
-          "v": 3537,
+          "v": 3496,
           "pr": 17,
-          "trend": -202,
-          "status": null
+          "trend": -291,
+          "trendPct": -0.08,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 3,
+            "ppg": 10.1,
+            "proj": 11.1,
+            "perf": 0.91,
+            "snap": 62,
+            "tgtShare": 17,
+            "tpg": 5,
+            "touches": null,
+            "rz": 0.7
+          }
+        },
+        {
+          "id": "10232",
+          "n": "Michael Wilson",
+          "p": "WR",
+          "t": "ARI",
+          "v": 2147,
+          "pr": 35,
+          "trend": 211,
+          "trendPct": 0.11,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 3,
+            "ppg": 10.4,
+            "proj": 8.9,
+            "perf": 1.18,
+            "snap": 91,
+            "tgtShare": 27,
+            "tpg": 10.3,
+            "touches": null,
+            "rz": 1.7
+          }
         }
       ],
       "get": [
@@ -69,305 +479,259 @@
           "n": "Omarion Hampton",
           "p": "RB",
           "t": "LAC",
-          "v": 4936,
-          "pr": 8,
-          "trend": -1329,
-          "status": null
+          "v": 4438,
+          "pr": 10,
+          "trend": -1681,
+          "trendPct": -0.27,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 3,
+            "ppg": 10.1,
+            "proj": 13.1,
+            "perf": 0.77,
+            "snap": 54,
+            "tgtShare": 3,
+            "tpg": 1,
+            "touches": 17.3,
+            "rz": 2.7
+          }
         },
         {
-          "id": "4892",
-          "n": "Baker Mayfield",
-          "p": "QB",
-          "t": "TB",
-          "v": 2801,
-          "pr": 21,
-          "trend": -382,
-          "status": null
+          "id": "6819",
+          "n": "Michael Pittman",
+          "p": "WR",
+          "t": "PIT",
+          "v": 1316,
+          "pr": 64,
+          "trend": -276,
+          "trendPct": -0.17,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 2,
+            "ppg": 5,
+            "proj": 7.9,
+            "perf": 0.63,
+            "snap": 81,
+            "tgtShare": 12,
+            "tpg": 4,
+            "touches": null,
+            "rz": 0
+          }
         }
       ],
       "value": {
-        "give": 7862,
-        "get": 7737,
-        "giveAdj": 7155,
-        "getAdj": 7177,
-        "diffPct": 0.004,
+        "give": 5643,
+        "get": 5754,
+        "giveAdj": 5214,
+        "getAdj": 5491,
+        "diffPct": 0.062,
         "fair": true,
-        "verdict": "Even"
+        "verdict": "Slightly in your favor"
       },
       "you": {
-        "before": 41097,
-        "after": 42352,
-        "gainPct": 3.1,
-        "changes": {
-          "in": [
-            {
-              "n": "Omarion Hampton",
-              "slot": "RB"
-            },
-            {
-              "n": "Michael Wilson",
-              "slot": "FLEX"
-            }
-          ],
-          "out": [
-            {
-              "n": "Jonah Coleman",
-              "slot": "RB"
-            },
-            {
-              "n": "Ladd McConkey",
-              "slot": "WR"
-            }
-          ]
-        },
-        "drop": {
-          "id": "11435",
-          "n": "Emanuel Wilson",
-          "p": "RB",
-          "v": 846
-        }
-      },
-      "them": {
-        "before": 29466,
-        "after": 29591,
-        "gainPct": 0.4,
-        "changes": {
-          "in": [
-            {
-              "n": "Jaxson Dart",
-              "slot": "QB"
-            },
-            {
-              "n": "Ladd McConkey",
-              "slot": "WR"
-            }
-          ],
-          "out": [
-            {
-              "n": "Omarion Hampton",
-              "slot": "RB"
-            },
-            {
-              "n": "Baker Mayfield",
-              "slot": "SUPER_FLEX"
-            }
-          ]
-        },
-        "drop": null
-      },
-      "headline": "Turn a season-ending Dart and banged-up McConkey into a healthy, ascending RB1 in Omarion Hampton",
-      "summary": "Dart needs season-ending knee surgery and won't help until 2027, and we're deep enough at WR to move McConkey; Hampton is fully healthy and stepping into a lead role for a rebuilding Njgriffin squad.",
-      "confidence": "high",
-      "why": {
-        "give": [
-          "Dart suffered MCL/PCL/meniscus damage in Week 2, needs season-ending surgery, and isn't expected back until 2027.",
-          "McConkey is nursing a Week 1 rib injury; we're deep at WR (Nacua, Odunze, Lemon, M. Wilson) and can absorb the loss."
-        ],
-        "get": [
-          "Hampton says his rookie-year ankle injuries are behind him and is set for a bigger workload in year two (FantasyCalc rank 8).",
-          "Mayfield fought through a Week 3 illness but had a full practice Friday and is not on the injury report."
-        ],
-        "you": [
-          "Fills our thinnest position (RB) with a clear breakout-caliber back, replacing IR'd Jonah Coleman in the lineup.",
-          "Adds Superflex QB depth behind Hurts/Maye without touching either current starter."
-        ],
-        "them": [
-          "0-2 Njgriffin is thin at QB/TE and deep at RB/WR, so moving a surplus RB for a high-capital rookie QB fits a rebuild.",
-          "They bank Dart's long-term upside (ACL intact) for 2027 while adding a WR (McConkey) to their deep receiver room."
-        ]
-      },
-      "risks": [
-        "Giants HC left open a slim chance Dart returns in the 2026 postseason, which would make this look like an early sell.",
-        "Hampton is still building back to a full workload post-injury, so touches could stay inconsistent for a few more weeks."
-      ],
-      "sources": [
-        {
-          "title": "Sources: Giants QB Jaxson Dart out for extended period",
-          "url": "https://www.espn.com/nfl/story/_/id/50007211/sources-giants-qb-jaxson-dart-extended-period"
-        },
-        {
-          "title": "Jaxson Dart Out For Season With Knee Injury, Latest NFL Rumors on Giants QB's Timeline to Return",
-          "url": "https://bleacherreport.com/articles/25502255-jaxson-dart-out-season-knee-injury-latest-nfl-rumors-giants-qbs-timeline-return"
-        },
-        {
-          "title": "Can Omarion Hampton be guy for Chargers after injury-riddled season?",
-          "url": "https://sports.yahoo.com/articles/omarion-hampton-guy-chargers-injury-205536540.html"
-        },
-        {
-          "title": "Baker Mayfield set to play in Week 3",
-          "url": "https://sports.yahoo.com/articles/baker-mayfield-set-play-week-191917057.html"
-        },
-        {
-          "title": "Ladd McConkey Injured, Latest Updates on Chargers WR's Status",
-          "url": "https://bleacherreport.com/articles/25499535-ladd-mcconkey-injured-latest-updates-chargers-wrs-status-vs-raiders-after-loss-cardinals"
-        }
-      ]
-    },
-    {
-      "id": "1pw7epj",
-      "partner": {
-        "roster_id": 1,
-        "name": "THE CREAM TEAM",
-        "user": "brodywade",
-        "record": "2-0",
-        "thin": [
-          "TE",
-          "WR"
-        ],
-        "deep": [
-          "QB",
-          "RB"
-        ]
-      },
-      "give": [
-        {
-          "id": "11564",
-          "n": "Drake Maye",
-          "p": "QB",
-          "t": "NE",
-          "v": 6256,
-          "pr": 4,
-          "trend": -1898,
-          "status": null
-        }
-      ],
-      "get": [
-        {
-          "id": "9226",
-          "n": "De'Von Achane",
-          "p": "RB",
-          "t": "MIA",
-          "v": 4900,
-          "pr": 9,
-          "trend": -1160,
-          "status": null
-        },
-        {
-          "id": "12487",
-          "n": "Terrance Ferguson",
-          "p": "TE",
-          "t": "LAR",
-          "v": 1684,
-          "pr": 14,
-          "trend": 89,
-          "status": null
-        }
-      ],
-      "value": {
-        "give": 6256,
-        "get": 6584,
-        "giveAdj": 6256,
-        "getAdj": 6247,
-        "diffPct": -0.001,
-        "fair": true,
-        "verdict": "Even"
-      },
-      "you": {
-        "before": 41097,
-        "after": 41981,
         "gainPct": 2.2,
         "changes": {
           "in": [
             {
-              "n": "De'Von Achane",
+              "n": "Omarion Hampton",
               "slot": "RB"
             },
             {
-              "n": "Jaxson Dart",
-              "slot": "SUPER_FLEX"
-            }
-          ],
-          "out": [
-            {
-              "n": "Drake Maye",
-              "slot": "QB"
-            },
-            {
-              "n": "Jonah Coleman",
-              "slot": "RB"
-            }
-          ]
-        },
-        "drop": {
-          "id": "11435",
-          "n": "Emanuel Wilson",
-          "p": "RB",
-          "v": 846
-        }
-      },
-      "them": {
-        "before": 49551,
-        "after": 50125,
-        "gainPct": 1.2,
-        "changes": {
-          "in": [
-            {
-              "n": "Javonte Williams",
+              "n": "Juwan Johnson",
               "slot": "FLEX"
-            },
-            {
-              "n": "Drake Maye",
-              "slot": "SUPER_FLEX"
             }
           ],
           "out": [
             {
-              "n": "De'Von Achane",
+              "n": "Kyle Monangai",
               "slot": "RB"
             },
             {
-              "n": "Dak Prescott",
-              "slot": "SUPER_FLEX"
+              "n": "Ladd McConkey",
+              "slot": "WR"
             }
           ]
         },
         "drop": null
       },
-      "headline": "Sell a turnover-prone Maye for a bell-cow in Achane plus the Rams' new TE1 Ferguson",
-      "summary": "Maye has been erratic through two games and we're deep at QB, while Achane anchors Miami's backfield and Ferguson just took over as Sean McVay's clear TE1 — a real plus under your te_premium scoring.",
-      "confidence": "high",
+      "them": {
+        "gainPct": -0.8
+      },
+      "headline": "Buy Omarion Hampton after a 27% price drop with Ladd McConkey and Michael Wilson",
+      "summary": "Hampton is a lead back with 17.3 touches per game, and his price has cratered. You pay with two receivers from your deepest position, one scoring above projection.",
+      "confidence": "low",
       "why": {
         "give": [
-          "Maye threw 3 INTs and lost a fumble in Week 1; we already start Hurts and roster Brissett/Young/Milroe behind him.",
-          "QB is our deepest position, so moving a Superflex QB2 doesn't touch our starting lineup at all."
+          "Michael Wilson scores 10.4 points per game against 8.9 projected, and his value is up 11%. His role is real, so this is a price you pay.",
+          "McConkey scores 10.1 against 11.1 projected. You have depth at WR, so both can be spared."
         ],
         "get": [
-          "Achane is Miami's clear lead back; he took a full practice Friday despite a questionable hip tag and profiles as an all-but-certain starter.",
-          "Ferguson logged 58% snaps, a 31% target share and 6 catches on 9 targets in Week 2, taking over the Rams' TE1 job — extra value with te_premium."
+          "Hampton averages 17.3 touches per game and 2.7 red-zone looks per game, but scores 10.1 against a 13.1 projection.",
+          "His value fell 27% in 30 days while the workload stayed. Snap share is 54%, so the backfield is shared."
         ],
         "you": [
-          "Directly fills both roster-thin spots (RB and TE) in a single trade, replacing IR'd Coleman and pairing Ferguson with Warren.",
-          "Leaves Hurts in place as our Superflex starter, so the current lineup doesn't get worse anywhere."
+          "Hampton takes a starting RB spot from Kyle Monangai, and Juwan Johnson moves into your flex. Team value rises about 2.2%.",
+          "Your thin RB group gets a real lead back, and WR is your deepest position."
         ],
         "them": [
-          "2-0 CREAM TEAM is deep at QB/RB and thin at WR/TE, moving a buried TE (Ferguson) for a true Superflex starter in Maye.",
-          "Their own lineup math shows a gain from swapping Dak Prescott to Maye in Superflex (+1.2% team value)."
+          "Njgriffin is 0-3 and thin at WR and TE. McConkey and Wilson both start for them right away.",
+          "They keep depth at RB, so they can afford to move Hampton."
+        ],
+        "experts": [
+          "The Chargers' site lists Hampton as a 2026 breakout candidate with Mike McDaniel calling plays (May, preseason)."
         ]
       },
       "risks": [
-        "Maye limited his Week 2 turnovers (win over Pittsburgh) and could still hit his ceiling, making this a sell-low if he stabilizes.",
-        "Achane's hip is a game-time watch; a setback this week would blunt the immediate return on this deal."
+        "Hampton has a 3% target share and a 54% snap share, so he depends on carries and game script.",
+        "Pittman adds little, and Juwan Johnson moves into your flex."
       ],
       "sources": [
         {
-          "title": "Drake Maye, New England Patriots, QB - 2026-27 Game Log",
-          "url": "https://www.cbssports.com/nfl/players/26695757/drake-maye/game-log/"
+          "title": "Omarion Hampton breakout players fantasy 2026 (Chargers.com)",
+          "url": "https://www.chargers.com/news/omarion-hampton-breakout-players-fantasy-2026"
         },
         {
-          "title": "De'Von Achane is Carrying a Heavy Workload in Miami",
-          "url": "https://www.rotoballer.com/player-news/devon-achane-is-carrying-a-heavy-workload-in-miami/1951181"
-        },
-        {
-          "title": "Rams snap count review: Terrance Ferguson stakes a claim for TE#1",
-          "url": "https://sports.yahoo.com/articles/rams-snap-count-review-terrance-223500168.html"
-        },
-        {
-          "title": "L.A. Rams snap count review: Terrance Ferguson claims TE#1 role",
-          "url": "https://www.turfshowtimes.com/los-angeles-rams-scores-results/149624/rams-snap-counts-terrance-ferguson"
+          "title": "Fantasy Football Rankings: Dynasty Trade Value Chart (August 2026 Update) (FantasyPros)",
+          "url": "https://www.fantasypros.com/2026/8/fantasy-football-rankings-dynasty-trade-value-chart-august-2026-update/amp/"
         }
       ]
     }
   ],
-  "none_reason": null,
-  "started": "2026-09-29T17:55:29.930Z"
+  "short_reason": "Only three trades survived review: the others left your lineup unchanged or sold players at prices not worth the roster spot.",
+  "review": {
+    "checked": true,
+    "notes": [
+      "The reviewer dropped two trades that left your lineup unchanged and one built on a source that did not support it.",
+      "Corrected Young's 2025 finish, the Rice target share, and how the FantasyNerds warning is framed.",
+      "Softened Hampton to a shared-snap lead back and lowered confidence."
+    ]
+  },
+  "draft_history": {
+    "seasons": [
+      "2026",
+      "2025"
+    ],
+    "rounds": [
+      {
+        "round": 1,
+        "n": 20,
+        "median": 2940,
+        "early": 3987,
+        "mid": 2534,
+        "late": 2312,
+        "busts": 0,
+        "best": [
+          {
+            "name": "Ashton Jeanty",
+            "pos": "RB",
+            "season": "2025",
+            "pick": "1.01",
+            "v": 6507
+          },
+          {
+            "name": "Jeremiyah Love",
+            "pos": "RB",
+            "season": "2026",
+            "pick": "1.02",
+            "v": 6152
+          },
+          {
+            "name": "Omarion Hampton",
+            "pos": "RB",
+            "season": "2025",
+            "pick": "1.02",
+            "v": 4438
+          }
+        ],
+        "market": {
+          "early": 5091,
+          "mid": 3352,
+          "late": 2558,
+          "any": 3128
+        }
+      },
+      {
+        "round": 2,
+        "n": 20,
+        "median": 1460,
+        "early": 1385,
+        "mid": 1732,
+        "late": 1460,
+        "busts": 0,
+        "best": [
+          {
+            "name": "Jaxson Dart",
+            "pos": "QB",
+            "season": "2025",
+            "pick": "2.01",
+            "v": 4366
+          },
+          {
+            "name": "Tyler Shough",
+            "pos": "QB",
+            "season": "2025",
+            "pick": "2.09",
+            "v": 4306
+          },
+          {
+            "name": "Colston Loveland",
+            "pos": "TE",
+            "season": "2025",
+            "pick": "2.06",
+            "v": 3629
+          }
+        ],
+        "market": {
+          "early": 2033,
+          "mid": 1669,
+          "late": 1430,
+          "any": 1614
+        }
+      },
+      {
+        "round": 3,
+        "n": 20,
+        "median": 499,
+        "early": 430,
+        "mid": 573,
+        "late": 645,
+        "busts": 50,
+        "best": [
+          {
+            "name": "Bhayshul Tuten",
+            "pos": "RB",
+            "season": "2025",
+            "pick": "3.04",
+            "v": 2790
+          },
+          {
+            "name": "Harold Fannin",
+            "pos": "TE",
+            "season": "2025",
+            "pick": "3.10",
+            "v": 2600
+          },
+          {
+            "name": "De'Zhaun Stribling",
+            "pos": "WR",
+            "season": "2026",
+            "pick": "3.09",
+            "v": 1654
+          }
+        ],
+        "market": {
+          "early": 1248,
+          "mid": 1106,
+          "late": 1018,
+          "any": 1090
+        }
+      }
+    ]
+  }
 }
