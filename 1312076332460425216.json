@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "ready",
+  "status": "running",
   "league_id": "1312076332460425216",
   "league_name": "Family Dynasty",
   "season": "2026",
@@ -1144,5 +1144,6 @@
         }
       }
     ]
-  }
+  },
+  "started": "2026-09-30T03:55:19.733Z"
 }
