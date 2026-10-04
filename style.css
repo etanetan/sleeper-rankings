@@ -120,6 +120,15 @@ a{color:var(--accent)}
   .nm{word-break:break-word}
   h1{font-size:20px}
   .lh h2{font-size:16px}
+  /* 6 tabs no longer fit evenly on a phone-width screen - flex:1 just
+     squeezed/clipped the last ones off the right edge instead of actually
+     shrinking (white-space:nowrap stops them wrapping, so their minimum
+     width is their full text). Scroll the row horizontally instead, each
+     tab keeping its natural width - a swipeable tab strip reads as
+     normal mobile UI, a silently clipped one reads as broken. */
+  .tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto;padding:9px 14px}
 }
 @media(max-width:340px){
   .pts{display:none}                   /* names win over projected points */
