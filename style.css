@@ -66,8 +66,16 @@ a.lb-open{font-weight:600}
 
 .recap-line{color:var(--dim);font-size:12.5px;margin:0 0 12px;line-height:1.5}
 
+/* Scrollable whenever the tabs don't fit, at any width - not just below
+   the mobile breakpoint below. flex:1's tabs have a text-width floor
+   (white-space:nowrap), so a too-narrow window of any kind (a split-screen
+   phone, a resized desktop browser, a tablet) would otherwise overflow the
+   whole page horizontally instead of just the tab row. Invisible when
+   there's room (scrollWidth <= clientWidth means no scrollbar appears). */
 .tabs{display:flex;gap:4px;margin:14px 0 12px;background:var(--chip);
-  padding:4px;border-radius:10px}
+  padding:4px;border-radius:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
 .tab{flex:1;background:transparent;color:var(--dim);border:none;border-radius:7px;
   padding:9px 12px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
 .tab:hover{color:var(--ink);filter:none}
@@ -120,14 +128,11 @@ a{color:var(--accent)}
   .nm{word-break:break-word}
   h1{font-size:20px}
   .lh h2{font-size:16px}
-  /* 6 tabs no longer fit evenly on a phone-width screen - flex:1 just
-     squeezed/clipped the last ones off the right edge instead of actually
-     shrinking (white-space:nowrap stops them wrapping, so their minimum
-     width is their full text). Scroll the row horizontally instead, each
-     tab keeping its natural width - a swipeable tab strip reads as
-     normal mobile UI, a silently clipped one reads as broken. */
-  .tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-  .tabs::-webkit-scrollbar{display:none}
+  /* Below this width, 6 tabs don't fit even stretched evenly (flex:1) -
+     let each keep its natural size instead and rely on .tabs' own
+     overflow-x:auto (set unconditionally above) to make the row
+     swipeable. A cut-off tab at the edge reads as "swipe for more";
+     desktop keeps the even-fill look, since there's room to spare there. */
   .tab{flex:0 0 auto;padding:9px 14px}
 }
 @media(max-width:340px){
