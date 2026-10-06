@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1312115063020081152",
   "league_name": "UMN Dynasty League 🧨",
   "season": "2026",
@@ -786,5 +786,8 @@
     "checked": false
   },
   "draft_history": null,
-  "started": "2026-10-06T17:55:06.153Z"
+  "error": {
+    "at": "2026-10-06T17:56:17.065Z",
+    "reason": "Research couldn't verify week 5 news for most players in this league (web search returned mostly preseason and older articles), so no trades were published; previous trades stay up."
+  }
 }
