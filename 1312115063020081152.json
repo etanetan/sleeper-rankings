@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1312115063020081152",
   "league_name": "UMN Dynasty League 🧨",
   "season": "2026",
@@ -786,5 +786,8 @@
     "checked": false
   },
   "draft_history": null,
-  "started": "2026-10-06T12:55:49.317Z"
+  "error": {
+    "at": "2026-10-06T12:56:15.515Z",
+    "reason": "Web research returned too little verifiable current news to support sourced trade write-ups this run; will retry next run."
+  }
 }
