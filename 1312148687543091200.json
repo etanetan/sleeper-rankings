@@ -1,20 +1,20 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1312148687543091200",
   "league_name": "HTB DYNASTY",
   "season": "2026",
-  "week": 4,
-  "generated": "2026-09-29T17:59:06.711Z",
+  "week": 5,
+  "generated": "2026-10-07T03:57:54.594Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&numTeams=10&ppr=0",
-    "fetched": "2026-09-29T17:55:24.083Z"
+    "fetched": "2026-10-07T03:56:01.584Z"
   },
   "me": {
     "name": "etanetan",
-    "record": "1-2",
+    "record": "2-2",
     "thin": [
       "RB",
       "TE"
@@ -26,135 +26,135 @@
   },
   "trades": [
     {
-      "id": "ovl0mo",
+      "id": "jewhxw",
       "partner": {
-        "roster_id": 9,
-        "name": "stplohasz",
-        "user": "stplohasz",
-        "record": "3-0",
+        "roster_id": 7,
+        "name": "nickmiller17",
+        "user": "nickmiller17",
+        "record": "3-1",
         "thin": [
-          "QB",
-          "RB"
+          "WR",
+          "TE"
         ],
         "deep": [
-          "TE",
-          "WR"
+          "RB",
+          "QB"
         ]
       },
       "give": [
         {
-          "id": "9228",
-          "n": "Bryce Young",
-          "p": "QB",
-          "t": "CAR",
-          "v": 3668,
-          "pr": 16,
-          "trend": 1233,
-          "trendPct": 0.51,
-          "status": null,
-          "sidelined": false,
-          "tag": "sell_high",
-          "tagBy": "numbers",
-          "form": {
-            "g": 3,
-            "ppg": 24.4,
-            "proj": 15.5,
-            "perf": 1.57,
-            "snap": 95,
-            "tgtShare": null,
-            "tpg": null,
-            "touches": null,
-            "rz": 1
-          }
-        },
-        {
-          "id": "3257",
-          "n": "Jacoby Brissett",
-          "p": "QB",
-          "t": "ARI",
-          "v": 1482,
-          "pr": 31,
-          "trend": 96,
-          "trendPct": 0.07,
-          "status": null,
-          "sidelined": false,
-          "tag": "sell_high",
-          "tagBy": "numbers",
-          "form": {
-            "g": 3,
-            "ppg": 16.2,
-            "proj": 12.9,
-            "perf": 1.26,
-            "snap": 100,
-            "tgtShare": null,
-            "tpg": null,
-            "touches": null,
-            "rz": 1
-          }
-        }
-      ],
-      "get": [
-        {
-          "id": "4866",
-          "n": "Saquon Barkley",
+          "id": "12534",
+          "n": "Kyle Monangai",
           "p": "RB",
-          "t": "PHI",
-          "v": 3682,
-          "pr": 13,
-          "trend": -496,
-          "trendPct": -0.12,
-          "status": null,
+          "t": "CHI",
+          "v": 2040,
+          "pr": 27,
+          "trend": 437,
+          "trendPct": 0.27,
+          "status": "Questionable",
           "sidelined": false,
-          "tag": "buy_low",
-          "tagBy": "numbers",
+          "tag": "sell_high",
+          "tagBy": "research",
           "form": {
-            "g": 3,
-            "ppg": 6.5,
-            "proj": 15.1,
-            "perf": 0.43,
-            "snap": 48,
-            "tgtShare": 7,
-            "tpg": 2,
-            "touches": 12.3,
-            "rz": 1.7
+            "g": 4,
+            "ppg": 15.7,
+            "proj": 7,
+            "perf": 2.23,
+            "snap": 41,
+            "tgtShare": 4,
+            "tpg": 1.3,
+            "touches": 16.3,
+            "rz": 3.8
           }
         },
         {
-          "id": "pick_2027_2_9",
-          "n": "2027 2nd (Late)",
+          "id": "pick_2028_1_10",
+          "n": "2028 1st",
           "p": "PICK",
           "t": "own",
-          "v": 1430,
+          "v": 2331,
           "pr": null,
-          "trend": 11,
-          "trendPct": 0.01,
+          "trend": 128,
+          "trendPct": 0.06,
           "status": null,
           "sidelined": false,
           "tag": null,
           "tagBy": null,
           "form": null,
           "isPick": true,
-          "season": 2027,
-          "round": 2,
-          "slot": "late",
-          "from": 9
+          "season": 2028,
+          "round": 1,
+          "slot": null,
+          "from": 10
+        }
+      ],
+      "get": [
+        {
+          "id": "12481",
+          "n": "Cam Skattebo",
+          "p": "RB",
+          "t": "NYG",
+          "v": 2846,
+          "pr": 20,
+          "trend": -137,
+          "trendPct": -0.05,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 4,
+            "ppg": 10.1,
+            "proj": 14,
+            "perf": 0.72,
+            "snap": 65,
+            "tgtShare": 8,
+            "tpg": 2.3,
+            "touches": 19,
+            "rz": 2.8
+          }
+        },
+        {
+          "id": "13311",
+          "n": "Chris Bell",
+          "p": "WR",
+          "t": "MIA",
+          "v": 1385,
+          "pr": 55,
+          "trend": -212,
+          "trendPct": -0.13,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 4,
+            "ppg": 2.9,
+            "proj": 4.7,
+            "perf": 0.62,
+            "snap": 60,
+            "tgtShare": 14,
+            "tpg": 3.5,
+            "touches": null,
+            "rz": 0.3
+          }
         }
       ],
       "value": {
-        "give": 5150,
-        "get": 5112,
-        "giveAdj": 4854,
-        "getAdj": 4826,
-        "diffPct": -0.008,
+        "give": 4371,
+        "get": 4231,
+        "giveAdj": 3963,
+        "getAdj": 3954,
+        "diffPct": -0.003,
         "fair": true,
         "verdict": "Even"
       },
       "you": {
-        "gainPct": 4.9,
+        "gainPct": 1.1,
         "changes": {
           "in": [
             {
-              "n": "Saquon Barkley",
+              "n": "Cam Skattebo",
               "slot": "RB"
             }
           ],
@@ -165,59 +165,67 @@
             }
           ]
         },
-        "drop": null
+        "drop": {
+          "id": "2505",
+          "n": "Darren Waller",
+          "p": "TE",
+          "v": 956
+        }
       },
       "them": {
-        "gainPct": -0.5
+        "gainPct": -1
       },
-      "headline": "Sell Bryce Young and Jacoby Brissett at their peak for Saquon Barkley, a starting back priced 12% lower than a month ago",
-      "summary": "Two bench quarterbacks scoring well over projection buy you a starting back whose price fell 12% in 30 days. Your thinnest position gets fixed, with real role risk.",
+      "headline": "Sell Kyle Monangai's hot stretch plus a 2028 1st for Cam Skattebo, who gets nearly every touch for the Giants",
+      "summary": "You turn a 41%-snap back who is outscoring his projection into a workhorse who is underscoring his. nickmiller17 gets a hot name and a first-round pick.",
       "confidence": "medium",
       "why": {
         "give": [
-          "Bryce Young scores 24.4 points per game against a 15.5 projection, and his FantasyCalc value is up 51% in 30 days.",
-          "Brissett is at 16.2 against 12.9 projected. Both sit on your bench, so their peak price costs your lineup nothing."
+          "Monangai scores 15.7 points per game against a 7.0 projection (2.2x) on only 41% of snaps and a 4% target share.",
+          "His FantasyCalc value is up 27% in 30 days, and he is listed Questionable, so his price is at its peak.",
+          "This league's recent first-rounders have a median value of 2,857, above your 2028 1st's 2,331 price, with 0% busts, so you give up a pick type that has returned more than it costs."
         ],
         "get": [
-          "Barkley scores 6.5 points per game against a 15.1 projection, with 12.3 touches per game and 1.7 red-zone looks per game.",
-          "The bet is that his carries hold and the line recovers. His 48% snap share and 7% target share are real concerns."
+          "Skattebo averages 19 touches per game, 65% of snaps and 2.8 red-zone looks per game, yet scores 10.1 against a 14.0 projection (0.72).",
+          "The workload is intact and his FantasyCalc value is down only 5%, so the cost is low relative to the role.",
+          "Chris Bell has a 14% target share and 60% of snaps, so he is a cheap depth piece, not a core part of the deal."
         ],
         "you": [
-          "Barkley replaces Kyle Monangai at RB, your thinnest position, and your team value rises about 4.9%.",
-          "Jalen Hurts and Drake Maye remain your healthy quarterbacks. Maye is a hold, so do not trade him."
+          "Skattebo replaces Monangai in your RB2 slot, so the swap is an upgrade in role. Your team score rises about 1.1%.",
+          "You are thin at RB, and this turns a part-time back into a full-time one.",
+          "Darren Waller (FantasyCalc value 956, a bench TE) is the drop the engine makes for roster space; you could trade him elsewhere first."
         ],
         "them": [
-          "stplohasz is thin at QB and RB, and Young steps into their Superflex slot.",
-          "The second-round pick is a late pick, priced at 1,430 and in line with this league's late second-round median of 1,460."
+          "nickmiller17 (3-1) is thin at WR and TE and deep at RB, so Monangai is depth they can spare.",
+          "Monangai's 15.7 points per game and 2.2x projection beat look great on their screen right now."
         ],
         "experts": [
-          "After week 1, FantasyNerds flagged Barkley's weak route participation and line trouble, and cautioned his owners against selling low (September 14).",
-          "Footballguys' April preview had Young as a fringe starter, so 24.4 points per game is well above what analysts expected."
+          "FantasyPros' Week 5 buy/sell/hold column names Skattebo a buy, saying he is getting nearly every touch (about 19 per game), and ranks him a mid-RB2 by expert consensus.",
+          "FantasyPros notes limited touchdown opportunities for Skattebo, which is why the consensus ranking is only mid-RB2."
         ]
       },
       "risks": [
-        "Guard Landon Dickerson is on injured reserve and cannot return before mid-October, so the line may stay poor for several games.",
-        "Barkley had one catch on two targets after week 1, so a weak passing role could cap him.",
-        "If Young keeps producing, you gave up a Superflex option."
+        "Skattebo's 10.1 points per game on 19 touches shows weak efficiency, and it may not improve behind the Giants' offense.",
+        "Monangai could keep scoring on his red-zone work (3.8 looks per game) and make this look early.",
+        "A 2028 first is a long-dated asset, and this league's firsts have paid off well (0% busts)."
       ],
       "sources": [
         {
-          "title": "Saquon Barkley's early Eagles usage raises concerns despite solid yards (FantasyNerds)",
-          "url": "https://www.fantasynerds.com/news/story/2026/09/14/saquon-barkleys-early-eagles-usage-raises-concerns-despite-solid-yards-1623666"
+          "title": "Fantasy Football Trade Advice: Players to Buy, Sell or Hold (Week 5) - FantasyPros",
+          "url": "https://www.fantasypros.com/2026/10/fantasy-football-trade-advice-players-to-buy-sell-or-hold-week-5-2026/"
         },
         {
-          "title": "Will Bryce Young Finally Be Fantasy Relevant? (Footballguys)",
-          "url": "https://www.footballguys.com/article/2026-will-bryce-young-finally-fantasy-relevant"
+          "title": "2026 Fantasy Football Week 5 Trade Value Chart - Roto Street Journal",
+          "url": "https://www.rotostreetjournal.com/2026/10/06/2026-fantasy-football-week-5-trade-value-chart/"
         }
       ]
     },
     {
-      "id": "z1xoo3",
+      "id": "1q27qim",
       "partner": {
         "roster_id": 5,
         "name": "Evening News Team",
         "user": "MLew234",
-        "record": "1-2",
+        "record": "1-3",
         "thin": [
           "RB",
           "QB"
@@ -233,383 +241,174 @@
           "n": "Bryce Young",
           "p": "QB",
           "t": "CAR",
-          "v": 3668,
+          "v": 3659,
           "pr": 16,
-          "trend": 1233,
-          "trendPct": 0.51,
+          "trend": 1327,
+          "trendPct": 0.57,
           "status": null,
           "sidelined": false,
           "tag": "sell_high",
-          "tagBy": "numbers",
+          "tagBy": "research",
           "form": {
-            "g": 3,
-            "ppg": 24.4,
-            "proj": 15.5,
-            "perf": 1.57,
-            "snap": 95,
+            "g": 4,
+            "ppg": 23.7,
+            "proj": 16.3,
+            "perf": 1.45,
+            "snap": 96,
             "tgtShare": null,
             "tpg": null,
             "touches": null,
-            "rz": 1
+            "rz": 0.8
           }
         },
         {
-          "id": "13301",
-          "n": "Antonio Williams",
-          "p": "WR",
-          "t": "WAS",
-          "v": 1496,
-          "pr": 48,
-          "trend": 58,
-          "trendPct": 0.04,
+          "id": "2505",
+          "n": "Darren Waller",
+          "p": "TE",
+          "t": "CAR",
+          "v": 956,
+          "pr": 28,
+          "trend": 369,
+          "trendPct": 0.63,
           "status": null,
           "sidelined": false,
           "tag": "sell_high",
-          "tagBy": "numbers",
+          "tagBy": "research",
           "form": {
-            "g": 3,
-            "ppg": 6.9,
-            "proj": 3.9,
-            "perf": 1.76,
-            "snap": 42,
-            "tgtShare": 12,
-            "tpg": 3.7,
+            "g": 4,
+            "ppg": 13.2,
+            "proj": 11.5,
+            "perf": 1.15,
+            "snap": 46,
+            "tgtShare": 13,
+            "tpg": 4.8,
             "touches": null,
-            "rz": 0.7
+            "rz": 1
           }
         }
       ],
       "get": [
         {
-          "id": "10229",
-          "n": "Rashee Rice",
-          "p": "WR",
-          "t": "KC",
-          "v": 2980,
-          "pr": 23,
-          "trend": -683,
-          "trendPct": -0.19,
-          "status": null,
-          "sidelined": false,
-          "tag": "buy_low",
-          "tagBy": "numbers",
-          "form": {
-            "g": 3,
-            "ppg": 10.5,
-            "proj": 10.5,
-            "perf": 1,
-            "snap": 80,
-            "tgtShare": 19,
-            "tpg": 5.7,
-            "touches": null,
-            "rz": 1.3
-          }
-        },
-        {
           "id": "12522",
           "n": "Cam Ward",
           "p": "QB",
           "t": "TEN",
-          "v": 2420,
-          "pr": 24,
-          "trend": -839,
-          "trendPct": -0.26,
+          "v": 2448,
+          "pr": 22,
+          "trend": -599,
+          "trendPct": -0.2,
           "status": null,
           "sidelined": false,
           "tag": "buy_low",
           "tagBy": "numbers",
           "form": {
-            "g": 3,
-            "ppg": 13.7,
-            "proj": 13.5,
-            "perf": 1.01,
+            "g": 4,
+            "ppg": 14.2,
+            "proj": 13.3,
+            "perf": 1.07,
             "snap": 100,
             "tgtShare": null,
             "tpg": null,
             "touches": null,
             "rz": 1.3
           }
+        },
+        {
+          "id": "421",
+          "n": "Matthew Stafford",
+          "p": "QB",
+          "t": "LAR",
+          "v": 2378,
+          "pr": 24,
+          "trend": -287,
+          "trendPct": -0.11,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 4,
+            "ppg": 15.9,
+            "proj": 16.1,
+            "perf": 0.99,
+            "snap": 97,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 1
+          }
         }
       ],
       "value": {
-        "give": 5164,
-        "get": 5400,
-        "giveAdj": 4865,
-        "getAdj": 4916,
-        "diffPct": 0.014,
+        "give": 4615,
+        "get": 4826,
+        "giveAdj": 4424,
+        "getAdj": 4350,
+        "diffPct": -0.02,
         "fair": true,
         "verdict": "Even"
       },
       "you": {
-        "gainPct": 1.5,
+        "gainPct": -0.1,
         "changes": {
-          "in": [
-            {
-              "n": "Rashee Rice",
-              "slot": "FLEX"
-            }
-          ],
-          "out": [
-            {
-              "n": "Makai Lemon",
-              "slot": "FLEX"
-            }
-          ]
-        },
-        "drop": {
-          "id": "11435",
-          "n": "Emanuel Wilson",
-          "p": "RB",
-          "v": 638
-        }
-      },
-      "them": {
-        "gainPct": 1.1
-      },
-      "headline": "Trade Bryce Young and Antonio Williams at their highs for Rashee Rice and Cam Ward",
-      "summary": "Two overperformers turn into a starting flex receiver and a young quarterback, both priced 19% to 26% below where they were a month ago.",
-      "confidence": "medium",
-      "why": {
-        "give": [
-          "Young is at 24.4 points per game against 15.5 projected, up 51% in value. Williams scores 6.9 against 3.9 on a 42% snap share.",
-          "Williams has a 12% target share, which does not support his scoring pace."
-        ],
-        "get": [
-          "Rice has an 80% snap share, 19% target share and 1.3 red-zone looks per game, and his value fell 19% in 30 days.",
-          "Ward plays every snap and scores about as projected, but his value fell 26%, which makes him a cheap Superflex piece."
-        ],
-        "you": [
-          "Rice starts at flex in place of Makai Lemon, and your team value rises about 1.5%.",
-          "You drop Emanuel Wilson to make the roster spot."
-        ],
-        "them": [
-          "Evening News Team is thin at RB and QB. They get a quarterback scoring 24.4 points per game and a receiver who is outproducing his role."
-        ],
-        "experts": [
-          "The Fantasy Footballers noted Rice had a 26.5% target share and 18 red-zone targets over his 2025 games (August).",
-          "Footballguys' April preview had Young as a fringe starter, so his current pace looks unsustainable."
-        ]
-      },
-      "risks": [
-        "Rice's 19% target share is down from 26.5% in 2025, so his role is smaller than last year's.",
-        "Young could keep producing, which would make this a sell too early."
-      ],
-      "sources": [
-        {
-          "title": "Fantasy Court: The Case FOR Rashee Rice in 2026 (The Fantasy Footballers)",
-          "url": "https://www.thefantasyfootballers.com/analysis/fantasy-court-the-case-for-rashee-rice-in-2026-fantasy-football/"
-        },
-        {
-          "title": "Will Bryce Young Finally Be Fantasy Relevant? (Footballguys)",
-          "url": "https://www.footballguys.com/article/2026-will-bryce-young-finally-fantasy-relevant"
-        }
-      ]
-    },
-    {
-      "id": "koze95",
-      "partner": {
-        "roster_id": 6,
-        "name": "Njgriffin",
-        "user": "Njgriffin",
-        "record": "0-3",
-        "thin": [
-          "TE",
-          "WR"
-        ],
-        "deep": [
-          "RB",
-          "QB"
-        ]
-      },
-      "give": [
-        {
-          "id": "11635",
-          "n": "Ladd McConkey",
-          "p": "WR",
-          "t": "LAC",
-          "v": 3496,
-          "pr": 17,
-          "trend": -291,
-          "trendPct": -0.08,
-          "status": null,
-          "sidelined": false,
-          "tag": null,
-          "tagBy": null,
-          "form": {
-            "g": 3,
-            "ppg": 10.1,
-            "proj": 11.1,
-            "perf": 0.91,
-            "snap": 62,
-            "tgtShare": 17,
-            "tpg": 5,
-            "touches": null,
-            "rz": 0.7
-          }
-        },
-        {
-          "id": "10232",
-          "n": "Michael Wilson",
-          "p": "WR",
-          "t": "ARI",
-          "v": 2147,
-          "pr": 35,
-          "trend": 211,
-          "trendPct": 0.11,
-          "status": null,
-          "sidelined": false,
-          "tag": null,
-          "tagBy": null,
-          "form": {
-            "g": 3,
-            "ppg": 10.4,
-            "proj": 8.9,
-            "perf": 1.18,
-            "snap": 91,
-            "tgtShare": 27,
-            "tpg": 10.3,
-            "touches": null,
-            "rz": 1.7
-          }
-        }
-      ],
-      "get": [
-        {
-          "id": "12507",
-          "n": "Omarion Hampton",
-          "p": "RB",
-          "t": "LAC",
-          "v": 4438,
-          "pr": 10,
-          "trend": -1681,
-          "trendPct": -0.27,
-          "status": null,
-          "sidelined": false,
-          "tag": "buy_low",
-          "tagBy": "numbers",
-          "form": {
-            "g": 3,
-            "ppg": 10.1,
-            "proj": 13.1,
-            "perf": 0.77,
-            "snap": 54,
-            "tgtShare": 3,
-            "tpg": 1,
-            "touches": 17.3,
-            "rz": 2.7
-          }
-        },
-        {
-          "id": "6819",
-          "n": "Michael Pittman",
-          "p": "WR",
-          "t": "PIT",
-          "v": 1316,
-          "pr": 64,
-          "trend": -276,
-          "trendPct": -0.17,
-          "status": null,
-          "sidelined": false,
-          "tag": "buy_low",
-          "tagBy": "numbers",
-          "form": {
-            "g": 2,
-            "ppg": 5,
-            "proj": 7.9,
-            "perf": 0.63,
-            "snap": 81,
-            "tgtShare": 12,
-            "tpg": 4,
-            "touches": null,
-            "rz": 0
-          }
-        }
-      ],
-      "value": {
-        "give": 5643,
-        "get": 5754,
-        "giveAdj": 5214,
-        "getAdj": 5491,
-        "diffPct": 0.062,
-        "fair": true,
-        "verdict": "Slightly in your favor"
-      },
-      "you": {
-        "gainPct": 2.2,
-        "changes": {
-          "in": [
-            {
-              "n": "Omarion Hampton",
-              "slot": "RB"
-            },
-            {
-              "n": "Juwan Johnson",
-              "slot": "FLEX"
-            }
-          ],
-          "out": [
-            {
-              "n": "Kyle Monangai",
-              "slot": "RB"
-            },
-            {
-              "n": "Ladd McConkey",
-              "slot": "WR"
-            }
-          ]
+          "in": [],
+          "out": []
         },
         "drop": null
       },
       "them": {
-        "gainPct": -0.8
+        "gainPct": 3.1
       },
-      "headline": "Buy Omarion Hampton after a 27% price drop with Ladd McConkey and Michael Wilson",
-      "summary": "Hampton is a lead back with 17.3 touches per game, and his price has cratered. You pay with two receivers from your deepest position, one scoring above projection.",
+      "headline": "Sell Bryce Young after a 23.7-points-per-game run for Matthew Stafford and Cam Ward at lower prices",
+      "summary": "You move Bryce Young at peak price for two starting-caliber quarterbacks. Stafford is a dip buy, and Evening News Team gets the hot name.",
       "confidence": "low",
       "why": {
         "give": [
-          "Michael Wilson scores 10.4 points per game against 8.9 projected, and his value is up 11%. His role is real, so this is a price you pay.",
-          "McConkey scores 10.1 against 11.1 projected. You have depth at WR, so both can be spared."
+          "Young scores 23.7 points per game against a 16.3 projection (1.45x), and his FantasyCalc value is up 57% in 30 days.",
+          "Footballguys' April 2026 outlook says Young ranked QB28 in both 2024 and 2025 and called him a low-end QB2, so a 23.7-point run is far above his history.",
+          "Waller is up 63% in 30 days on a 46% snap share and a 13% target share."
         ],
         "get": [
-          "Hampton averages 17.3 touches per game and 2.7 red-zone looks per game, but scores 10.1 against a 13.1 projection.",
-          "His value fell 27% in 30 days while the workload stayed. Snap share is 54%, so the backfield is shared."
+          "Stafford plays 97% of snaps and scores 15.9 against a 16.1 projection, with FantasyCalc value down 11%.",
+          "Ward plays 100% of snaps and scores 14.2 against a 13.3 projection, with value down 20% from its high.",
+          "You get two starting-caliber quarterbacks in a superflex league for one hot name."
         ],
         "you": [
-          "Hampton takes a starting RB spot from Kyle Monangai, and Juwan Johnson moves into your flex. Team value rises about 2.2%.",
-          "Your thin RB group gets a real lead back, and WR is your deepest position."
+          "Your lineup does not change and your team score is about even (-0.1%). This is a value move, not a lineup move.",
+          "You turn one QB and a bench TE into two starting-caliber QBs, with Maye and Hurts still starting."
         ],
         "them": [
-          "Njgriffin is 0-3 and thin at WR and TE. McConkey and Wilson both start for them right away.",
-          "They keep depth at RB, so they can afford to move Hampton."
+          "Evening News Team (1-3) is thin at QB and RB, and Young would start in their superflex slot, raising their team score about 3.1%.",
+          "Young's 23.7 points per game looks like a breakout to a 1-3 team that needs a spark."
         ],
         "experts": [
-          "The Chargers' site lists Hampton as a 2026 breakout candidate with Mike McDaniel calling plays (May, preseason)."
+          "Yahoo's Week 5 trade targets list Stafford as a buy: third in the NFL in passing yards, with a slight value dip after a scoreless Week 4.",
+          "Footballguys (April 2026) called Young a fringe fantasy option and low-end QB2 whose passing game became less aggressive downfield."
         ]
       },
       "risks": [
-        "Hampton has a 3% target share and a 54% snap share, so he depends on carries and game script.",
-        "Pittman adds little, and Juwan Johnson moves into your flex."
+        "Young could keep this pace, and you would have sold a QB1 for two backups.",
+        "Neither Stafford nor Ward starts for you today, so the gain is in future value, not this week's lineup."
       ],
       "sources": [
         {
-          "title": "Omarion Hampton breakout players fantasy 2026 (Chargers.com)",
-          "url": "https://www.chargers.com/news/omarion-hampton-breakout-players-fantasy-2026"
+          "title": "Fantasy football trade targets Week 5: Buy low, sell high candidates - Yahoo Sports",
+          "url": "https://sports.yahoo.com/articles/fantasy-football-trade-targets-week-191245270.html"
         },
         {
-          "title": "Fantasy Football Rankings: Dynasty Trade Value Chart (August 2026 Update) (FantasyPros)",
-          "url": "https://www.fantasypros.com/2026/8/fantasy-football-rankings-dynasty-trade-value-chart-august-2026-update/amp/"
+          "title": "Will Bryce Young Finally Be Fantasy Relevant? - Footballguys (April 2026)",
+          "url": "https://www.footballguys.com/article/2026-will-bryce-young-finally-fantasy-relevant"
         }
       ]
     }
   ],
-  "short_reason": "Only three trades survived review: the others left your lineup unchanged or sold players at prices not worth the roster spot.",
+  "short_reason": "Only two trades held up. Current Week 5 analysts disagree with the numbers on Bucky Irving and Rashee Rice (both sells), so those buys were dropped, and Zach Charbonnet is returning from injury and worth keeping. Michael Wilson is a hold, not a sell. The remaining candidates had no current news to back them.",
   "review": {
     "checked": true,
     "notes": [
-      "The reviewer dropped two trades that left your lineup unchanged and one built on a source that did not support it.",
-      "Corrected Young's 2025 finish, the Rice target share, and how the FantasyNerds warning is framed.",
-      "Softened Hampton to a shared-snap lead back and lowered confidence."
+      "Reviewer corrected the Young source (April, QB28 in 2024 and 2025) and removed an unsupported depth-of-target claim.",
+      "Pick comparison now uses the 2028 1st's price, not the 2027 mid-first.",
+      "Replaced a non-expert bullet with FantasyPros' touchdown caveat and tightened vague lineup wording."
     ]
   },
   "draft_history": {
@@ -621,10 +420,10 @@
       {
         "round": 1,
         "n": 20,
-        "median": 2940,
-        "early": 3987,
-        "mid": 2534,
-        "late": 2312,
+        "median": 2857,
+        "early": 3848,
+        "mid": 2498,
+        "late": 2442,
         "busts": 0,
         "best": [
           {
@@ -632,107 +431,106 @@
             "pos": "RB",
             "season": "2025",
             "pick": "1.01",
-            "v": 6507
+            "v": 6737
           },
           {
             "name": "Jeremiyah Love",
             "pos": "RB",
             "season": "2026",
             "pick": "1.02",
-            "v": 6152
+            "v": 6495
           },
           {
-            "name": "Omarion Hampton",
-            "pos": "RB",
+            "name": "Tetairoa McMillan",
+            "pos": "WR",
             "season": "2025",
-            "pick": "1.02",
-            "v": 4438
+            "pick": "1.06",
+            "v": 4748
           }
         ],
         "market": {
-          "early": 5091,
-          "mid": 3352,
-          "late": 2558,
-          "any": 3128
+          "early": 5260,
+          "mid": 3464,
+          "late": 2635,
+          "any": 3204
         }
       },
       {
         "round": 2,
         "n": 20,
-        "median": 1460,
-        "early": 1385,
-        "mid": 1732,
-        "late": 1460,
+        "median": 1537,
+        "early": 1484,
+        "mid": 1657,
+        "late": 1541,
         "busts": 0,
         "best": [
-          {
-            "name": "Jaxson Dart",
-            "pos": "QB",
-            "season": "2025",
-            "pick": "2.01",
-            "v": 4366
-          },
           {
             "name": "Tyler Shough",
             "pos": "QB",
             "season": "2025",
             "pick": "2.09",
-            "v": 4306
+            "v": 4504
+          },
+          {
+            "name": "Jaxson Dart",
+            "pos": "QB",
+            "season": "2025",
+            "pick": "2.01",
+            "v": 4169
           },
           {
             "name": "Colston Loveland",
             "pos": "TE",
             "season": "2025",
             "pick": "2.06",
-            "v": 3629
+            "v": 3522
           }
         ],
         "market": {
-          "early": 2033,
-          "mid": 1669,
-          "late": 1430,
-          "any": 1614
+          "early": 2087,
+          "mid": 1707,
+          "late": 1477,
+          "any": 1644
         }
       },
       {
         "round": 3,
         "n": 20,
-        "median": 499,
-        "early": 430,
-        "mid": 573,
-        "late": 645,
-        "busts": 50,
+        "median": 511,
+        "early": 473,
+        "mid": 511,
+        "late": 592,
+        "busts": 45,
         "best": [
           {
             "name": "Bhayshul Tuten",
             "pos": "RB",
             "season": "2025",
             "pick": "3.04",
-            "v": 2790
+            "v": 3157
           },
           {
             "name": "Harold Fannin",
             "pos": "TE",
             "season": "2025",
             "pick": "3.10",
-            "v": 2600
+            "v": 3070
           },
           {
             "name": "De'Zhaun Stribling",
             "pos": "WR",
             "season": "2026",
             "pick": "3.09",
-            "v": 1654
+            "v": 1706
           }
         ],
         "market": {
-          "early": 1248,
-          "mid": 1106,
-          "late": 1018,
-          "any": 1090
+          "early": 1301,
+          "mid": 1163,
+          "late": 1048,
+          "any": 1143
         }
       }
     ]
-  },
-  "started": "2026-10-07T03:54:53.772Z"
+  }
 }
