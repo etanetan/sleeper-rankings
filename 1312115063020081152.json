@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "ready",
+  "status": "running",
   "league_id": "1312115063020081152",
   "league_name": "UMN Dynasty League 🧨",
   "season": "2026",
@@ -207,5 +207,6 @@
       "Cut unsupported expert quotes and added the thin-WR risk."
     ]
   },
-  "draft_history": null
+  "draft_history": null,
+  "started": "2026-10-13T22:55:00.681Z"
 }
