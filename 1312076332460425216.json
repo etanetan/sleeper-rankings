@@ -1,242 +1,33 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1312076332460425216",
   "league_name": "Family Dynasty",
   "season": "2026",
-  "week": 4,
-  "generated": "2026-09-30T03:59:10.854Z",
+  "week": 6,
+  "generated": "2026-10-13T17:56:12.828Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&numTeams=12&ppr=1",
-    "fetched": "2026-09-30T03:55:13.578Z"
+    "fetched": "2026-10-13T17:55:21.743Z"
   },
   "me": {
     "name": "Bob’s Dynasty",
-    "record": "2-1",
+    "record": "3-2",
     "thin": [
-      "RB",
-      "TE"
+      "TE",
+      "RB"
     ],
     "deep": [
       "WR",
       "QB"
     ]
   },
-  "trades": [
-    {
-      "id": "1px5sbq",
-      "partner": {
-        "roster_id": 6,
-        "name": "28AllDay",
-        "user": "28AllDay",
-        "record": "2-1",
-        "thin": [
-          "WR",
-          "RB"
-        ],
-        "deep": [
-          "QB",
-          "TE"
-        ]
-      },
-      "give": [
-        {
-          "id": "8151",
-          "n": "Kenneth Walker",
-          "p": "RB",
-          "t": "KC",
-          "v": 6198,
-          "pr": 4,
-          "trend": 1594,
-          "trendPct": 0.35,
-          "status": null,
-          "sidelined": false,
-          "tag": "sell_high",
-          "tagBy": "numbers",
-          "form": {
-            "g": 3,
-            "ppg": 28.4,
-            "proj": 17.1,
-            "perf": 1.66,
-            "snap": 75,
-            "tgtShare": 20,
-            "tpg": 6,
-            "touches": 25.3,
-            "rz": 6.3
-          }
-        },
-        {
-          "id": "9997",
-          "n": "Zay Flowers",
-          "p": "WR",
-          "t": "BAL",
-          "v": 4282,
-          "pr": 11,
-          "trend": 297,
-          "trendPct": 0.07,
-          "status": null,
-          "sidelined": false,
-          "tag": "sell_high",
-          "tagBy": "numbers",
-          "form": {
-            "g": 2,
-            "ppg": 23.7,
-            "proj": 14.9,
-            "perf": 1.59,
-            "snap": 31,
-            "tgtShare": 27,
-            "tpg": 6,
-            "touches": null,
-            "rz": 1
-          }
-        }
-      ],
-      "get": [
-        {
-          "id": "9493",
-          "n": "Puka Nacua",
-          "p": "WR",
-          "t": "LAR",
-          "v": 7553,
-          "pr": 4,
-          "trend": -639,
-          "trendPct": -0.08,
-          "status": "Out",
-          "sidelined": false,
-          "tag": "buy_low",
-          "tagBy": "numbers",
-          "form": {
-            "g": 1,
-            "ppg": 12.4,
-            "proj": 21,
-            "perf": 0.59,
-            "snap": 70,
-            "tgtShare": 33,
-            "tpg": 9,
-            "touches": null,
-            "rz": 1
-          }
-        },
-        {
-          "id": "12512",
-          "n": "Quinshon Judkins",
-          "p": "RB",
-          "t": "CLE",
-          "v": 2925,
-          "pr": 20,
-          "trend": -565,
-          "trendPct": -0.16,
-          "status": null,
-          "sidelined": false,
-          "tag": "buy_low",
-          "tagBy": "numbers",
-          "form": {
-            "g": 3,
-            "ppg": 8.9,
-            "proj": 12,
-            "perf": 0.74,
-            "snap": 60,
-            "tgtShare": 11,
-            "tpg": 3,
-            "touches": 17,
-            "rz": 2.3
-          }
-        }
-      ],
-      "value": {
-        "give": 10480,
-        "get": 10478,
-        "giveAdj": 9624,
-        "getAdj": 9893,
-        "diffPct": 0.036,
-        "fair": true,
-        "verdict": "Slightly in your favor"
-      },
-      "you": {
-        "gainPct": 0,
-        "changes": {
-          "in": [
-            {
-              "n": "Quinshon Judkins",
-              "slot": "RB"
-            },
-            {
-              "n": "Puka Nacua",
-              "slot": "WR"
-            }
-          ],
-          "out": [
-            {
-              "n": "Kenneth Walker",
-              "slot": "RB"
-            },
-            {
-              "n": "Zay Flowers",
-              "slot": "FLEX"
-            }
-          ]
-        },
-        "drop": null
-      },
-      "them": {
-        "gainPct": 0
-      },
-      "headline": "Swap Walker and Flowers at peak price for Nacua while a groin injury has his price down",
-      "summary": "You send two players whose production is running ahead of their roles and get a top-tier receiver plus a workhorse-type back. Nacua's injury is the discount.",
-      "confidence": "low",
-      "why": {
-        "give": [
-          "Walker scores 28.4 points a game against 17.1 projected on 25 touches a game; NFL.com reports Andy Reid wants to lighten his carries after 56 touches in two games.",
-          "Flowers is at 23.7 against 14.9 projected on a 31% snap share and was expected to be on a pitch count after his Week 1 hamstring injury."
-        ],
-        "get": [
-          "Nacua has a 33% target share and 12.4 points a game against 21 projected. He missed time with a groin issue, so production is down, not his role.",
-          "Judkins has 17 touches a game and 2.3 red-zone looks a game on a 60% snap share, so he has the volume to outscore his 8.9."
-        ],
-        "you": [
-          "This turns your top running back and a receiver flex into a top receiver plus a starting back. Nacua is Out now, so that flex spot is empty until he returns."
-        ],
-        "them": [
-          "28AllDay gets a back averaging 28 points and a receiver with a big Week 1 game, both at peak price, and is thin at receiver and back."
-        ],
-        "experts": [
-          "McVay says the groin issue is unrelated to the earlier psoas injury and the symptoms resemble a pre-hernia; the Rams are avoiding IR and target Week 4.",
-          "Nacua can play but may lack his usual explosiveness; surgery is not entirely off the table (Deseret News, Sept 28)."
-        ]
-      },
-      "risks": [
-        "Nacua could need surgery and miss weeks.",
-        "Walker has 6.3 red-zone looks a game and is your best back while you are thin at running back; he could keep scoring."
-      ],
-      "sources": [
-        {
-          "title": "McVay hopeful Puka Nacua will play in Week 4 (NBC Sports)",
-          "url": "https://www.nbcsports.com/fantasy/football/player-news/2026-09-28/mcvay-hopeful-puka-nacua-will-play-in-week-4"
-        },
-        {
-          "title": "Puka Nacua missed his 2nd straight game (Deseret News)",
-          "url": "https://www.deseret.com/sports/2026/09/28/puka-nacua-injury-update-could-be-ready-week-4-surgery-possible/"
-        },
-        {
-          "title": "Chiefs want to lighten Kenneth Walker's workload (NFL.com)",
-          "url": "https://www.nfl.com/news/chiefs-want-to-lighten-kenneth-walker-workload"
-        },
-        {
-          "title": "Zay Flowers to return in Week 3 (BVM Sports)",
-          "url": "https://bvmsports.com/2026/09/27/ravens-zay-flowers-to-return-in-week-3/"
-        }
-      ]
-    }
-  ],
-  "short_reason": "Only one of five drafted trades survived review. Others sold slumping players, used stale usage data for Hampton, or would have left your superflex slot empty with Williams out. The remaining candidates need more checking next run.",
+  "trades": [],
+  "short_reason": "Web research this run turned up only preseason takes and a few Week 4-5 notes (Kenneth Walker's two-touchdown game, one 4for4 column), with nothing current on the key players in these trades (Jaxon Smith-Njigba, Zay Flowers, Jeremiyah Love, Justin Jefferson). Without verified, current news and analyst sentiment, no trade is published; the numbers-based candidates will be re-checked next run.",
   "review": {
-    "checked": true,
-    "notes": [
-      "Dropped four trades: they sold slumping Skattebo, relied on stale or unconfirmed Hampton and Henderson usage, or left the superflex slot empty.",
-      "Reworded the Nacua injury description, the Flowers snap claim, and the lineup impact for the kept trade; lowered confidence to low."
-    ]
+    "checked": false
   },
   "draft_history": {
     "seasons": [
@@ -249,10 +40,10 @@
       {
         "round": 1,
         "n": 48,
-        "median": 2961,
-        "early": 3403,
-        "mid": 2814,
-        "late": 2465,
+        "median": 2942,
+        "early": 3996,
+        "mid": 2657,
+        "late": 2801,
         "busts": 4,
         "best": [
           {
@@ -260,37 +51,37 @@
             "pos": "RB",
             "season": "2023",
             "pick": "1.05",
-            "v": 10775
+            "v": 10246
           },
           {
             "name": "Bijan Robinson",
             "pos": "RB",
             "season": "2023",
             "pick": "1.01",
-            "v": 10238
+            "v": 10170
           },
           {
             "name": "Jaxon Smith-Njigba",
             "pos": "WR",
             "season": "2023",
             "pick": "1.07",
-            "v": 9937
+            "v": 9950
           }
         ],
         "market": {
-          "early": 4886,
-          "mid": 3217,
-          "late": 2449,
-          "any": 3001
+          "early": 5028,
+          "mid": 3311,
+          "late": 2529,
+          "any": 3037
         }
       },
       {
         "round": 2,
         "n": 48,
-        "median": 1194,
-        "early": 1810,
-        "mid": 620,
-        "late": 1083,
+        "median": 1311,
+        "early": 2070,
+        "mid": 616,
+        "late": 1117,
         "busts": 25,
         "best": [
           {
@@ -298,69 +89,68 @@
             "pos": "QB",
             "season": "2025",
             "pick": "2.10",
-            "v": 4544
+            "v": 4166
           },
           {
             "name": "Jaxson Dart",
             "pos": "QB",
             "season": "2025",
             "pick": "2.02",
-            "v": 4256
+            "v": 4158
           },
           {
             "name": "Devon Achane",
             "pos": "RB",
             "season": "2023",
             "pick": "2.03",
-            "v": 4092
+            "v": 3996
           }
         ],
         "market": {
-          "early": 1942,
-          "mid": 1589,
-          "late": 1370,
-          "any": 1537
+          "early": 2012,
+          "mid": 1654,
+          "late": 1419,
+          "any": 1585
         }
       },
       {
         "round": 3,
         "n": 48,
-        "median": 367,
-        "early": 711,
-        "mid": 91,
-        "late": 347,
-        "busts": 58,
+        "median": 352,
+        "early": 699,
+        "mid": 75,
+        "late": 443,
+        "busts": 52,
         "best": [
           {
             "name": "Chase Brown",
             "pos": "RB",
             "season": "2023",
             "pick": "3.03",
-            "v": 4123
+            "v": 3915
           },
           {
             "name": "Bucky Irving",
             "pos": "RB",
             "season": "2024",
             "pick": "3.02",
-            "v": 3212
+            "v": 3330
           },
           {
-            "name": "Terrance Ferguson",
-            "pos": "TE",
-            "season": "2025",
-            "pick": "3.09",
-            "v": 1685
+            "name": "De'Zhaun Stribling",
+            "pos": "WR",
+            "season": "2026",
+            "pick": "3.07",
+            "v": 1670
           }
         ],
         "market": {
-          "early": 1202,
-          "mid": 1071,
-          "late": 979,
-          "any": 1055
+          "early": 1240,
+          "mid": 1100,
+          "late": 1009,
+          "any": 1079
         }
       }
     ]
-  },
-  "started": "2026-10-13T17:55:45.526Z"
+  }
 }
