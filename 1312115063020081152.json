@@ -1,20 +1,20 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1312115063020081152",
   "league_name": "UMN Dynasty League 🧨",
   "season": "2026",
-  "week": 5,
-  "generated": "2026-10-06T22:58:36.896Z",
+  "week": 6,
+  "generated": "2026-10-13T22:55:29.531Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=2&numTeams=10&ppr=0.5",
-    "fetched": "2026-10-06T22:56:34.682Z"
+    "fetched": "2026-10-13T22:54:55.943Z"
   },
   "me": {
     "name": "UnWorthy Opponent",
-    "record": "1-3",
+    "record": "2-3",
     "thin": [
       "WR",
       "QB"
@@ -24,189 +24,10 @@
       "RB"
     ]
   },
-  "trades": [
-    {
-      "id": "1s48kac",
-      "partner": {
-        "roster_id": 1,
-        "name": "2x Champ Killer Corgis 🔥",
-        "user": "carterstromberg",
-        "record": "2-2",
-        "thin": [
-          "TE",
-          "RB"
-        ],
-        "deep": [
-          "QB",
-          "WR"
-        ]
-      },
-      "give": [
-        {
-          "id": "13346",
-          "n": "Denzel Boston",
-          "p": "WR",
-          "t": "CLE",
-          "v": 1075,
-          "pr": 35,
-          "trend": 942,
-          "trendPct": 7.08,
-          "status": null,
-          "sidelined": false,
-          "tag": "sell_high",
-          "tagBy": "research",
-          "form": {
-            "g": 4,
-            "ppg": 12.5,
-            "proj": 7.6,
-            "perf": 1.63,
-            "snap": 92,
-            "tgtShare": 19,
-            "tpg": 5.5,
-            "touches": null,
-            "rz": 0.8
-          }
-        },
-        {
-          "id": "13330",
-          "n": "Kenyon Sadiq",
-          "p": "TE",
-          "t": "NYJ",
-          "v": 622,
-          "pr": 13,
-          "trend": 496,
-          "trendPct": 3.94,
-          "status": null,
-          "sidelined": false,
-          "tag": "sell_high",
-          "tagBy": "research",
-          "form": {
-            "g": 4,
-            "ppg": 8.2,
-            "proj": 5.9,
-            "perf": 1.39,
-            "snap": 48,
-            "tgtShare": 16,
-            "tpg": 4.5,
-            "touches": null,
-            "rz": 0.3
-          }
-        }
-      ],
-      "get": [
-        {
-          "id": "9758",
-          "n": "C.J. Stroud",
-          "p": "QB",
-          "t": "HOU",
-          "v": 1558,
-          "pr": 22,
-          "trend": -944,
-          "trendPct": -0.38,
-          "status": null,
-          "sidelined": false,
-          "tag": "buy_low",
-          "tagBy": "numbers",
-          "form": {
-            "g": 4,
-            "ppg": 18.1,
-            "proj": 18.7,
-            "perf": 0.97,
-            "snap": 100,
-            "tgtShare": null,
-            "tpg": null,
-            "touches": null,
-            "rz": 0
-          }
-        }
-      ],
-      "value": {
-        "give": 1697,
-        "get": 1558,
-        "giveAdj": 1573,
-        "getAdj": 1558,
-        "diffPct": -0.01,
-        "fair": true,
-        "verdict": "Even"
-      },
-      "you": {
-        "gainPct": 1,
-        "changes": {
-          "in": [
-            {
-              "n": "C.J. Stroud",
-              "slot": "SUPER_FLEX"
-            }
-          ],
-          "out": [
-            {
-              "n": "Daniel Jones",
-              "slot": "SUPER_FLEX"
-            }
-          ]
-        },
-        "drop": null
-      },
-      "them": {
-        "gainPct": 0
-      },
-      "headline": "Cash in two spiking bench pieces for C.J. Stroud, a QB who starts over Daniel Jones in your superflex slot",
-      "summary": "Boston and Sadiq are priced off a few big games, while Stroud has a full-time job and fills your thinnest spot. Neither player you send starts for you today.",
-      "confidence": "medium",
-      "why": {
-        "give": [
-          "Denzel Boston is scoring 1.63x his projection, and his FantasyCalc value is up 708% in 30 days; that price is the peak.",
-          "Boston has 13 catches for 284 yards in four games; Week 4 included a 60-yard catch-and-run on a blown coverage, which is hard to repeat.",
-          "Kenyon Sadiq is scoring 1.39x his projection on 48% of snaps, and went 0 for 4 on targets in Week 4; his value is up 394%."
-        ],
-        "get": [
-          "C.J. Stroud has 5 touchdown passes and no interceptions, and 347 yards with 2 touchdowns in Week 4 was his best game of the year.",
-          "Nico Collins is back from injury and drew 8 targets in his first game, including both of Stroud's touchdowns that day.",
-          "He plays every snap (100%) and his points are at 0.97x projection, so the role is not in question."
-        ],
-        "you": [
-          "Stroud starts at SUPER_FLEX in place of Daniel Jones, who is scoring 0.6x his projection.",
-          "Both players you send are on your bench, so no starter leaves."
-        ],
-        "them": [
-          "2x Champ Killer Corgis are 2-2, deep at QB and WR but thin at TE and RB, so Sadiq fills a need.",
-          "Boston and Sadiq are the hot names, so they look better to them now than they will in a month."
-        ],
-        "experts": [
-          "Rotoballer noted Boston's 15.7-yard average target depth before Week 4; Profootballnetwork's Week 4 piece said to sit him but keep tracking.",
-          "Stroud's 347-yard game is why Bleacher Report's Week 5 waiver column highlights him; FantasyPros lists him as a matchup-dependent QB1."
-        ]
-      },
-      "risks": [
-        "Boston's role is locked in (over 90% snaps), so he may keep rising while you hold only a middling QB1.",
-        "Trading Boston leaves your WR group thin: Metcalf and McLaurin score less than he does.",
-        "Houston is 0-4 and Stroud had been a fringe QB1 before Week 4."
-      ],
-      "sources": [
-        {
-          "title": "Denzel Boston Fantasy News (2026)",
-          "url": "https://fantasyfootballcalculator.com/players/denzel-boston/news"
-        },
-        {
-          "title": "Week 5 Waiver Wire Pickups Highlighted by C.J. Stroud (Bleacher Report)",
-          "url": "https://bleacherreport.com/articles/25506693-week-5-waiver-wire-pickups-highlighted-cj-stroud-tank-bigsby-keon-coleman"
-        },
-        {
-          "title": "Fantasy Football Trade Advice: Players to Buy, Sell or Hold (Week 5) - FantasyPros",
-          "url": "https://www.fantasypros.com/2026/10/fantasy-football-trade-advice-players-to-buy-sell-or-hold-week-5-2026/"
-        }
-      ]
-    }
-  ],
-  "short_reason": "Only one fair deal held up in research. Your starters and slumping players (Bijan Robinson, Garrett Wilson, Daniel Jones, Terry McLaurin, Quinshon Judkins, Trevor Lawrence, James Cook) are holds, and the best other buy-lows are hurt: Lamar Jackson, Breece Hall, DeVonta Smith and Ja'Marr Chase all have Week 5 injury questions. Justin Herbert is not a buy-low per analysts. The remaining candidates were lineup-neutral swaps of tiny value.",
+  "trades": [],
+  "short_reason": "The numbers found 11 fair candidates, but this week's news could not be verified: search results mixed 2025 and 2026 articles and had no Week 6 recaps or injury reports for Garrett Wilson, Malik Nabers, Denzel Boston or Deshaun Watson. Nothing is published until the angles can be checked. Wilson looks like a sell-high only if his 37.9% Week 5 target share fades once teammates return from injury.",
   "review": {
-    "checked": true,
-    "notes": [
-      "Reviewer corrected Stroud's touchdown count to 5, Collins' return, and Boston's snap share.",
-      "Removed the Sadiq/Andrews for Downs/Lemon deal: its sell reason was wrong and it overlapped trade 1.",
-      "Cut unsupported expert quotes and added the thin-WR risk."
-    ]
+    "checked": false
   },
-  "draft_history": null,
-  "started": "2026-10-13T22:55:00.681Z"
+  "draft_history": null
 }
