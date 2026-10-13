@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "ready",
+  "status": "running",
   "league_id": "1367869106300133376",
   "league_name": "FCFFL",
   "season": "2026",
@@ -800,5 +800,6 @@
       "Noted that the Herbert deals overlap and cannot both be done."
     ]
   },
-  "draft_history": null
+  "draft_history": null,
+  "started": "2026-10-13T12:55:50.890Z"
 }
