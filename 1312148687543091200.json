@@ -1,20 +1,20 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1312148687543091200",
   "league_name": "HTB DYNASTY",
   "season": "2026",
-  "week": 5,
-  "generated": "2026-10-07T03:57:54.594Z",
+  "week": 6,
+  "generated": "2026-10-14T03:56:38.619Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&numTeams=10&ppr=0",
-    "fetched": "2026-10-07T03:56:01.584Z"
+    "fetched": "2026-10-14T03:55:33.614Z"
   },
   "me": {
     "name": "etanetan",
-    "record": "2-2",
+    "record": "3-2",
     "thin": [
       "RB",
       "TE"
@@ -24,392 +24,10 @@
       "QB"
     ]
   },
-  "trades": [
-    {
-      "id": "jewhxw",
-      "partner": {
-        "roster_id": 7,
-        "name": "nickmiller17",
-        "user": "nickmiller17",
-        "record": "3-1",
-        "thin": [
-          "WR",
-          "TE"
-        ],
-        "deep": [
-          "RB",
-          "QB"
-        ]
-      },
-      "give": [
-        {
-          "id": "12534",
-          "n": "Kyle Monangai",
-          "p": "RB",
-          "t": "CHI",
-          "v": 2040,
-          "pr": 27,
-          "trend": 437,
-          "trendPct": 0.27,
-          "status": "Questionable",
-          "sidelined": false,
-          "tag": "sell_high",
-          "tagBy": "research",
-          "form": {
-            "g": 4,
-            "ppg": 15.7,
-            "proj": 7,
-            "perf": 2.23,
-            "snap": 41,
-            "tgtShare": 4,
-            "tpg": 1.3,
-            "touches": 16.3,
-            "rz": 3.8
-          }
-        },
-        {
-          "id": "pick_2028_1_10",
-          "n": "2028 1st",
-          "p": "PICK",
-          "t": "own",
-          "v": 2331,
-          "pr": null,
-          "trend": 128,
-          "trendPct": 0.06,
-          "status": null,
-          "sidelined": false,
-          "tag": null,
-          "tagBy": null,
-          "form": null,
-          "isPick": true,
-          "season": 2028,
-          "round": 1,
-          "slot": null,
-          "from": 10
-        }
-      ],
-      "get": [
-        {
-          "id": "12481",
-          "n": "Cam Skattebo",
-          "p": "RB",
-          "t": "NYG",
-          "v": 2846,
-          "pr": 20,
-          "trend": -137,
-          "trendPct": -0.05,
-          "status": null,
-          "sidelined": false,
-          "tag": "buy_low",
-          "tagBy": "research",
-          "form": {
-            "g": 4,
-            "ppg": 10.1,
-            "proj": 14,
-            "perf": 0.72,
-            "snap": 65,
-            "tgtShare": 8,
-            "tpg": 2.3,
-            "touches": 19,
-            "rz": 2.8
-          }
-        },
-        {
-          "id": "13311",
-          "n": "Chris Bell",
-          "p": "WR",
-          "t": "MIA",
-          "v": 1385,
-          "pr": 55,
-          "trend": -212,
-          "trendPct": -0.13,
-          "status": null,
-          "sidelined": false,
-          "tag": "buy_low",
-          "tagBy": "numbers",
-          "form": {
-            "g": 4,
-            "ppg": 2.9,
-            "proj": 4.7,
-            "perf": 0.62,
-            "snap": 60,
-            "tgtShare": 14,
-            "tpg": 3.5,
-            "touches": null,
-            "rz": 0.3
-          }
-        }
-      ],
-      "value": {
-        "give": 4371,
-        "get": 4231,
-        "giveAdj": 3963,
-        "getAdj": 3954,
-        "diffPct": -0.003,
-        "fair": true,
-        "verdict": "Even"
-      },
-      "you": {
-        "gainPct": 1.1,
-        "changes": {
-          "in": [
-            {
-              "n": "Cam Skattebo",
-              "slot": "RB"
-            }
-          ],
-          "out": [
-            {
-              "n": "Kyle Monangai",
-              "slot": "RB"
-            }
-          ]
-        },
-        "drop": {
-          "id": "2505",
-          "n": "Darren Waller",
-          "p": "TE",
-          "v": 956
-        }
-      },
-      "them": {
-        "gainPct": -1
-      },
-      "headline": "Sell Kyle Monangai's hot stretch plus a 2028 1st for Cam Skattebo, who gets nearly every touch for the Giants",
-      "summary": "You turn a 41%-snap back who is outscoring his projection into a workhorse who is underscoring his. nickmiller17 gets a hot name and a first-round pick.",
-      "confidence": "medium",
-      "why": {
-        "give": [
-          "Monangai scores 15.7 points per game against a 7.0 projection (2.2x) on only 41% of snaps and a 4% target share.",
-          "His FantasyCalc value is up 27% in 30 days, and he is listed Questionable, so his price is at its peak.",
-          "This league's recent first-rounders have a median value of 2,857, above your 2028 1st's 2,331 price, with 0% busts, so you give up a pick type that has returned more than it costs."
-        ],
-        "get": [
-          "Skattebo averages 19 touches per game, 65% of snaps and 2.8 red-zone looks per game, yet scores 10.1 against a 14.0 projection (0.72).",
-          "The workload is intact and his FantasyCalc value is down only 5%, so the cost is low relative to the role.",
-          "Chris Bell has a 14% target share and 60% of snaps, so he is a cheap depth piece, not a core part of the deal."
-        ],
-        "you": [
-          "Skattebo replaces Monangai in your RB2 slot, so the swap is an upgrade in role. Your team score rises about 1.1%.",
-          "You are thin at RB, and this turns a part-time back into a full-time one.",
-          "Darren Waller (FantasyCalc value 956, a bench TE) is the drop the engine makes for roster space; you could trade him elsewhere first."
-        ],
-        "them": [
-          "nickmiller17 (3-1) is thin at WR and TE and deep at RB, so Monangai is depth they can spare.",
-          "Monangai's 15.7 points per game and 2.2x projection beat look great on their screen right now."
-        ],
-        "experts": [
-          "FantasyPros' Week 5 buy/sell/hold column names Skattebo a buy, saying he is getting nearly every touch (about 19 per game), and ranks him a mid-RB2 by expert consensus.",
-          "FantasyPros notes limited touchdown opportunities for Skattebo, which is why the consensus ranking is only mid-RB2."
-        ]
-      },
-      "risks": [
-        "Skattebo's 10.1 points per game on 19 touches shows weak efficiency, and it may not improve behind the Giants' offense.",
-        "Monangai could keep scoring on his red-zone work (3.8 looks per game) and make this look early.",
-        "A 2028 first is a long-dated asset, and this league's firsts have paid off well (0% busts)."
-      ],
-      "sources": [
-        {
-          "title": "Fantasy Football Trade Advice: Players to Buy, Sell or Hold (Week 5) - FantasyPros",
-          "url": "https://www.fantasypros.com/2026/10/fantasy-football-trade-advice-players-to-buy-sell-or-hold-week-5-2026/"
-        },
-        {
-          "title": "2026 Fantasy Football Week 5 Trade Value Chart - Roto Street Journal",
-          "url": "https://www.rotostreetjournal.com/2026/10/06/2026-fantasy-football-week-5-trade-value-chart/"
-        }
-      ]
-    },
-    {
-      "id": "1q27qim",
-      "partner": {
-        "roster_id": 5,
-        "name": "Evening News Team",
-        "user": "MLew234",
-        "record": "1-3",
-        "thin": [
-          "RB",
-          "QB"
-        ],
-        "deep": [
-          "TE",
-          "WR"
-        ]
-      },
-      "give": [
-        {
-          "id": "9228",
-          "n": "Bryce Young",
-          "p": "QB",
-          "t": "CAR",
-          "v": 3659,
-          "pr": 16,
-          "trend": 1327,
-          "trendPct": 0.57,
-          "status": null,
-          "sidelined": false,
-          "tag": "sell_high",
-          "tagBy": "research",
-          "form": {
-            "g": 4,
-            "ppg": 23.7,
-            "proj": 16.3,
-            "perf": 1.45,
-            "snap": 96,
-            "tgtShare": null,
-            "tpg": null,
-            "touches": null,
-            "rz": 0.8
-          }
-        },
-        {
-          "id": "2505",
-          "n": "Darren Waller",
-          "p": "TE",
-          "t": "CAR",
-          "v": 956,
-          "pr": 28,
-          "trend": 369,
-          "trendPct": 0.63,
-          "status": null,
-          "sidelined": false,
-          "tag": "sell_high",
-          "tagBy": "research",
-          "form": {
-            "g": 4,
-            "ppg": 13.2,
-            "proj": 11.5,
-            "perf": 1.15,
-            "snap": 46,
-            "tgtShare": 13,
-            "tpg": 4.8,
-            "touches": null,
-            "rz": 1
-          }
-        }
-      ],
-      "get": [
-        {
-          "id": "12522",
-          "n": "Cam Ward",
-          "p": "QB",
-          "t": "TEN",
-          "v": 2448,
-          "pr": 22,
-          "trend": -599,
-          "trendPct": -0.2,
-          "status": null,
-          "sidelined": false,
-          "tag": "buy_low",
-          "tagBy": "numbers",
-          "form": {
-            "g": 4,
-            "ppg": 14.2,
-            "proj": 13.3,
-            "perf": 1.07,
-            "snap": 100,
-            "tgtShare": null,
-            "tpg": null,
-            "touches": null,
-            "rz": 1.3
-          }
-        },
-        {
-          "id": "421",
-          "n": "Matthew Stafford",
-          "p": "QB",
-          "t": "LAR",
-          "v": 2378,
-          "pr": 24,
-          "trend": -287,
-          "trendPct": -0.11,
-          "status": null,
-          "sidelined": false,
-          "tag": "buy_low",
-          "tagBy": "research",
-          "form": {
-            "g": 4,
-            "ppg": 15.9,
-            "proj": 16.1,
-            "perf": 0.99,
-            "snap": 97,
-            "tgtShare": null,
-            "tpg": null,
-            "touches": null,
-            "rz": 1
-          }
-        }
-      ],
-      "value": {
-        "give": 4615,
-        "get": 4826,
-        "giveAdj": 4424,
-        "getAdj": 4350,
-        "diffPct": -0.02,
-        "fair": true,
-        "verdict": "Even"
-      },
-      "you": {
-        "gainPct": -0.1,
-        "changes": {
-          "in": [],
-          "out": []
-        },
-        "drop": null
-      },
-      "them": {
-        "gainPct": 3.1
-      },
-      "headline": "Sell Bryce Young after a 23.7-points-per-game run for Matthew Stafford and Cam Ward at lower prices",
-      "summary": "You move Bryce Young at peak price for two starting-caliber quarterbacks. Stafford is a dip buy, and Evening News Team gets the hot name.",
-      "confidence": "low",
-      "why": {
-        "give": [
-          "Young scores 23.7 points per game against a 16.3 projection (1.45x), and his FantasyCalc value is up 57% in 30 days.",
-          "Footballguys' April 2026 outlook says Young ranked QB28 in both 2024 and 2025 and called him a low-end QB2, so a 23.7-point run is far above his history.",
-          "Waller is up 63% in 30 days on a 46% snap share and a 13% target share."
-        ],
-        "get": [
-          "Stafford plays 97% of snaps and scores 15.9 against a 16.1 projection, with FantasyCalc value down 11%.",
-          "Ward plays 100% of snaps and scores 14.2 against a 13.3 projection, with value down 20% from its high.",
-          "You get two starting-caliber quarterbacks in a superflex league for one hot name."
-        ],
-        "you": [
-          "Your lineup does not change and your team score is about even (-0.1%). This is a value move, not a lineup move.",
-          "You turn one QB and a bench TE into two starting-caliber QBs, with Maye and Hurts still starting."
-        ],
-        "them": [
-          "Evening News Team (1-3) is thin at QB and RB, and Young would start in their superflex slot, raising their team score about 3.1%.",
-          "Young's 23.7 points per game looks like a breakout to a 1-3 team that needs a spark."
-        ],
-        "experts": [
-          "Yahoo's Week 5 trade targets list Stafford as a buy: third in the NFL in passing yards, with a slight value dip after a scoreless Week 4.",
-          "Footballguys (April 2026) called Young a fringe fantasy option and low-end QB2 whose passing game became less aggressive downfield."
-        ]
-      },
-      "risks": [
-        "Young could keep this pace, and you would have sold a QB1 for two backups.",
-        "Neither Stafford nor Ward starts for you today, so the gain is in future value, not this week's lineup."
-      ],
-      "sources": [
-        {
-          "title": "Fantasy football trade targets Week 5: Buy low, sell high candidates - Yahoo Sports",
-          "url": "https://sports.yahoo.com/articles/fantasy-football-trade-targets-week-191245270.html"
-        },
-        {
-          "title": "Will Bryce Young Finally Be Fantasy Relevant? - Footballguys (April 2026)",
-          "url": "https://www.footballguys.com/article/2026-will-bryce-young-finally-fantasy-relevant"
-        }
-      ]
-    }
-  ],
-  "short_reason": "Only two trades held up. Current Week 5 analysts disagree with the numbers on Bucky Irving and Rashee Rice (both sells), so those buys were dropped, and Zach Charbonnet is returning from injury and worth keeping. Michael Wilson is a hold, not a sell. The remaining candidates had no current news to back them.",
+  "trades": [],
+  "short_reason": "This week's search results were mostly old seasons, and the 2026 pages that loaded gave no usable player-level news. The FantasyPros Week 6 chart and a few 2026 notes could not back five trades. Hampton (Chargers backfield split three ways) and Burden (backup QB) both have open role questions, so no buy-low angle held up. Nothing is published until the news can be checked.",
   "review": {
-    "checked": true,
-    "notes": [
-      "Reviewer corrected the Young source (April, QB28 in 2024 and 2025) and removed an unsupported depth-of-target claim.",
-      "Pick comparison now uses the 2028 1st's price, not the 2027 mid-first.",
-      "Replaced a non-expert bullet with FantasyPros' touchdown caveat and tightened vague lineup wording."
-    ]
+    "checked": false
   },
   "draft_history": {
     "seasons": [
@@ -420,10 +38,10 @@
       {
         "round": 1,
         "n": 20,
-        "median": 2857,
-        "early": 3848,
-        "mid": 2498,
-        "late": 2442,
+        "median": 2812,
+        "early": 3651,
+        "mid": 2492,
+        "late": 2410,
         "busts": 0,
         "best": [
           {
@@ -431,75 +49,75 @@
             "pos": "RB",
             "season": "2025",
             "pick": "1.01",
-            "v": 6737
+            "v": 6191
           },
           {
             "name": "Jeremiyah Love",
             "pos": "RB",
             "season": "2026",
             "pick": "1.02",
-            "v": 6495
+            "v": 5810
           },
           {
             "name": "Tetairoa McMillan",
             "pos": "WR",
             "season": "2025",
             "pick": "1.06",
-            "v": 4748
+            "v": 5031
           }
         ],
         "market": {
-          "early": 5260,
-          "mid": 3464,
-          "late": 2635,
-          "any": 3204
+          "early": 5254,
+          "mid": 3460,
+          "late": 2665,
+          "any": 3173
         }
       },
       {
         "round": 2,
         "n": 20,
-        "median": 1537,
-        "early": 1484,
-        "mid": 1657,
-        "late": 1541,
-        "busts": 0,
+        "median": 1615,
+        "early": 1404,
+        "mid": 1677,
+        "late": 1647,
+        "busts": 5,
         "best": [
-          {
-            "name": "Tyler Shough",
-            "pos": "QB",
-            "season": "2025",
-            "pick": "2.09",
-            "v": 4504
-          },
           {
             "name": "Jaxson Dart",
             "pos": "QB",
             "season": "2025",
             "pick": "2.01",
-            "v": 4169
+            "v": 4080
+          },
+          {
+            "name": "Tyler Shough",
+            "pos": "QB",
+            "season": "2025",
+            "pick": "2.09",
+            "v": 4045
           },
           {
             "name": "Colston Loveland",
             "pos": "TE",
             "season": "2025",
             "pick": "2.06",
-            "v": 3522
+            "v": 3556
           }
         ],
         "market": {
-          "early": 2087,
-          "mid": 1707,
-          "late": 1477,
-          "any": 1644
+          "early": 2140,
+          "mid": 1776,
+          "late": 1512,
+          "any": 1702
         }
       },
       {
         "round": 3,
         "n": 20,
-        "median": 511,
-        "early": 473,
-        "mid": 511,
-        "late": 592,
+        "median": 585,
+        "early": 516,
+        "mid": 585,
+        "late": 567,
         "busts": 45,
         "best": [
           {
@@ -507,31 +125,30 @@
             "pos": "RB",
             "season": "2025",
             "pick": "3.04",
-            "v": 3157
+            "v": 2999
           },
           {
             "name": "Harold Fannin",
             "pos": "TE",
             "season": "2025",
             "pick": "3.10",
-            "v": 3070
+            "v": 2856
           },
           {
             "name": "De'Zhaun Stribling",
             "pos": "WR",
             "season": "2026",
             "pick": "3.09",
-            "v": 1706
+            "v": 1596
           }
         ],
         "market": {
-          "early": 1301,
-          "mid": 1163,
-          "late": 1048,
-          "any": 1143
+          "early": 1313,
+          "mid": 1155,
+          "late": 1058,
+          "any": 1133
         }
       }
     ]
-  },
-  "started": "2026-10-14T03:55:39.007Z"
+  }
 }
