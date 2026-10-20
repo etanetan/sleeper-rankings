@@ -1,34 +1,33 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1367869106300133376",
   "league_name": "FCFFL",
   "season": "2026",
-  "week": 6,
-  "generated": "2026-10-13T12:56:38.502Z",
+  "week": 7,
+  "generated": "2026-10-20T12:55:49.732Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=1&numTeams=12&ppr=1",
-    "fetched": "2026-10-13T12:55:45.511Z"
+    "fetched": "2026-10-20T12:55:14.436Z"
   },
   "me": {
     "name": "Young Blood",
-    "record": "1-4",
+    "record": "2-4",
     "thin": [
       "TE",
       "QB"
     ],
     "deep": [
-      "RB",
-      "WR"
+      "WR",
+      "RB"
     ]
   },
   "trades": [],
-  "short_reason": "Current-week news and analyst sentiment could not be verified this run: searches returned mostly preseason or older-season pages, and the ones that were current conflicted with each other and with the numbers (for example Ja'Marr Chase's concussion status and Woody Marks's role). Rather than publish unsourced trades, none are suggested this week.",
+  "short_reason": "Current-week news and analyst sentiment could not be verified this run: searches returned mostly 2025 or preseason pages, and the 2026 buy-low/sell-high columns found were paywalled or only covered Week 5. Rather than publish unsourced trades, none are suggested this week.",
   "review": {
     "checked": false
   },
-  "draft_history": null,
-  "started": "2026-10-20T12:55:18.467Z"
+  "draft_history": null
 }
