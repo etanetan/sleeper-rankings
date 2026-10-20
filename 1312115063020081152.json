@@ -1,20 +1,20 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1312115063020081152",
   "league_name": "UMN Dynasty League 🧨",
   "season": "2026",
-  "week": 6,
-  "generated": "2026-10-13T22:55:29.531Z",
+  "week": 7,
+  "generated": "2026-10-20T22:55:35.420Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=2&numTeams=10&ppr=0.5",
-    "fetched": "2026-10-13T22:54:55.943Z"
+    "fetched": "2026-10-20T22:55:05.666Z"
   },
   "me": {
     "name": "UnWorthy Opponent",
-    "record": "2-3",
+    "record": "3-3",
     "thin": [
       "WR",
       "QB"
@@ -25,10 +25,9 @@
     ]
   },
   "trades": [],
-  "short_reason": "The numbers found 11 fair candidates, but this week's news could not be verified: search results mixed 2025 and 2026 articles and had no Week 6 recaps or injury reports for Garrett Wilson, Malik Nabers, Denzel Boston or Deshaun Watson. Nothing is published until the angles can be checked. Wilson looks like a sell-high only if his 37.9% Week 5 target share fades once teammates return from injury.",
+  "short_reason": "No trades this week: the web searches returned only 2021 and 2024 columns and preseason pieces for the players involved, so no current news, injury or usage reports could be verified. Nothing is published on unverified claims. The league will be researched again on the next run.",
   "review": {
     "checked": false
   },
-  "draft_history": null,
-  "started": "2026-10-20T22:55:09.115Z"
+  "draft_history": null
 }
