@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "ready",
+  "status": "running",
   "league_id": "1312148687543091200",
   "league_name": "HTB DYNASTY",
   "season": "2026",
@@ -150,5 +150,6 @@
         }
       }
     ]
-  }
+  },
+  "started": "2026-10-21T03:55:25.809Z"
 }
