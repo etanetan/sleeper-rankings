@@ -1,20 +1,20 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1312115063020081152",
   "league_name": "UMN Dynasty League 🧨",
   "season": "2026",
-  "week": 7,
-  "generated": "2026-10-20T22:55:35.420Z",
+  "week": 8,
+  "generated": "2026-10-27T22:57:01.423Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=2&numTeams=10&ppr=0.5",
-    "fetched": "2026-10-20T22:55:05.666Z"
+    "fetched": "2026-10-27T22:55:28.595Z"
   },
   "me": {
     "name": "UnWorthy Opponent",
-    "record": "3-3",
+    "record": "3-4",
     "thin": [
       "WR",
       "QB"
@@ -25,10 +25,9 @@
     ]
   },
   "trades": [],
-  "short_reason": "No trades this week: the web searches returned only 2021 and 2024 columns and preseason pieces for the players involved, so no current news, injury or usage reports could be verified. Nothing is published on unverified claims. The league will be researched again on the next run.",
+  "short_reason": "No trade cleared the bar this week. The strongest buy-low, Chase Brown (71% of Cincinnati's RB opportunities, one touchdown), only pairs with a deal that swaps Jayden Daniels for Bo Nix, a big downgrade at superflex QB on a Denver offense ranked 31st in yards per game. Dak Prescott just posted a QB6 week (three touchdowns vs Philadelphia), so he is no longer cheap. Emeka Egbuka's availability is unclear after a reported concussion and foot injury. Trevor Lawrence has topped 20 points in every game and is on a bye, and Tyler Shough has a Week 8 bye, so selling or buying either now costs a lineup spot for no clear edge. Check back after the Week 8 byes.",
   "review": {
     "checked": false
   },
-  "draft_history": null,
-  "started": "2026-10-27T22:55:31.860Z"
+  "draft_history": null
 }
