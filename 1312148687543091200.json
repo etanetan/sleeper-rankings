@@ -1,20 +1,20 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1312148687543091200",
   "league_name": "HTB DYNASTY",
   "season": "2026",
-  "week": 7,
-  "generated": "2026-10-21T03:56:03.995Z",
+  "week": 8,
+  "generated": "2026-10-28T03:55:54.685Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&numTeams=10&ppr=0",
-    "fetched": "2026-10-21T03:55:21.093Z"
+    "fetched": "2026-10-28T03:55:21.956Z"
   },
   "me": {
     "name": "etanetan",
-    "record": "3-3",
+    "record": "4-3",
     "thin": [
       "RB",
       "TE"
@@ -25,7 +25,7 @@
     ]
   },
   "trades": [],
-  "short_reason": "This week's searches found little current, verifiable news to back a trade angle. Michael Wilson, flagged as a sell-high, is tied for the league lead in receiver targets and analysts call him a buy-low, so he stays put. Reports on Kyle Monangai's current status and on the targets' recent usage were stale or missing, and none of the candidate deals had an angle strong enough to suggest without it.",
+  "short_reason": "This week's web research could only confirm preseason and prior-season news for the players in the best angles (Skattebo, Hampton, Waddle, Nix), with no current-week injury, snap or analyst sentiment to back a buy-low or sell-high call. No trades are published rather than pitching ones the news can't support. The candidates will be re-checked on the next run.",
   "review": {
     "checked": false
   },
@@ -38,10 +38,10 @@
       {
         "round": 1,
         "n": 20,
-        "median": 2736,
-        "early": 3454,
-        "mid": 2404,
-        "late": 2167,
+        "median": 2773,
+        "early": 3528,
+        "mid": 2411,
+        "late": 2421,
         "busts": 0,
         "best": [
           {
@@ -49,37 +49,37 @@
             "pos": "RB",
             "season": "2025",
             "pick": "1.01",
-            "v": 6282
+            "v": 5574
           },
           {
             "name": "Jeremiyah Love",
             "pos": "RB",
             "season": "2026",
             "pick": "1.02",
-            "v": 5269
+            "v": 5229
           },
           {
             "name": "Tetairoa McMillan",
             "pos": "WR",
             "season": "2025",
             "pick": "1.06",
-            "v": 4815
+            "v": 4613
           }
         ],
         "market": {
-          "early": 5234,
-          "mid": 3446,
-          "late": 2648,
-          "any": 3135
+          "early": 5239,
+          "mid": 3450,
+          "late": 2658,
+          "any": 3112
         }
       },
       {
         "round": 2,
         "n": 20,
-        "median": 1551,
-        "early": 1388,
-        "mid": 1675,
-        "late": 1818,
+        "median": 1639,
+        "early": 1440,
+        "mid": 1767,
+        "late": 1840,
         "busts": 10,
         "best": [
           {
@@ -87,37 +87,37 @@
             "pos": "WR",
             "season": "2025",
             "pick": "2.04",
-            "v": 3910
+            "v": 4060
           },
           {
-            "name": "Tyler Shough",
-            "pos": "QB",
+            "name": "Colston Loveland",
+            "pos": "TE",
             "season": "2025",
-            "pick": "2.09",
-            "v": 3792
+            "pick": "2.06",
+            "v": 4033
           },
           {
             "name": "Jaxson Dart",
             "pos": "QB",
             "season": "2025",
             "pick": "2.01",
-            "v": 3790
+            "v": 3775
           }
         ],
         "market": {
-          "early": 2120,
-          "mid": 1753,
-          "late": 1518,
-          "any": 1674
+          "early": 2134,
+          "mid": 1771,
+          "late": 1526,
+          "any": 1683
         }
       },
       {
         "round": 3,
         "n": 20,
-        "median": 489,
-        "early": 470,
-        "mid": 547,
-        "late": 608,
+        "median": 544,
+        "early": 468,
+        "mid": 497,
+        "late": 810,
         "busts": 50,
         "best": [
           {
@@ -125,31 +125,30 @@
             "pos": "RB",
             "season": "2025",
             "pick": "3.04",
-            "v": 3391
+            "v": 3529
           },
           {
             "name": "Harold Fannin",
             "pos": "TE",
             "season": "2025",
             "pick": "3.10",
-            "v": 2604
+            "v": 2480
           },
           {
             "name": "De'Zhaun Stribling",
             "pos": "WR",
             "season": "2026",
             "pick": "3.09",
-            "v": 1745
+            "v": 1789
           }
         ],
         "market": {
-          "early": 1339,
-          "mid": 1198,
-          "late": 1089,
-          "any": 1172
+          "early": 1340,
+          "mid": 1194,
+          "late": 1080,
+          "any": 1166
         }
       }
     ]
-  },
-  "started": "2026-10-28T03:55:27.304Z"
+  }
 }
