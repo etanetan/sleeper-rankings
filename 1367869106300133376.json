@@ -1,20 +1,20 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1367869106300133376",
   "league_name": "FCFFL",
   "season": "2026",
-  "week": 8,
-  "generated": "2026-10-27T13:15:18.855Z",
+  "week": 9,
+  "generated": "2026-11-03T13:55:58.061Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=1&numTeams=12&ppr=1",
-    "fetched": "2026-10-27T13:15:00.165Z"
+    "fetched": "2026-11-03T13:55:19.717Z"
   },
   "me": {
     "name": "Young Blood",
-    "record": "2-5",
+    "record": "2-6",
     "thin": [
       "TE",
       "QB"
@@ -25,10 +25,9 @@
     ]
   },
   "trades": [],
-  "short_reason": "Current-week news and analyst sentiment could not be verified this run: searches for Week 8 buy-low/sell-high columns and trade value charts returned only 2025 or earlier pages. Rather than publish unsourced trades, none are suggested this week.",
+  "short_reason": "Web research for week 9 returned mostly last season's or summer articles, so this week's injury and role news on the key players couldn't be verified. No trades are published rather than guessing; the next run will retry.",
   "review": {
     "checked": false
   },
-  "draft_history": null,
-  "started": "2026-11-03T13:55:27.694Z"
+  "draft_history": null
 }
