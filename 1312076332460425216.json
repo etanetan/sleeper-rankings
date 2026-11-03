@@ -1,20 +1,20 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1312076332460425216",
   "league_name": "Family Dynasty",
   "season": "2026",
-  "week": 8,
-  "generated": "2026-10-27T17:58:35.509Z",
+  "week": 9,
+  "generated": "2026-11-03T18:57:58.546Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&numTeams=12&ppr=1",
-    "fetched": "2026-10-27T17:55:16.815Z"
+    "fetched": "2026-11-03T18:57:03.217Z"
   },
   "me": {
     "name": "Bob’s Dynasty",
-    "record": "5-2",
+    "record": "6-2",
     "thin": [
       "TE",
       "RB"
@@ -25,7 +25,7 @@
     ]
   },
   "trades": [],
-  "short_reason": "Week 7 reporting undercut the numbers' main angles, so no trade was published. Ashton Jeanty now splits carries almost evenly with Mike Washington Jr. (your hold), so he is not a clean buy-low. Jonah Coleman returned from IR and led Denver's backfield on early downs, third downs and short yardage, so he is a hold rather than a sell. Lamar Jackson was ruled out with an ankle injury and Jeremiyah Love has missed two games with an ankle injury and may miss more, so neither is a safe buy right now. Malik Nabers had 9 targets and 111 yards against Houston with the most routes on the Giants, and Colston Loveland is a locked-in target for Chicago, so neither is a sell. Sources could not confirm current news on Omarion Hampton, Josh Downs, Dameon Pierce or Cam Ward. Check back after the next run.",
+  "short_reason": "Web search only returned last season's articles and nothing dated this week, so injury news, depth charts and analyst sentiment for the players in the candidates could not be verified. Rather than publish trades on unchecked claims, none are listed this week; the engine's market calls (for example Jonah Coleman and Isaiah Likely as sell-highs) are on the numbers alone.",
   "review": {
     "checked": false
   },
@@ -40,86 +40,86 @@
       {
         "round": 1,
         "n": 48,
-        "median": 2887,
-        "early": 4355,
-        "mid": 2409,
-        "late": 2551,
+        "median": 2959,
+        "early": 3978,
+        "mid": 2625,
+        "late": 2606,
         "busts": 4,
         "best": [
+          {
+            "name": "Jaxon Smith-Njigba",
+            "pos": "WR",
+            "season": "2023",
+            "pick": "1.07",
+            "v": 10331
+          },
           {
             "name": "Jahmyr Gibbs",
             "pos": "RB",
             "season": "2023",
             "pick": "1.05",
-            "v": 10385
+            "v": 10052
           },
           {
             "name": "Bijan Robinson",
             "pos": "RB",
             "season": "2023",
             "pick": "1.01",
-            "v": 10167
-          },
-          {
-            "name": "Jaxon Smith-Njigba",
-            "pos": "WR",
-            "season": "2023",
-            "pick": "1.07",
-            "v": 9963
+            "v": 9378
           }
         ],
         "market": {
-          "early": 5077,
-          "mid": 3343,
-          "late": 2565,
-          "any": 3016
+          "early": 5021,
+          "mid": 3306,
+          "late": 2554,
+          "any": 2959
         }
       },
       {
         "round": 2,
         "n": 48,
-        "median": 1276,
-        "early": 1965,
-        "mid": 734,
-        "late": 827,
-        "busts": 27,
+        "median": 1280,
+        "early": 1954,
+        "mid": 635,
+        "late": 1011,
+        "busts": 29,
         "best": [
+          {
+            "name": "Luther Burden",
+            "pos": "WR",
+            "season": "2025",
+            "pick": "2.01",
+            "v": 4119
+          },
           {
             "name": "Jaxson Dart",
             "pos": "QB",
             "season": "2025",
             "pick": "2.02",
-            "v": 3956
-          },
-          {
-            "name": "Tyler Shough",
-            "pos": "QB",
-            "season": "2025",
-            "pick": "2.10",
-            "v": 3847
+            "v": 4065
           },
           {
             "name": "Devon Achane",
             "pos": "RB",
             "season": "2023",
             "pick": "2.03",
-            "v": 3793
+            "v": 3880
           }
         ],
         "market": {
-          "early": 2050,
-          "mid": 1693,
-          "late": 1458,
-          "any": 1609
+          "early": 2057,
+          "mid": 1712,
+          "late": 1464,
+          "any": 1621
         }
       },
       {
         "round": 3,
         "n": 48,
-        "median": 321,
-        "early": 549,
-        "mid": 47,
-        "late": 454,
+        "median": 309,
+        "early": 674,
+        "mid": 67,
+        "late": 374,
         "busts": 60,
         "best": [
           {
@@ -127,31 +127,30 @@
             "pos": "RB",
             "season": "2024",
             "pick": "3.02",
-            "v": 3764
+            "v": 3892
           },
           {
             "name": "Chase Brown",
             "pos": "RB",
             "season": "2023",
             "pick": "3.03",
-            "v": 3231
+            "v": 3132
           },
           {
-            "name": "De'Zhaun Stribling",
-            "pos": "WR",
-            "season": "2026",
-            "pick": "3.07",
-            "v": 1867
+            "name": "Braelon Allen",
+            "pos": "RB",
+            "season": "2024",
+            "pick": "3.11",
+            "v": 2126
           }
         ],
         "market": {
-          "early": 1279,
-          "mid": 1139,
-          "late": 1036,
-          "any": 1112
+          "early": 1274,
+          "mid": 1125,
+          "late": 1008,
+          "any": 1096
         }
       }
     ]
-  },
-  "started": "2026-11-03T18:57:11.370Z"
+  }
 }
