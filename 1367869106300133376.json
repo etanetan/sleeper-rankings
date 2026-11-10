@@ -1,20 +1,20 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1367869106300133376",
   "league_name": "FCFFL",
   "season": "2026",
-  "week": 9,
-  "generated": "2026-11-03T13:55:58.061Z",
+  "week": 10,
+  "generated": "2026-11-10T13:56:29.274Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=1&numTeams=12&ppr=1",
-    "fetched": "2026-11-03T13:55:19.717Z"
+    "fetched": "2026-11-10T13:55:53.413Z"
   },
   "me": {
     "name": "Young Blood",
-    "record": "2-6",
+    "record": "2-7",
     "thin": [
       "TE",
       "QB"
@@ -25,10 +25,9 @@
     ]
   },
   "trades": [],
-  "short_reason": "Web research for week 9 returned mostly last season's or summer articles, so this week's injury and role news on the key players couldn't be verified. No trades are published rather than guessing; the next run will retry.",
+  "short_reason": "Web search this run returned mostly 2024/2025 articles and almost no verifiable week 10 news on the players in the candidate trades (Nabers, Diggs, Hampton, Kyren Williams, Daniels), so no trade could be backed by current sources. Numbers-only suggestions were held back rather than published unchecked.",
   "review": {
     "checked": false
   },
-  "draft_history": null,
-  "started": "2026-11-10T13:55:57.053Z"
+  "draft_history": null
 }
