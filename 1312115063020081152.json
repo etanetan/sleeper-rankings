@@ -1,20 +1,20 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1312115063020081152",
   "league_name": "UMN Dynasty League 🧨",
   "season": "2026",
-  "week": 9,
-  "generated": "2026-11-03T23:55:35.252Z",
+  "week": 10,
+  "generated": "2026-11-11T00:15:55.272Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=2&numTeams=10&ppr=0.5",
-    "fetched": "2026-11-03T23:55:11.533Z"
+    "fetched": "2026-11-11T00:02:46.631Z"
   },
   "me": {
     "name": "UnWorthy Opponent",
-    "record": "3-5",
+    "record": "4-5",
     "thin": [
       "WR",
       "QB"
@@ -24,11 +24,1030 @@
       "RB"
     ]
   },
-  "trades": [],
-  "short_reason": "Web search only returned last season's articles and nothing dated this week, so injury news, depth charts and analyst sentiment for the players in the candidates could not be verified. Rather than publish trades on unchecked claims, none are listed this week; the engine's market calls (for example Jayden Daniels and Trevor Lawrence as sell-highs) are on the numbers alone.",
+  "trades": [
+    {
+      "id": "zulnd5",
+      "partner": {
+        "roster_id": 5,
+        "name": "Charity Case",
+        "user": "samt00",
+        "record": "3-6",
+        "thin": [
+          "QB",
+          "WR"
+        ],
+        "deep": [
+          "TE",
+          "RB"
+        ]
+      },
+      "give": [
+        {
+          "id": "7523",
+          "n": "Trevor Lawrence",
+          "p": "QB",
+          "t": "JAX",
+          "v": 5126,
+          "pr": 7,
+          "trend": 791,
+          "trendPct": 0.18,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 8,
+            "ppg": 19.3,
+            "proj": 20.7,
+            "perf": 0.93,
+            "snap": 96,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 0.3
+          }
+        },
+        {
+          "id": "2449",
+          "n": "Stefon Diggs",
+          "p": "WR",
+          "t": "WAS",
+          "v": 986,
+          "pr": 35,
+          "trend": 265,
+          "trendPct": 0.37,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 7,
+            "ppg": 10.8,
+            "proj": 9.3,
+            "perf": 1.16,
+            "snap": 61,
+            "tgtShare": 22,
+            "tpg": 7,
+            "touches": null,
+            "rz": 0.7
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "8144",
+          "n": "Chris Olave",
+          "p": "WR",
+          "t": "NO",
+          "v": 4542,
+          "pr": 10,
+          "trend": -1140,
+          "trendPct": -0.2,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 8,
+            "ppg": 14.2,
+            "proj": 13.9,
+            "perf": 1.02,
+            "snap": 81,
+            "tgtShare": 28,
+            "tpg": 10.4,
+            "touches": null,
+            "rz": 0.9
+          }
+        },
+        {
+          "id": "10859",
+          "n": "Sam LaPorta",
+          "p": "TE",
+          "t": "DET",
+          "v": 1790,
+          "pr": 6,
+          "trend": -447,
+          "trendPct": -0.2,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 8,
+            "ppg": 9.5,
+            "proj": 10.1,
+            "perf": 0.94,
+            "snap": 90,
+            "tgtShare": 18,
+            "tpg": 6.1,
+            "touches": null,
+            "rz": 1.5
+          }
+        }
+      ],
+      "value": {
+        "give": 6112,
+        "get": 6332,
+        "giveAdj": 5915,
+        "getAdj": 5974,
+        "diffPct": 0.012,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "gainPct": 1.8,
+        "changes": {
+          "in": [
+            {
+              "n": "Chris Olave",
+              "slot": "WR"
+            },
+            {
+              "n": "Sam LaPorta",
+              "slot": "FLEX"
+            },
+            {
+              "n": "Michael Penix Jr.",
+              "slot": "SUPER_FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Trevor Lawrence",
+              "slot": "QB"
+            },
+            {
+              "n": "Denzel Boston",
+              "slot": "WR"
+            },
+            {
+              "n": "Stefon Diggs",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "gainPct": -0.7
+      },
+      "headline": "Sell Lawrence's TD spike and a borrowed-role Diggs for a healthy WR1 plus a TE bonus",
+      "summary": "Lawrence's price is riding an unusual rushing-TD stretch and Diggs's role is about to shrink once McLaurin is back — flip both to a QB-needy rival for Olave's locked-in volume and a free TE chip.",
+      "confidence": "high",
+      "why": {
+        "give": [
+          "Lawrence's price is up 18% over the last 30 days even though he's performing 7% below his own projection pace (0.93) right now — the market is paying on name value, not current output",
+          "Diggs's 37% 30-day value jump lines up with Terry McLaurin landing on injured reserve; once McLaurin's back, target competition resets (commanders.com)"
+        ],
+        "get": [
+          "Olave is full-go after last year's blood-clot scare and off blood thinners with no restrictions (draftsharks.com)",
+          "He's still New Orleans' clear No.1 target at 28% share and 81% snaps even with his price down 20% over 30 days",
+          "Sam LaPorta is a 90%-snap, 18%-target-share TE1 in a top-tier Lions passing game — a value chip even on top of your own TE depth"
+        ],
+        "you": [
+          "Olave starts right away at WR; LaPorta slots into your FLEX — both are upgrades on Diggs and Denzel Boston, who were already fringe lineup pieces",
+          "Fixes the thin WR spot the numbers flagged without touching your RB/TE surplus"
+        ],
+        "them": [
+          "Charity Case (3-6) is thin at both QB and WR, but a superflex league punishes an empty QB spot harder than a mediocre WR2 — Lawrence fixes an actual zero for them",
+          "They're deep at TE/RB, so trading from a thin group is an easier call when the alternative is starting no QB at all"
+        ],
+        "experts": [
+          "Washington's own team site confirms McLaurin is now on injured reserve, which is the direct cause of Diggs's recent target bump (commanders.com)",
+          "Olave was officially cleared with no restrictions after last year's blood-clot scare, removing the durability question a rival would otherwise use to lowball this deal (draftsharks.com)"
+        ]
+      },
+      "risks": [
+        "Lawrence's price has kept climbing all season; if Jacksonville's offense keeps performing like a top team, you sell too early",
+        "Olave has a blood-clot history; a recurrence would erase the value of this swap"
+      ],
+      "sources": [
+        {
+          "title": "Commanders place Terry McLaurin on injured reserve",
+          "url": "https://www.commanders.com/news/commanders-terry-mclaurin-injured-reserve-jer-zhan-newton"
+        },
+        {
+          "title": "Chris Olave full-go after blood clot issue",
+          "url": "https://www.draftsharks.com/fantasy-football-news/82042/chris-olave-full-go-after-blood-clot-issue"
+        }
+      ]
+    },
+    {
+      "id": "mj2wzz",
+      "partner": {
+        "roster_id": 7,
+        "name": "BowerRangers MysticForce",
+        "user": "SammyHillstead",
+        "record": "7-2",
+        "thin": [
+          "WR",
+          "RB"
+        ],
+        "deep": [
+          "TE",
+          "QB"
+        ]
+      },
+      "give": [
+        {
+          "id": "7523",
+          "n": "Trevor Lawrence",
+          "p": "QB",
+          "t": "JAX",
+          "v": 5126,
+          "pr": 7,
+          "trend": 791,
+          "trendPct": 0.18,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 8,
+            "ppg": 19.3,
+            "proj": 20.7,
+            "perf": 0.93,
+            "snap": 96,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 0.3
+          }
+        },
+        {
+          "id": "2449",
+          "n": "Stefon Diggs",
+          "p": "WR",
+          "t": "WAS",
+          "v": 986,
+          "pr": 35,
+          "trend": 265,
+          "trendPct": 0.37,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 7,
+            "ppg": 10.8,
+            "proj": 9.3,
+            "perf": 1.16,
+            "snap": 61,
+            "tgtShare": 22,
+            "tpg": 7,
+            "touches": null,
+            "rz": 0.7
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "7569",
+          "n": "Nico Collins",
+          "p": "WR",
+          "t": "HOU",
+          "v": 3732,
+          "pr": 13,
+          "trend": -1528,
+          "trendPct": -0.29,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 6,
+            "ppg": 12.9,
+            "proj": 14.8,
+            "perf": 0.87,
+            "snap": 71,
+            "tgtShare": 20,
+            "tpg": 6.5,
+            "touches": null,
+            "rz": 1
+          }
+        },
+        {
+          "id": "12545",
+          "n": "Tyler Shough",
+          "p": "QB",
+          "t": "NO",
+          "v": 2719,
+          "pr": 14,
+          "trend": -665,
+          "trendPct": -0.2,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 8,
+            "ppg": 19.3,
+            "proj": 18.4,
+            "perf": 1.05,
+            "snap": 100,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 1.3
+          }
+        }
+      ],
+      "value": {
+        "give": 6112,
+        "get": 6451,
+        "giveAdj": 5915,
+        "getAdj": 5907,
+        "diffPct": -0.002,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "gainPct": 0.9,
+        "changes": {
+          "in": [
+            {
+              "n": "Nico Collins",
+              "slot": "WR"
+            },
+            {
+              "n": "Tyler Shough",
+              "slot": "SUPER_FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Trevor Lawrence",
+              "slot": "QB"
+            },
+            {
+              "n": "Stefon Diggs",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "gainPct": -0.5
+      },
+      "headline": "Sell Lawrence's hot streak and a fading Diggs to a contender upgrading at QB for the stretch run",
+      "summary": "A 7-2 team starting Tyler Shough will pay a premium at the deadline for a clear QB1 upgrade — take Nico Collins' depressed-price alpha role plus Shough back as a QB2.",
+      "confidence": "high",
+      "why": {
+        "give": [
+          "Same sell case as above: Lawrence's price is up 18% over 30 days while he's actually performing 7% under his own projection pace (0.93) right now — the price is outrunning the output",
+          "Diggs's role is a McLaurin-injury bump, not a new baseline — he's still being valued as a low-end WR4 long-term (si.com)"
+        ],
+        "get": [
+          "Nico Collins is Houston's unquestioned alpha receiver even after the team added depth, and his stock rose further once Jayden Higgins was ruled out for the season",
+          "His price is down 29% over 30 days despite a 20% target share and 71% snaps in a smaller 6-game sample — the discount is about missed time, not a lost role",
+          "Tyler Shough is the Saints' full-time, team-committed starter (100% snaps, playing to his projection) — a real floor at your thin QB2 spot"
+        ],
+        "you": [
+          "Collins starts immediately at WR and Shough gives you a second playable arm in the superflex, directly addressing your thin WR/QB"
+        ],
+        "them": [
+          "BowerRangers MysticForce (7-2) is in the thick of the race and deep at QB, but Shough is their own starter — Lawrence is a clear ceiling upgrade for a stretch run",
+          "They're thin WR and only giving up one piece there (Collins) to fix a bigger lever (QB); Diggs coming back gives them a roster-worthy WR in return"
+        ],
+        "experts": [
+          "Analysts call Collins the clear alpha in Houston's passing game even with the Kayshon Boutte addition, with a 30%+ target share expected this season",
+          "The Saints' front office and coaching staff have repeatedly affirmed Shough as the full-time 2026 starter, not a bridge option",
+          "Diggs is still graded as a low-end WR4 long-term now that he's healthy, which caps how much his current McLaurin-injury bump is really worth (si.com)"
+        ]
+      },
+      "risks": [
+        "Collins' sample is only 6 games — if the missed time reflects an underlying issue rather than bad luck, the buy-low thesis weakens",
+        "Shough is replacement-level insurance, not a true starter upgrade over your existing room"
+      ],
+      "sources": [
+        {
+          "title": "Nico Collins set for massive volume in 2026",
+          "url": "https://www.rotoballer.com/?p=1914870"
+        },
+        {
+          "title": "Saints committed to Tyler Shough as starting quarterback for 2026",
+          "url": "https://africa.espn.com/nfl/story/_/id/47541318/saints-committed-tyler-shough-starting-qb-2026"
+        },
+        {
+          "title": "Stefon Diggs back on the fantasy radar with the Commanders",
+          "url": "https://www.si.com/fantasy/stefon-diggs-fantasy-radar-commanders"
+        }
+      ]
+    },
+    {
+      "id": "gvsw03",
+      "partner": {
+        "roster_id": 5,
+        "name": "Charity Case",
+        "user": "samt00",
+        "record": "3-6",
+        "thin": [
+          "QB",
+          "WR"
+        ],
+        "deep": [
+          "TE",
+          "RB"
+        ]
+      },
+      "give": [
+        {
+          "id": "7523",
+          "n": "Trevor Lawrence",
+          "p": "QB",
+          "t": "JAX",
+          "v": 5126,
+          "pr": 7,
+          "trend": 791,
+          "trendPct": 0.18,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 8,
+            "ppg": 19.3,
+            "proj": 20.7,
+            "perf": 0.93,
+            "snap": 96,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 0.3
+          }
+        },
+        {
+          "id": "6130",
+          "n": "Devin Singletary",
+          "p": "RB",
+          "t": "NYG",
+          "v": 454,
+          "pr": 41,
+          "trend": 450,
+          "trendPct": 112.5,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 5,
+            "ppg": 6.9,
+            "proj": 4.9,
+            "perf": 1.41,
+            "snap": 45,
+            "tgtShare": 8,
+            "tpg": 2.4,
+            "touches": 9.8,
+            "rz": 1
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "9997",
+          "n": "Zay Flowers",
+          "p": "WR",
+          "t": "BAL",
+          "v": 3489,
+          "pr": 14,
+          "trend": -1235,
+          "trendPct": -0.26,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 8,
+            "ppg": 13.4,
+            "proj": 13.6,
+            "perf": 0.98,
+            "snap": 67,
+            "tgtShare": 30,
+            "tpg": 8,
+            "touches": null,
+            "rz": 0.9
+          }
+        },
+        {
+          "id": "421",
+          "n": "Matthew Stafford",
+          "p": "QB",
+          "t": "LAR",
+          "v": 2712,
+          "pr": 15,
+          "trend": -808,
+          "trendPct": -0.23,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 9,
+            "ppg": 17,
+            "proj": 19.6,
+            "perf": 0.87,
+            "snap": 98,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 0.4
+          }
+        }
+      ],
+      "value": {
+        "give": 5580,
+        "get": 6201,
+        "giveAdj": 5489,
+        "getAdj": 5659,
+        "diffPct": 0.033,
+        "fair": true,
+        "verdict": "Slightly in your favor"
+      },
+      "you": {
+        "gainPct": 0.4,
+        "changes": {
+          "in": [
+            {
+              "n": "Zay Flowers",
+              "slot": "WR"
+            },
+            {
+              "n": "Matthew Stafford",
+              "slot": "SUPER_FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Trevor Lawrence",
+              "slot": "QB"
+            },
+            {
+              "n": "Stefon Diggs",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "gainPct": 1.1
+      },
+      "headline": "Pair Lawrence with a borrowed-role bench back for a target-monster WR and a steady veteran QB2",
+      "summary": "Singletary's current workload disappears the moment either Giants back returns from injury — package him with Lawrence for Zay Flowers' locked-in target share and Stafford as a safe QB2.",
+      "confidence": "high",
+      "why": {
+        "give": [
+          "Singletary's huge 30-day value jump is because he's the only healthy back left in New York's backfield — Tyrone Tracy is out roughly 4 games with a hamstring injury and Cam Skattebo is also dealing with hamstring tightness (stackedfantasy.com)",
+          "That workload reverts the moment either back is active again, so now is the time to cash him in",
+          "Same Lawrence sell case: his price is up 18% over 30 days while he's performing 7% under his own projection pace (0.93) right now"
+        ],
+        "get": [
+          "Zay Flowers carries a 28% target share, the 4th-highest in the NFL this season, and keeps cashing targets even in games the touchdowns don't come (draftsharks.com)",
+          "Matthew Stafford is still throwing at a near-MVP level behind a one-year, $55M extension, giving you a steady, low-maintenance QB2 even if his TD rate cools (profootballnetwork.com)"
+        ],
+        "you": [
+          "Flowers starts at WR and Stafford takes the superflex spot — note that making this deal pushes Diggs to your bench outright, since Flowers' current role outproduces him; a sign Diggs' remaining trade value is worth locking in elsewhere rather than losing it for nothing"
+        ],
+        "them": [
+          "Charity Case (3-6) is thin at QB; Lawrence is a real starter upgrade over nothing",
+          "They're deep at RB, so taking on Singletary, even on a short-lived hot streak, costs them nothing"
+        ],
+        "experts": [
+          "Ravens coaching has publicly said Flowers is a focal point of the new offense, and he already owns a top-4 target share leaguewide this season (baltimoreravens.com)",
+          "Analysts still project 2025 MVP Stafford for QB1-caliber volume even as they debate touchdown regression off his 46-TD season (profootballnetwork.com)"
+        ]
+      },
+      "risks": [
+        "Flowers' touchdown rate has been inconsistent — the volume is locked in, the scoring isn't guaranteed",
+        "Stafford is 38; one bad game from the offensive line and his floor craters"
+      ],
+      "sources": [
+        {
+          "title": "Stacked Fantasy: Giants backfield notes",
+          "url": "https://www.stackedfantasy.com/nfl/news/sources/42/players/a961b0d4-5d7c-438e-90f0-2e1fa09f6c89"
+        },
+        {
+          "title": "Zay Flowers keeps cashing targets even without TDs",
+          "url": "https://www.draftsharks.com/fantasy-football-news/83362/zay-flowers-keeps-cashing-targets-even-without-tds"
+        },
+        {
+          "title": "Matthew Stafford Fantasy Outlook 2026: Value Continues To Hinge On Touchdowns",
+          "url": "https://www.profootballnetwork.com/fantasy-football/matthew-stafford-fantasy-outlook-2026/"
+        }
+      ]
+    },
+    {
+      "id": "16mmbbn",
+      "partner": {
+        "roster_id": 8,
+        "name": "Chase A Bag Hoe",
+        "user": "DiegoCarr0620",
+        "record": "6-3",
+        "thin": [
+          "TE",
+          "RB"
+        ],
+        "deep": [
+          "WR",
+          "QB"
+        ]
+      },
+      "give": [
+        {
+          "id": "11566",
+          "n": "Jayden Daniels",
+          "p": "QB",
+          "t": "WAS",
+          "v": 4620,
+          "pr": 9,
+          "trend": 1009,
+          "trendPct": 0.28,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 6,
+            "ppg": 20.1,
+            "proj": 19.6,
+            "perf": 1.03,
+            "snap": 92,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 0.8
+          }
+        },
+        {
+          "id": "6130",
+          "n": "Devin Singletary",
+          "p": "RB",
+          "t": "NYG",
+          "v": 454,
+          "pr": 41,
+          "trend": 450,
+          "trendPct": 112.5,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 5,
+            "ppg": 6.9,
+            "proj": 4.9,
+            "perf": 1.41,
+            "snap": 45,
+            "tgtShare": 8,
+            "tpg": 2.4,
+            "touches": 9.8,
+            "rz": 1
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "3294",
+          "n": "Dak Prescott",
+          "p": "QB",
+          "t": "DAL",
+          "v": 4160,
+          "pr": 10,
+          "trend": -582,
+          "trendPct": -0.12,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 9,
+            "ppg": 19.7,
+            "proj": 21.4,
+            "perf": 0.92,
+            "snap": 100,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 0.4
+          }
+        },
+        {
+          "id": "12514",
+          "n": "Emeka Egbuka",
+          "p": "WR",
+          "t": "TB",
+          "v": 1291,
+          "pr": 28,
+          "trend": -114,
+          "trendPct": -0.08,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 7,
+            "ppg": 8.9,
+            "proj": 9,
+            "perf": 0.99,
+            "snap": 84,
+            "tgtShare": 25,
+            "tpg": 7.7,
+            "touches": null,
+            "rz": 1
+          }
+        }
+      ],
+      "value": {
+        "give": 5074,
+        "get": 5451,
+        "giveAdj": 4983,
+        "getAdj": 5193,
+        "diffPct": 0.045,
+        "fair": true,
+        "verdict": "Slightly in your favor"
+      },
+      "you": {
+        "gainPct": -0.3,
+        "changes": {
+          "in": [
+            {
+              "n": "Emeka Egbuka",
+              "slot": "WR"
+            },
+            {
+              "n": "Dak Prescott",
+              "slot": "SUPER_FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Stefon Diggs",
+              "slot": "FLEX"
+            },
+            {
+              "n": "Jayden Daniels",
+              "slot": "SUPER_FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "gainPct": 0.4
+      },
+      "headline": "Move an injury-prone Daniels and a short-lived RB1 role for a true Bucs WR1 and a healthy Prescott",
+      "summary": "Daniels is back near his season-high value after another injury scare and Singletary's role is borrowed time — send both to a QB-rich rival for Egbuka, Tampa Bay's new permanent No.1 receiver, plus Prescott.",
+      "confidence": "high",
+      "why": {
+        "give": [
+          "Daniels dislocated his left elbow in Week 2 against Dallas — the second dislocation of that same elbow in less than a year — and has a multi-year pattern of knee, hamstring and elbow injuries; his 30-day value is up 28% simply for returning and playing well (nbcsports.com, axios.com)",
+          "Singletary's role is only there because Tyrone Tracy (hamstring, ~4 weeks) and Cam Skattebo (hamstring) are both out — not a sustainable workload (stackedfantasy.com)"
+        ],
+        "get": [
+          "Emeka Egbuka stepped into a permanent WR1 role in Tampa Bay after Mike Evans left for San Francisco this offseason — this isn't a committee spot, it's the lead job",
+          "Dak Prescott is playing full-time (100% snaps, 9 games) and coming off a 335-yard game against Indianapolis on Nov. 8 — healthy, productive, just priced down 12% over 30 days"
+        ],
+        "you": [
+          "Egbuka and Prescott both start immediately, directly addressing your thin WR and QB spots"
+        ],
+        "them": [
+          "Chase A Bag Hoe (6-3) is already deep at WR/QB, so Egbuka and Prescott are replaceable there — but Daniels is a clear ceiling upgrade over Prescott in a superflex even from a position of strength, and Singletary fills their thin RB spot for next to nothing"
+        ],
+        "experts": [
+          "Egbuka is described as stepping into the permanent No.1 role vacated by Mike Evans this offseason, not just a committee piece",
+          "Washington coaches have called Daniels' recovery encouraging each time, but a second dislocation of the same elbow in under a year makes this an established pattern worth pricing in, not a one-off (nbcsports.com)"
+        ]
+      },
+      "risks": [
+        "Daniels' ceiling as a dual-threat QB is real — if he stays healthy the rest of the way, this looks like a bad sell",
+        "Egbuka still shares targets with Chris Godwin and a crowded WR room, so his target share could settle lower than his new WR1 billing suggests"
+      ],
+      "sources": [
+        {
+          "title": "Reports: Jayden Daniels consulting specialists after dislocating left elbow Sunday",
+          "url": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/reports-jayden-daniels-consulting-specialists-after-dislocating-left-elbow-sunday"
+        },
+        {
+          "title": "Jayden Daniels is hurt again, and optimism is in short supply",
+          "url": "https://www.axios.com/local/washington-dc/2026/09/21/jayden-daniels-injury-update-commanders-cowboys"
+        },
+        {
+          "title": "Stacked Fantasy: Giants backfield notes",
+          "url": "https://www.stackedfantasy.com/nfl/news/sources/42/players/a961b0d4-5d7c-438e-90f0-2e1fa09f6c89"
+        },
+        {
+          "title": "Can Emeka Egbuka Emerge as Buccaneers' No. 1 Receiver?",
+          "url": "https://www.si.com/nfl/buccaneers/onsi/can-emeka-egbuka-emerge-as-buccaneers-no-1-receiver-2026"
+        }
+      ]
+    },
+    {
+      "id": "1k96205",
+      "partner": {
+        "roster_id": 4,
+        "name": "🏆 Garbage Time Goblins",
+        "user": "PapaGart",
+        "record": "7-2",
+        "thin": [
+          "TE",
+          "QB"
+        ],
+        "deep": [
+          "WR",
+          "RB"
+        ]
+      },
+      "give": [
+        {
+          "id": "8138",
+          "n": "James Cook III",
+          "p": "RB",
+          "t": "BUF",
+          "v": 6070,
+          "pr": 6,
+          "trend": -354,
+          "trendPct": -0.06,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 8,
+            "ppg": 17.8,
+            "proj": 15.9,
+            "perf": 1.12,
+            "snap": 65,
+            "tgtShare": 8,
+            "tpg": 2.3,
+            "touches": 22.6,
+            "rz": 4.3
+          }
+        },
+        {
+          "id": "11559",
+          "n": "Michael Penix Jr.",
+          "p": "QB",
+          "t": "ATL",
+          "v": 1517,
+          "pr": 22,
+          "trend": 59,
+          "trendPct": 0.04,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 7,
+            "ppg": 14.5,
+            "proj": 16.6,
+            "perf": 0.87,
+            "snap": 99,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 0.3
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "8150",
+          "n": "Kyren Williams",
+          "p": "RB",
+          "t": "LAR",
+          "v": 4356,
+          "pr": 9,
+          "trend": -1181,
+          "trendPct": -0.21,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 9,
+            "ppg": 15.7,
+            "proj": 16.2,
+            "perf": 0.97,
+            "snap": 68,
+            "tgtShare": 14,
+            "tpg": 5.1,
+            "touches": 18.1,
+            "rz": 3.1
+          }
+        },
+        {
+          "id": "7594",
+          "n": "Chuba Hubbard",
+          "p": "RB",
+          "t": "CAR",
+          "v": 4220,
+          "pr": 10,
+          "trend": 345,
+          "trendPct": 0.09,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 8,
+            "ppg": 16.7,
+            "proj": 13.7,
+            "perf": 1.21,
+            "snap": 81,
+            "tgtShare": 11,
+            "tpg": 3.9,
+            "touches": 20,
+            "rz": 2.9
+          }
+        }
+      ],
+      "value": {
+        "give": 7587,
+        "get": 8576,
+        "giveAdj": 7284,
+        "getAdj": 7732,
+        "diffPct": 0.074,
+        "fair": true,
+        "verdict": "Slightly in your favor"
+      },
+      "you": {
+        "gainPct": 3.8,
+        "changes": {
+          "in": [
+            {
+              "n": "Kyren Williams",
+              "slot": "RB"
+            },
+            {
+              "n": "Chuba Hubbard",
+              "slot": "FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "James Cook III",
+              "slot": "RB"
+            },
+            {
+              "n": "Stefon Diggs",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "gainPct": -0.7
+      },
+      "headline": "Sell Cook near his touch-count peak and a QB3 you don't need for two proven, still-featured backs",
+      "summary": "James Cook is running hotter than his role justifies (22.6 touches/game, 12% over projection) on a workload at least one outlet has flagged as due to shrink — pair him with your third QB for Kyren Williams and Chuba Hubbard, two backs whose prices dropped without their roles actually shrinking.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Cook is performing 12% above his own projection pace (1.12) on 22.6 touches/game — production a RotoBaller piece already flagged as more likely to shrink than grow from here (rotoballer.com)",
+          "Michael Penix Jr. is your third QB behind Lawrence and Daniels; you don't need him to field a competitive superflex lineup"
+        ],
+        "get": [
+          "Kyren Williams is still handling a clear lead role — 68% snaps, 18.1 touches/game, 3.1 red-zone looks/game — with his price down 21% over 30 days on game-script variance, not a lost job",
+          "Chuba Hubbard has stayed over 20 touches/game even through a blowout loss, and slots straight into your FLEX (fantasynerds.com)"
+        ],
+        "you": [
+          "Kyren Williams starts at RB and Hubbard takes your FLEX",
+          "This doesn't fix your thin WR/QB spot directly — it's a value play: cashing in Cook near a possible usage cliff and shedding a QB3 you don't need, while keeping your RB room just as strong"
+        ],
+        "them": [
+          "Garbage Time Goblins (7-2) are thin at QB — Penix gives them a real second arm instead of nothing",
+          "They're deep at RB but currently splitting touches between two good-not-great backs; consolidating into one clear lead back (Cook, red hot) upgrades their best lineup spot for a playoff push"
+        ],
+        "experts": [
+          "A RotoBaller report specifically flagged Cook as a back who 'could be looking at fewer touches' going forward, even with his raw numbers still strong (rotoballer.com)",
+          "Fantasy Nerds notes Hubbard's workload has stayed heavy in Carolina's run-first offense even in a lopsided loss, showing his role is coach-driven rather than game-script-dependent (fantasynerds.com)"
+        ]
+      },
+      "risks": [
+        "If Cook's workload holds up the way it has all season, this looks like selling a workhorse one week too early",
+        "Chuba Hubbard still shares the Carolina backfield with Jonathan Brooks; a healthy Brooks return would cut into Hubbard's touches too"
+      ],
+      "sources": [
+        {
+          "title": "James Cook III Could be Looking at Fewer Touches",
+          "url": "https://www.rotoballer.com/?p=1899567"
+        },
+        {
+          "title": "Chuba Hubbard's workload remains high despite limited carries in blowout loss",
+          "url": "https://fantasynerds.com/news/story/2026/10/26/chuba-hubbards-workload-remains-high-despite-limited-carries-in-blowout-loss-1661163"
+        }
+      ]
+    }
+  ],
+  "short_reason": null,
   "review": {
-    "checked": false
+    "checked": true,
+    "notes": [
+      "Dropped candidate halql1 (Cook+Boston for London+Jeanty, 'Beautiful ->'): the partner is thin WR/TE yet was being asked to give up its alpha WR (London), and the Jeanty buy-low case didn't hold up against the partner's thin/deep profile. Replaced with candidate 1k96205 (Cook+Penix for Kyren Williams+Chuba Hubbard, Garbage Time Goblins), whose need fit (thin QB, deep RB) is far cleaner.",
+      "Removed overclaimed Trevor Lawrence stats ('7 rushing TDs this year', '17th in EPA/dropback this season') from zulnd5, mj2wzz and gvsw03 — both source articles turned out to be 2025-season retrospectives, not current 2026 facts. Replaced with the work file's own verified numbers (30-day value +18%, performing 7% under projection).",
+      "Fixed 16mmbbn: Daniels' elbow dislocation was Week 2, not Week 3, and added that it's the second dislocation of that same elbow in under a year; swapped a mismatched on3.com citation (about a different, sprained-knee injury) for the correct nbcsports.com report on the elbow."
+    ]
   },
-  "draft_history": null,
-  "started": "2026-11-10T23:55:22.028Z"
+  "draft_history": null
 }
