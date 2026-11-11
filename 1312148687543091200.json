@@ -1,33 +1,1042 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1312148687543091200",
   "league_name": "HTB DYNASTY",
   "season": "2026",
-  "week": 9,
-  "generated": "2026-11-04T04:55:43.941Z",
+  "week": 10,
+  "generated": "2026-11-11T05:17:13.324Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&numTeams=10&ppr=0",
-    "fetched": "2026-11-04T04:55:08.934Z"
+    "fetched": "2026-11-11T05:08:15.147Z"
   },
   "me": {
     "name": "etanetan",
-    "record": "5-3",
+    "record": "5-4",
     "thin": [
       "RB",
       "TE"
     ],
     "deep": [
-      "WR",
-      "QB"
+      "QB",
+      "WR"
     ]
   },
-  "trades": [],
-  "short_reason": "The engine found fair buy-low and sell-high candidates, but web search only returned last season's articles and undated pages, so current injury, usage and analyst news for this week's players couldn't be verified. Nothing is published rather than risk stale advice; the next run will retry.",
+  "trades": [
+    {
+      "id": "1ihfihe",
+      "partner": {
+        "roster_id": 1,
+        "name": "THE CREAM TEAM",
+        "user": "brodywade",
+        "record": "5-4",
+        "thin": [
+          "TE",
+          "RB"
+        ],
+        "deep": [
+          "QB",
+          "WR"
+        ]
+      },
+      "give": [
+        {
+          "id": "13345",
+          "n": "Jonah Coleman",
+          "p": "RB",
+          "t": "DEN",
+          "v": 2884,
+          "pr": 19,
+          "trend": 1067,
+          "trendPct": 0.59,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 5,
+            "ppg": 11.3,
+            "proj": 7.3,
+            "perf": 1.54,
+            "snap": 50,
+            "tgtShare": 10,
+            "tpg": 2.8,
+            "touches": 12,
+            "rz": 2.6
+          }
+        },
+        {
+          "id": "7567",
+          "n": "Kenny Gainwell",
+          "p": "RB",
+          "t": "TB",
+          "v": 1209,
+          "pr": 51,
+          "trend": 311,
+          "trendPct": 0.35,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 9,
+            "ppg": 6.2,
+            "proj": 7.3,
+            "perf": 0.85,
+            "snap": 37,
+            "tgtShare": 9,
+            "tpg": 2.3,
+            "touches": 8.7,
+            "rz": 1.1
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "8155",
+          "n": "Breece Hall",
+          "p": "RB",
+          "t": "NYJ",
+          "v": 3310,
+          "pr": 14,
+          "trend": -352,
+          "trendPct": -0.1,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 4,
+            "ppg": 11.9,
+            "proj": 12.6,
+            "perf": 0.94,
+            "snap": 54,
+            "tgtShare": 11,
+            "tpg": 3.5,
+            "touches": 19.8,
+            "rz": 2.5
+          }
+        },
+        {
+          "id": "12502",
+          "n": "Gunnar Helm",
+          "p": "TE",
+          "t": "TEN",
+          "v": 779,
+          "pr": 34,
+          "trend": 27,
+          "trendPct": 0.04,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 8,
+            "ppg": 6.8,
+            "proj": 9.4,
+            "perf": 0.72,
+            "snap": 75,
+            "tgtShare": 11,
+            "tpg": 3.3,
+            "touches": null,
+            "rz": 0.4
+          }
+        }
+      ],
+      "value": {
+        "give": 4093,
+        "get": 4089,
+        "giveAdj": 3851,
+        "getAdj": 3933,
+        "diffPct": 0.025,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "gainPct": 1.1,
+        "changes": {
+          "in": [
+            {
+              "n": "Breece Hall",
+              "slot": "RB"
+            }
+          ],
+          "out": [
+            {
+              "n": "Jonah Coleman",
+              "slot": "RB"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "gainPct": -0.9
+      },
+      "headline": "Sell Coleman's borrowed-time workload before Harvey returns; land extension-backed Hall and a rising TE1",
+      "summary": "Jonah Coleman is only Denver's lead back because RJ Harvey is hurt, and Kenny Gainwell's price has outrun his crowded Tampa Bay role. Breece Hall and Gunnar Helm fill your thin RB and TE spots with real paths to more work.",
+      "confidence": "high",
+      "why": {
+        "give": [
+          "Coleman is Denver's RB1 only with RJ Harvey on injured reserve since late October; Harvey can't return before Week 13.",
+          "Coleman's 30-day value is up 59%, pricing in a workload analysts expect him to lose once Harvey is back.",
+          "Gainwell's value is up 35% in 30 days but he's a complementary receiving back behind lead back Bucky Irving in a crowded Tampa Bay backfield."
+        ],
+        "get": [
+          "Breece Hall signed a 3-year, $45.75M extension this offseason and the Jets have committed to building the ground game around him.",
+          "His snap share (54%) still hasn't caught up to that commitment, which is why his value is down 10% over 30 days.",
+          "Gunnar Helm is Tennessee's clear TE1 since Chig Okonkwo left for Washington, and he's drawn 13 targets over his last two games."
+        ],
+        "you": [
+          "Breece Hall starts immediately at your thin RB spot in place of Jonah Coleman.",
+          "Gunnar Helm gives you a second viable tight end behind Tyler Warren, your other thin spot."
+        ],
+        "them": [
+          "THE CREAM TEAM is thin at RB and TE too, but Coleman's current touches make him an immediate starter for them, not a stash.",
+          "Gainwell is a cheap, high-floor receiving back they can plug in right away."
+        ],
+        "experts": [
+          "The Broncos placed RJ Harvey on injured reserve in late October after a knee injury; he's not eligible back before Week 13 against Miami.",
+          "NFL.com and ESPN-sourced reporting on Hall's extension says the Jets plan to build their 2026 ground game around him with Frank Reich calling plays.",
+          "FantasyPros' Gunnar Helm note tracks a 13-target stretch over his last two games as he grows into Tennessee's passing-game role."
+        ]
+      },
+      "risks": [
+        "If Harvey's IR stint runs longer than expected, Coleman could keep lead-back touches past the point this trade assumed.",
+        "Hall's snap share needs to actually rise toward the Jets' stated plan; if it stays near 54%, the workload bump doesn't show up."
+      ],
+      "sources": [
+        {
+          "title": "Broncos promote S Taylor Rapp to active roster, place RB RJ Harvey on injured reserve",
+          "url": "https://www.denverbroncos.com/news/broncos-promote-s-taylor-rapp-to-active-roster-place-rb-rj-harvey-on-injured-reserve"
+        },
+        {
+          "title": "RJ Harvey lands on injured reserve",
+          "url": "https://www.thefantasyfootballers.com/news/645227/rj-harvey-lands-on-injured-reserve/"
+        },
+        {
+          "title": "Breece Hall contract extension - Jets",
+          "url": "https://www.newyorkjets.com/news/breece-hall-contract-extension-jets-05-11-2026"
+        },
+        {
+          "title": "Breece Hall's Extension Highlights Jets' Running Back Outlook for 2026",
+          "url": "https://fantasynerds.com/news/story/2026/07/04/breece-halls-extension-highlights-jets-running-back-outlook-for-2026-1567224"
+        },
+        {
+          "title": "Gunnar Helm 2026 outlook",
+          "url": "https://www.fantasypros.com/nfl/notes/419550/gunnar-helm-2026-outlook.php"
+        },
+        {
+          "title": "What Kenneth Gainwell's Signing Means for Bucky Irving & Buccaneers Backfield",
+          "url": "https://www.si.com/onsi/fantasy/nfl/what-kenneth-gainwell-signing-means-for-bucky-irving-buccaneers-backfield"
+        }
+      ]
+    },
+    {
+      "id": "17u0g3e",
+      "partner": {
+        "roster_id": 9,
+        "name": "stplohasz",
+        "user": "stplohasz",
+        "record": "7-2",
+        "thin": [
+          "RB",
+          "QB"
+        ],
+        "deep": [
+          "TE",
+          "WR"
+        ]
+      },
+      "give": [
+        {
+          "id": "pick_2027_1_10",
+          "n": "2027 1st (Mid)",
+          "p": "PICK",
+          "t": "own",
+          "v": 3434,
+          "pr": null,
+          "trend": -23,
+          "trendPct": -0.01,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": null,
+          "isPick": true,
+          "season": 2027,
+          "round": 1,
+          "slot": "mid",
+          "from": 10
+        },
+        {
+          "id": "pick_2028_2_10",
+          "n": "2028 2nd",
+          "p": "PICK",
+          "t": "own",
+          "v": 1423,
+          "pr": null,
+          "trend": -44,
+          "trendPct": -0.03,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": null,
+          "isPick": true,
+          "season": 2028,
+          "round": 2,
+          "slot": null,
+          "from": 10
+        }
+      ],
+      "get": [
+        {
+          "id": "8150",
+          "n": "Kyren Williams",
+          "p": "RB",
+          "t": "LAR",
+          "v": 3898,
+          "pr": 10,
+          "trend": -573,
+          "trendPct": -0.13,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 9,
+            "ppg": 15.7,
+            "proj": 16.2,
+            "perf": 0.97,
+            "snap": 68,
+            "tgtShare": 14,
+            "tpg": 5.1,
+            "touches": 18.1,
+            "rz": 3.1
+          }
+        },
+        {
+          "id": "5012",
+          "n": "Mark Andrews",
+          "p": "TE",
+          "t": "BAL",
+          "v": 897,
+          "pr": 30,
+          "trend": -476,
+          "trendPct": -0.35,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 9,
+            "ppg": 10,
+            "proj": 13.5,
+            "perf": 0.74,
+            "snap": 63,
+            "tgtShare": 18,
+            "tpg": 4.8,
+            "touches": null,
+            "rz": 0.8
+          }
+        }
+      ],
+      "value": {
+        "give": 4857,
+        "get": 4795,
+        "giveAdj": 4572,
+        "getAdj": 4616,
+        "diffPct": 0.011,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "gainPct": 2.3,
+        "changes": {
+          "in": [
+            {
+              "n": "Kyren Williams",
+              "slot": "RB"
+            }
+          ],
+          "out": [
+            {
+              "n": "Makai Lemon",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": {
+          "id": "2078",
+          "n": "Odell Beckham Jr.",
+          "p": "WR",
+          "v": 0
+        }
+      },
+      "them": {
+        "gainPct": -0.9
+      },
+      "headline": "Spend future picks, not roster spots, to land Kyren Williams and Mark Andrews for your thin RB and TE",
+      "summary": "Kyren Williams's price is down 13% despite grading on projection behind the league's best offensive line, and Mark Andrews is the clear TE1 target now that Isaiah Likely is gone. You pay with a future 1st and 2nd, not a single player off your own roster.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Your 2027 1st (mid) and 2028 2nd cost you no current roster spot, and this league's own rookie history shows 1sts and 2nds carry real bust risk (0% and 5% busted outright, but outcomes vary widely by slot).",
+          "You still keep 4 more future picks after this deal."
+        ],
+        "get": [
+          "Kyren Williams is grading right at his projection (0.97) this season behind a Rams offensive line analysts call the league's best by Adjusted Line Yards, which is why FantasyNerds calls his current price undervalued.",
+          "Mark Andrews is now Baltimore's only established pass-catching tight end after Isaiah Likely left for the Giants in free agency, and his value is down 35% in 30 days.",
+          "Andrews' route rate climbed to 68.8% in his sample without Likely on the field."
+        ],
+        "you": [
+          "Kyren Williams starts immediately at your thin RB spot, and the trade also clears your bench by dropping Odell Beckham Jr., a $0-value roster spot.",
+          "Mark Andrews gives you a real TE2 behind Tyler Warren, with TE premium scoring in this league boosting both."
+        ],
+        "them": [
+          "stplohasz is 7-2 and can absorb moving Williams; their roster shows Derrick Henry stepping into the starting RB spot behind him.",
+          "Future picks give a contender currency they can use again in a later, bigger deal without giving up a player they need now."
+        ],
+        "experts": [
+          "FantasyNerds' July piece argues Kyren Williams' dynasty ranking is undervalued given the Rams' league-best offensive line play.",
+          "Multiple outlets confirm Isaiah Likely signed with the Giants in free agency, leaving Andrews as Baltimore's lone established receiving tight end.",
+          "Fansided's season-long piece on the Ravens' tight end usage argues the team has underused Andrews relative to his talent."
+        ]
+      },
+      "risks": [
+        "Baltimore is on a 4-game losing streak with Jacoby Brissett now at QB instead of Lamar Jackson, which could suppress Andrews' per-target value short-term.",
+        "Derrick Henry has himself voiced frustration with a reduced role in Baltimore, so stplohasz's backfield plan after this trade is less certain than it looks.",
+        "Williams himself has recently voiced frustration with his own usage after a loss, and the Rams have reportedly been featuring Blake Corum more — a real threat to the 'role is intact' read on him, not just a projection miss."
+      ],
+      "sources": [
+        {
+          "title": "Kyren Williams' Ranking Undervalued Due to Rams' Elite Offensive Line",
+          "url": "https://fantasynerds.com/news/story/2026/07/07/kyren-williams-ranking-undervalued-due-to-rams-elite-offensive-line-1568863"
+        },
+        {
+          "title": "Mark Andrews primed for larger role in 2026",
+          "url": "https://apps.rotowire.com/football/headlines/mark-andrews-news-primed-for-larger-role-in-2026-630146"
+        },
+        {
+          "title": "The Ravens' mistake with Isaiah Likely and Mark Andrews has never been more obvious",
+          "url": "https://fansided.com/nfl/the-ravens-mistake-with-isaiah-likely-and-mark-andrews-has-never-been-more-obvious"
+        },
+        {
+          "title": "Baltimore Ravens: Derrick Henry hints at frustration with reduced role",
+          "url": "https://www.si.com/nfl/ravens/onsi/news/baltimore-ravens-derrick-henry-hints-frustration-reduced-role"
+        }
+      ]
+    },
+    {
+      "id": "coil30",
+      "partner": {
+        "roster_id": 4,
+        "name": "Benihana34",
+        "user": "Benihana34",
+        "record": "4-5",
+        "thin": [
+          "WR",
+          "RB"
+        ],
+        "deep": [
+          "TE",
+          "QB"
+        ]
+      },
+      "give": [
+        {
+          "id": "11620",
+          "n": "Rome Odunze",
+          "p": "WR",
+          "t": "CHI",
+          "v": 2496,
+          "pr": 27,
+          "trend": 175,
+          "trendPct": 0.08,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 9,
+            "ppg": 8.1,
+            "proj": 8.4,
+            "perf": 0.97,
+            "snap": 85,
+            "tgtShare": 17,
+            "tpg": 5.7,
+            "touches": null,
+            "rz": 0.8
+          }
+        },
+        {
+          "id": "pick_2028_1_10",
+          "n": "2028 1st",
+          "p": "PICK",
+          "t": "own",
+          "v": 2271,
+          "pr": null,
+          "trend": -115,
+          "trendPct": -0.05,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": null,
+          "isPick": true,
+          "season": 2028,
+          "round": 1,
+          "slot": null,
+          "from": 10
+        }
+      ],
+      "get": [
+        {
+          "id": "9224",
+          "n": "Chase Brown",
+          "p": "RB",
+          "t": "CIN",
+          "v": 3068,
+          "pr": 17,
+          "trend": -1095,
+          "trendPct": -0.26,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 8,
+            "ppg": 10.2,
+            "proj": 14.7,
+            "perf": 0.7,
+            "snap": 70,
+            "tgtShare": 16,
+            "tpg": 5.6,
+            "touches": 17.8,
+            "rz": 1.9
+          }
+        },
+        {
+          "id": "5846",
+          "n": "DK Metcalf",
+          "p": "WR",
+          "t": "PIT",
+          "v": 1537,
+          "pr": 48,
+          "trend": -339,
+          "trendPct": -0.18,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 8,
+            "ppg": 7.7,
+            "proj": 10,
+            "perf": 0.77,
+            "snap": 95,
+            "tgtShare": 24,
+            "tpg": 8,
+            "touches": null,
+            "rz": 0.5
+          }
+        }
+      ],
+      "value": {
+        "give": 4767,
+        "get": 4605,
+        "giveAdj": 4313,
+        "getAdj": 4298,
+        "diffPct": -0.005,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "gainPct": 0.6,
+        "changes": {
+          "in": [
+            {
+              "n": "Chase Brown",
+              "slot": "RB"
+            }
+          ],
+          "out": [
+            {
+              "n": "Rome Odunze",
+              "slot": "WR"
+            }
+          ]
+        },
+        "drop": {
+          "id": "2078",
+          "n": "Odell Beckham Jr.",
+          "p": "WR",
+          "v": 0
+        }
+      },
+      "them": {
+        "gainPct": -0.7
+      },
+      "headline": "Flip a WR you don't need plus a future 1st for a Pittman-IR beneficiary and a buy-low RB1 workload",
+      "summary": "DK Metcalf is now Aaron Rodgers' clear No. 1 outside target with Michael Pittman on IR, and Chase Brown is still getting lead-back touches (70% snaps, 17.8 touches/game) despite results below projection. Rome Odunze, who you're deep at WR behind, and a 2028 1st pay for both.",
+      "confidence": "high",
+      "why": {
+        "give": [
+          "Rome Odunze is a fine WR3 for you (85% snaps, 17% target share) but behind Puka Nacua and Ladd McConkey in your WR corps, where you're deep.",
+          "Your 2028 1st is a year away and this league's 1st-round rookie picks have a 0% bust rate but a wide median-to-early-slot gap, making a single future 1st reasonable currency for two starters now."
+        ],
+        "get": [
+          "DK Metcalf's target share jumped as high as 35% in a recent game with Michael Pittman Jr. on IR, and Aaron Rodgers has publicly pushed for more targets to go his way.",
+          "Metcalf is still scoring below projection (0.77) despite that role, which is the gap between results and opportunity you're buying.",
+          "Chase Brown is averaging 17.8 touches and a 70% snap share on the season, well above his 0.7 performance-vs-projection mark, pointing to an efficiency dip rather than a lost role."
+        ],
+        "you": [
+          "Chase Brown starts immediately at your thin RB spot.",
+          "DK Metcalf is a clear upgrade over Rome Odunze in your flex mix, especially with Puka Nacua banged up.",
+          "The trade also clears your bench by dropping Odell Beckham Jr., a $0-value roster spot."
+        ],
+        "them": [
+          "Benihana34 is deep at QB and TE but thin at WR and RB, so trading away one WR and one RB for a future 1st and a player who projects as a bigger 2027 asset fits a rebuild.",
+          "Odunze still has 85% snaps and real receiving work for a team that needs exactly that at WR."
+        ],
+        "experts": [
+          "DraftSharks reports Rodgers has pushed publicly for more targets to Metcalf, who led the Steelers with 15 targets and a 35% target share in a recent game with Pittman out.",
+          "Fantasy Nerds' October piece flagged Samaje Perine cutting into Chase Brown's early-season workload, though Brown's season-long touches and snap share have stayed the lead-back level."
+        ]
+      },
+      "risks": [
+        "Pittman's IR stint is a recent foot re-aggravation and he's already eligible to return as early as this week; this buy-low window on Metcalf's target share may be very narrow or already closing, not a hypothetical months out.",
+        "Chase Brown lost a costly fumble and has below-average yards-after-contact this season; if Perine's efficiency edge keeps showing up, Cincinnati's staff could keep trimming Brown's role further."
+      ],
+      "sources": [
+        {
+          "title": "Aaron Rodgers pushes for more DK Metcalf in Steelers offense",
+          "url": "https://www.draftsharks.com/fantasy-football-news/82452/aaron-rodgers-pushes-for-more-dk-metcalf-in-steelers-offense"
+        },
+        {
+          "title": "DK Metcalf puts up WR1 week during Steelers comeback",
+          "url": "https://www.draftsharks.com/fantasy-football-news/83538/dk-metcalf-puts-up-wr1-week-during-steelers-comeback"
+        },
+        {
+          "title": "Chase Brown's role diminishes as Samaje Perine emerges for Bengals",
+          "url": "https://fantasynerds.com/news/story/2026/10/12/chase-browns-role-diminishes-as-samaje-perine-emerges-for-bengals-1649255"
+        }
+      ]
+    },
+    {
+      "id": "7pirng",
+      "partner": {
+        "roster_id": 5,
+        "name": "Evening News Team",
+        "user": "MLew234",
+        "record": "3-6",
+        "thin": [
+          "RB",
+          "QB"
+        ],
+        "deep": [
+          "TE",
+          "WR"
+        ]
+      },
+      "give": [
+        {
+          "id": "13294",
+          "n": "Makai Lemon",
+          "p": "WR",
+          "t": "PHI",
+          "v": 2363,
+          "pr": 31,
+          "trend": -3,
+          "trendPct": 0,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 9,
+            "ppg": 6.1,
+            "proj": 5.9,
+            "perf": 1.05,
+            "snap": 79,
+            "tgtShare": 19,
+            "tpg": 6,
+            "touches": null,
+            "rz": 0.2
+          }
+        },
+        {
+          "id": "pick_2027_2_10",
+          "n": "2027 2nd (Mid)",
+          "p": "PICK",
+          "t": "own",
+          "v": 1795,
+          "pr": null,
+          "trend": 9,
+          "trendPct": 0.01,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": null,
+          "isPick": true,
+          "season": 2027,
+          "round": 2,
+          "slot": "mid",
+          "from": 10
+        }
+      ],
+      "get": [
+        {
+          "id": "10229",
+          "n": "Rashee Rice",
+          "p": "WR",
+          "t": "KC",
+          "v": 2920,
+          "pr": 22,
+          "trend": 137,
+          "trendPct": 0.05,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 6,
+            "ppg": 9,
+            "proj": 11.2,
+            "perf": 0.8,
+            "snap": 61,
+            "tgtShare": 17,
+            "tpg": 5.3,
+            "touches": null,
+            "rz": 0.8
+          }
+        },
+        {
+          "id": "12509",
+          "n": "Tre' Harris",
+          "p": "WR",
+          "t": "LAC",
+          "v": 1064,
+          "pr": 76,
+          "trend": -302,
+          "trendPct": -0.22,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 7,
+            "ppg": 5.2,
+            "proj": 5.7,
+            "perf": 0.92,
+            "snap": 70,
+            "tgtShare": 18,
+            "tpg": 5,
+            "touches": null,
+            "rz": 0.6
+          }
+        }
+      ],
+      "value": {
+        "give": 4158,
+        "get": 3984,
+        "giveAdj": 3799,
+        "getAdj": 3771,
+        "diffPct": -0.01,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "gainPct": 0.7,
+        "changes": {
+          "in": [
+            {
+              "n": "Rashee Rice",
+              "slot": "WR"
+            }
+          ],
+          "out": [
+            {
+              "n": "Makai Lemon",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": {
+          "id": "2078",
+          "n": "Odell Beckham Jr.",
+          "p": "WR",
+          "v": 0
+        }
+      },
+      "them": {
+        "gainPct": -0.8
+      },
+      "headline": "Pay a bench WR and a 2027 2nd for Rashee Rice's upside and a cheap Chargers WR3 flier",
+      "summary": "Rashee Rice still commands a strong target share when healthy but his price has stayed depressed on availability history; Tre' Harris is a real WR3 in a Chargers passing game that wants to use him more. Makai Lemon, a bench piece for you, and a 2027 2nd pay for both.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Makai Lemon is a deep-bench flex for you (79% snaps but only 6.1 PPG) behind a WR corps where you're already stocked.",
+          "A 2027 2nd is this league's lowest-risk pick round to spend: its own draft history shows only a 5% bust rate."
+        ],
+        "get": [
+          "Rashee Rice carried a 26.5% target share and 19 red-zone looks across his 8 games last year when on the field, and he's currently at an 18% target share with a 61% snap share.",
+          "His 0.8 performance-vs-projection mark this season reflects QB and offense variance more than a lost role.",
+          "Tre' Harris is the Chargers' stated WR3 behind Ladd McConkey and Quentin Johnston, and has been a frequent target for Justin Herbert in that role."
+        ],
+        "you": [
+          "Rashee Rice starts for you right away, a real upgrade over Makai Lemon in the same flex spot.",
+          "Tre' Harris is a stash with WR3 upside if Johnston or McConkey miss time.",
+          "The trade also clears your bench by dropping Odell Beckham Jr., a $0-value roster spot."
+        ],
+        "them": [
+          "Evening News Team is 3-6 and thin at RB and QB; shipping out WR depth they don't need for future draft capital fits where they are.",
+          "Makai Lemon still gives them an every-week flex option in the exact WR-deep context their roster already plays in."
+        ],
+        "experts": [
+          "FantasyPros' Chiefs 2026 outlook notes Rice's heavy red-zone usage (19 looks in 8 games) when he's had a full-time role, with Xavier Worthy as his main target competition.",
+          "The Score's Chargers coverage describes Harris as looking at an expanded WR3 role in 2026, with Jim Harbaugh naming him part of the top three receivers back in camp — his role since has held at a real, if not featured, WR3 snap share."
+        ]
+      },
+      "risks": [
+        "Rice has averaged fewer than half his career games the last two seasons between an LCL tear, a suspension, and a concussion; his availability is the single biggest risk in this deal.",
+        "Harris is still fourth in line behind McConkey, Johnston, and tight end Oronde Gadsden for targets on run-downs, so his floor stays low if nobody ahead of him is hurt."
+      ],
+      "sources": [
+        {
+          "title": "Kansas City Chiefs 2026 Fantasy Outlook: Uncertainty Abounds at Receiver",
+          "url": "https://fantasynerds.com/news/story/2026/07/22/kansas-city-chiefs-2026-fantasy-outlook-uncertainty-abounds-at-receiver-1577869"
+        },
+        {
+          "title": "Chargers' Tre' Harris: Looking at expanded role in 2026",
+          "url": "https://thescore.com/news/3546833"
+        }
+      ]
+    },
+    {
+      "id": "uhfqxm",
+      "partner": {
+        "roster_id": 3,
+        "name": "paparik69",
+        "user": "paparik69",
+        "record": "7-2",
+        "thin": [
+          "QB",
+          "TE"
+        ],
+        "deep": [
+          "WR",
+          "RB"
+        ]
+      },
+      "give": [
+        {
+          "id": "13345",
+          "n": "Jonah Coleman",
+          "p": "RB",
+          "t": "DEN",
+          "v": 2884,
+          "pr": 19,
+          "trend": 1067,
+          "trendPct": 0.59,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 5,
+            "ppg": 11.3,
+            "proj": 7.3,
+            "perf": 1.54,
+            "snap": 50,
+            "tgtShare": 10,
+            "tpg": 2.8,
+            "touches": 12,
+            "rz": 2.6
+          }
+        },
+        {
+          "id": "13294",
+          "n": "Makai Lemon",
+          "p": "WR",
+          "t": "PHI",
+          "v": 2363,
+          "pr": 31,
+          "trend": -3,
+          "trendPct": 0,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 9,
+            "ppg": 6.1,
+            "proj": 5.9,
+            "perf": 1.05,
+            "snap": 79,
+            "tgtShare": 19,
+            "tpg": 6,
+            "touches": null,
+            "rz": 0.2
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "7569",
+          "n": "Nico Collins",
+          "p": "WR",
+          "t": "HOU",
+          "v": 3711,
+          "pr": 18,
+          "trend": -938,
+          "trendPct": -0.2,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 6,
+            "ppg": 12.9,
+            "proj": 14.8,
+            "perf": 0.87,
+            "snap": 71,
+            "tgtShare": 20,
+            "tpg": 6.5,
+            "touches": null,
+            "rz": 1
+          }
+        },
+        {
+          "id": "5892",
+          "n": "David Montgomery",
+          "p": "RB",
+          "t": "HOU",
+          "v": 1409,
+          "pr": 42,
+          "trend": -284,
+          "trendPct": -0.17,
+          "status": "Out",
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 5,
+            "ppg": 8.4,
+            "proj": 13.9,
+            "perf": 0.61,
+            "snap": 46,
+            "tgtShare": 4,
+            "tpg": 1.4,
+            "touches": 11.8,
+            "rz": 1.8
+          }
+        }
+      ],
+      "value": {
+        "give": 5247,
+        "get": 5120,
+        "giveAdj": 4774,
+        "getAdj": 4838,
+        "diffPct": 0.017,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "gainPct": 0.9,
+        "changes": {
+          "in": [
+            {
+              "n": "Zach Charbonnet",
+              "slot": "RB"
+            },
+            {
+              "n": "Nico Collins",
+              "slot": "WR"
+            }
+          ],
+          "out": [
+            {
+              "n": "Jonah Coleman",
+              "slot": "RB"
+            },
+            {
+              "n": "Makai Lemon",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "gainPct": -0.9
+      },
+      "headline": "Sell Coleman's borrowed workload and a bench WR for Nico Collins and a David Montgomery buying on his return date",
+      "summary": "Nico Collins just posted back-to-back target-leading games and his price is still down 20% on old QB-injury fears; David Montgomery is a near-term return from a groin injury with a starting job waiting. Jonah Coleman and bench piece Makai Lemon pay for both.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Coleman is Denver's RB1 only with RJ Harvey on IR through at least Week 13; his price (up 59% in 30 days) is pricing in a role he's expected to share once Harvey's back.",
+          "Makai Lemon is a deep-bench flex piece behind your deep WR corps."
+        ],
+        "get": [
+          "Nico Collins led Houston in targets in each of his last two games back (11 targets/7 catches in one, a team-high in the other), but his value is still down 20% in 30 days.",
+          "David Montgomery has missed since Week 6 with a groin injury but multiple reports target his return around Week 11 (Nov. 15 at Cleveland), and Houston's coaching staff has called him a three-down back.",
+          "Both arrived in Houston's backfield/receiver room as clear lead options when healthy, which is the gap this buys."
+        ],
+        "you": [
+          "Nico Collins is a ready-made WR2 replacement while Puka Nacua is banged up, and a clear long-term upgrade on your bench.",
+          "David Montgomery, once back, slots in as a real RB2 behind your thin RB corps."
+        ],
+        "them": [
+          "paparik69 is deep at WR and RB, so trading from that surplus for Coleman's current touches and a flex-caliber WR fits a 7-2 team looking to add immediate depth.",
+          "Their roster already has Braelon Allen rotating in at RB, softening the loss of a hurt Montgomery in the short term."
+        ],
+        "experts": [
+          "SI's Week 10 trade-target piece names Collins as a prime buy, noting his QB-injury discount even as his target volume has climbed back up.",
+          "Coverage of Montgomery's groin injury has him sidelined since a Week 6 setback with a return targeted for Houston's Nov. 15 game at Cleveland.",
+          "NFL.com's offseason coverage of the Lions-to-Texans trade quotes Houston's running backs coach calling Montgomery a three-down back."
+        ]
+      },
+      "risks": [
+        "If Montgomery's groin injury lingers past the Week 11 target, Woody Marks could keep enough of the role to cap Montgomery's value even once he's back.",
+        "If Harvey's IR stint runs long, Coleman could outproduce this sale for longer than expected."
+      ],
+      "sources": [
+        {
+          "title": "Why Nico Collins Is a Prime Fantasy Football Trade Target Entering Week 10",
+          "url": "https://www.si.com/onsi/fantasy/trade-analysis/nico-collins-prime-fantasy-football-trade-target-week-10"
+        },
+        {
+          "title": "Texans news: David Montgomery injury update hints at missed time",
+          "url": "https://clutchpoints.com/nfl/houston-texans/texans-news-david-montgomery-injury-update-hints-missed-time"
+        },
+        {
+          "title": "Texans view David Montgomery as a three-down back",
+          "url": "https://www.nfl.com/news/texans-view-david-montgomery-as-a-three-down-back"
+        },
+        {
+          "title": "Broncos promote S Taylor Rapp to active roster, place RB RJ Harvey on injured reserve",
+          "url": "https://www.denverbroncos.com/news/broncos-promote-s-taylor-rapp-to-active-roster-place-rb-rj-harvey-on-injured-reserve"
+        }
+      ]
+    }
+  ],
+  "short_reason": null,
   "review": {
-    "checked": false
+    "checked": true,
+    "notes": [
+      "Reviewer verified Puka Nacua is never a give piece and no hold-tagged player is given away; confirmed RJ Harvey's IR timeline, Breece Hall's extension, Gunnar Helm's role, Isaiah Likely's departure, and David Montgomery's groin-injury return target all check out.",
+      "Added a risk to 17u0g3e noting Kyren Williams has himself voiced frustration with his usage and the Rams have featured Blake Corum more, a real threat to the 'role intact' read, not just a projection miss.",
+      "Tightened the Pittman risk on coil30: his IR return is imminent (as early as this week), not a hypothetical months out, so the DK Metcalf buy-low window may already be narrowing.",
+      "Noted on 7pirng that the Harbaugh 'top-3 receiver' quote for Tre' Harris is from camp, not current, though his role has held since.",
+      "Added the Odell Beckham Jr. bench drop (a $0-value roster mechanic) to the 'you' section of the three pick-based trades (17u0g3e, coil30, 7pirng) that require it."
+    ]
   },
   "draft_history": {
     "seasons": [
@@ -38,10 +1047,10 @@
       {
         "round": 1,
         "n": 20,
-        "median": 2761,
-        "early": 3513,
-        "mid": 2445,
-        "late": 2353,
+        "median": 2628,
+        "early": 3649,
+        "mid": 2497,
+        "late": 2227,
         "busts": 0,
         "best": [
           {
@@ -49,75 +1058,75 @@
             "pos": "RB",
             "season": "2026",
             "pick": "1.02",
-            "v": 5281
+            "v": 4958
           },
           {
             "name": "Ashton Jeanty",
             "pos": "RB",
             "season": "2025",
             "pick": "1.01",
-            "v": 5150
+            "v": 4575
           },
           {
             "name": "Tetairoa McMillan",
             "pos": "WR",
             "season": "2025",
             "pick": "1.06",
-            "v": 4099
+            "v": 4341
           }
         ],
         "market": {
-          "early": 5208,
-          "mid": 3430,
-          "late": 2635,
-          "any": 3068
+          "early": 5214,
+          "mid": 3434,
+          "late": 2660,
+          "any": 3047
         }
       },
       {
         "round": 2,
         "n": 20,
-        "median": 1603,
-        "early": 1444,
-        "mid": 2100,
-        "late": 1771,
-        "busts": 10,
+        "median": 1655,
+        "early": 1297,
+        "mid": 2271,
+        "late": 1735,
+        "busts": 5,
         "best": [
-          {
-            "name": "Colston Loveland",
-            "pos": "TE",
-            "season": "2025",
-            "pick": "2.06",
-            "v": 4127
-          },
           {
             "name": "Matthew Golden",
             "pos": "WR",
             "season": "2025",
             "pick": "2.04",
-            "v": 4118
+            "v": 5014
           },
           {
             "name": "Luther Burden",
             "pos": "WR",
             "season": "2025",
             "pick": "2.10",
-            "v": 4001
+            "v": 4279
+          },
+          {
+            "name": "Colston Loveland",
+            "pos": "TE",
+            "season": "2025",
+            "pick": "2.06",
+            "v": 3982
           }
         ],
         "market": {
-          "early": 2111,
-          "mid": 1747,
-          "late": 1494,
-          "any": 1654
+          "early": 2150,
+          "mid": 1795,
+          "late": 1545,
+          "any": 1692
         }
       },
       {
         "round": 3,
         "n": 20,
-        "median": 525,
-        "early": 398,
-        "mid": 525,
-        "late": 896,
+        "median": 536,
+        "early": 395,
+        "mid": 536,
+        "late": 804,
         "busts": 45,
         "best": [
           {
@@ -125,31 +1134,30 @@
             "pos": "RB",
             "season": "2025",
             "pick": "3.04",
-            "v": 3866
+            "v": 3678
           },
           {
             "name": "Harold Fannin",
             "pos": "TE",
             "season": "2025",
             "pick": "3.10",
-            "v": 2846
+            "v": 2943
           },
           {
-            "name": "De'Zhaun Stribling",
-            "pos": "WR",
+            "name": "Carson Beck",
+            "pos": "QB",
             "season": "2026",
-            "pick": "3.09",
-            "v": 1654
+            "pick": "3.07",
+            "v": 1750
           }
         ],
         "market": {
-          "early": 1300,
-          "mid": 1149,
-          "late": 1037,
-          "any": 1120
+          "early": 1354,
+          "mid": 1205,
+          "late": 1093,
+          "any": 1171
         }
       }
     ]
-  },
-  "started": "2026-11-11T05:00:07.323Z"
+  }
 }
