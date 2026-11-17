@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "ready",
+  "status": "running",
   "league_id": "1312115063020081152",
   "league_name": "UMN Dynasty League 🧨",
   "season": "2026",
@@ -1049,5 +1049,6 @@
       "Fixed 16mmbbn: Daniels' elbow dislocation was Week 2, not Week 3, and added that it's the second dislocation of that same elbow in under a year; swapped a mismatched on3.com citation (about a different, sprained-knee injury) for the correct nbcsports.com report on the elbow."
     ]
   },
-  "draft_history": null
+  "draft_history": null,
+  "started": "2026-11-17T23:55:25.565Z"
 }
