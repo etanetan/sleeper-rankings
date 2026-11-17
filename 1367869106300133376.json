@@ -1,20 +1,20 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1367869106300133376",
   "league_name": "FCFFL",
   "season": "2026",
-  "week": 10,
-  "generated": "2026-11-10T13:56:29.274Z",
+  "week": 11,
+  "generated": "2026-11-17T14:10:54.514Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=1&numTeams=12&ppr=1",
-    "fetched": "2026-11-10T13:55:53.413Z"
+    "fetched": "2026-11-17T13:59:02.179Z"
   },
   "me": {
     "name": "Young Blood",
-    "record": "2-7",
+    "record": "2-8",
     "thin": [
       "TE",
       "QB"
@@ -24,11 +24,973 @@
       "RB"
     ]
   },
-  "trades": [],
-  "short_reason": "Web search this run returned mostly 2024/2025 articles and almost no verifiable week 10 news on the players in the candidate trades (Nabers, Diggs, Hampton, Kyren Williams, Daniels), so no trade could be backed by current sources. Numbers-only suggestions were held back rather than published unchecked.",
+  "trades": [
+    {
+      "id": "1j87xrb",
+      "partner": {
+        "roster_id": 11,
+        "name": "Inverness Hissing Iguanas",
+        "user": "Iguanas",
+        "record": "6-4",
+        "thin": [
+          "WR",
+          "TE"
+        ],
+        "deep": [
+          "QB",
+          "RB"
+        ]
+      },
+      "give": [
+        {
+          "id": "2449",
+          "n": "Stefon Diggs",
+          "p": "WR",
+          "t": "WAS",
+          "v": 1472,
+          "pr": 30,
+          "trend": 678,
+          "trendPct": 0.85,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 8,
+            "ppg": 13.8,
+            "proj": 11.2,
+            "perf": 1.23,
+            "snap": 61,
+            "tgtShare": 23,
+            "tpg": 7.4,
+            "touches": null,
+            "rz": 0.8
+          }
+        },
+        {
+          "id": "1166",
+          "n": "Kirk Cousins",
+          "p": "QB",
+          "t": "MIN",
+          "v": 973,
+          "pr": 13,
+          "trend": 559,
+          "trendPct": 1.35,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 10,
+            "ppg": 22.2,
+            "proj": 18.2,
+            "perf": 1.22,
+            "snap": 98,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 0.3
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "12506",
+          "n": "Harold Fannin Jr.",
+          "p": "TE",
+          "t": "CLE",
+          "v": 1817,
+          "pr": 7,
+          "trend": 1102,
+          "trendPct": 1.54,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 10,
+            "ppg": 12.2,
+            "proj": 10.8,
+            "perf": 1.14,
+            "snap": 87,
+            "tgtShare": 20,
+            "tpg": 6.2,
+            "touches": null,
+            "rz": 0.4
+          }
+        },
+        {
+          "id": "8134",
+          "n": "Khalil Shakir",
+          "p": "WR",
+          "t": "BUF",
+          "v": 499,
+          "pr": 47,
+          "trend": 7,
+          "trendPct": 0.01,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 9,
+            "ppg": 9.5,
+            "proj": 10,
+            "perf": 0.96,
+            "snap": 62,
+            "tgtShare": 19,
+            "tpg": 5,
+            "touches": null,
+            "rz": 0.9
+          }
+        }
+      ],
+      "value": {
+        "give": 2445,
+        "get": 2316,
+        "giveAdj": 2250,
+        "getAdj": 2216,
+        "diffPct": -0.019,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "gainPct": 5.7,
+        "changes": {
+          "in": [
+            {
+              "n": "Harold Fannin Jr.",
+              "slot": "TE"
+            },
+            {
+              "n": "A.J. Brown",
+              "slot": "FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Juwan Johnson",
+              "slot": "TE"
+            },
+            {
+              "n": "Stefon Diggs",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "gainPct": -0.9
+      },
+      "headline": "Flip two riding-hot sell-highs for a true starter at your weakest spot: TE",
+      "summary": "Diggs and Cousins are both outproducing their roles right now; Harold Fannin Jr. gives you a legitimate every-down TE instead of replacement-level production from Juwan Johnson.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Diggs is scoring at a 1.23x-of-projection clip on just 61% snaps and a 23% target share behind Terry McLaurin in a crowded Washington room.",
+          "Cousins is a one-year rental at 34, behind your clear QB1 Jayden Daniels, riding a hot stretch (1.22x projection, 98% snap) since landing in Minnesota midseason."
+        ],
+        "get": [
+          "Fannin Jr. is playing 87% of Cleveland's snaps with a 20% target share — legitimately elite TE usage, not just a hot stretch.",
+          "Shakir adds rotational WR depth: 9.5 ppg on a 19% target share in Buffalo's offense."
+        ],
+        "you": [
+          "Fannin Jr. slots straight into your starting TE spot in place of Juwan Johnson.",
+          "Per the work file, A.J. Brown also returns to your flex once he's back from his knee issue, since Johnson clears a roster spot."
+        ],
+        "them": [
+          "Inverness Hissing Iguanas (6-4) are thin at both WR and TE; Diggs' name and recent scoring run address the WR hole directly.",
+          "They're deep at QB already, so Cousins is upside/insurance rather than a need, but his recent form makes him easy to say yes to."
+        ],
+        "experts": [
+          "Fannin Jr. is running an 87% snap share and 20% target share for the season (12.2 ppg) — a true focal-point role, not just one hot outlier game; that outlier game is already weeks old (Cleveland is on a bye this week) and is baked into his current price (Draft Sharks).",
+          "Diggs entered the season as the clear No. 2 behind McLaurin in a three-wide room that analysts warned wouldn't support three fantasy-relevant options (SI/FantasyNerds coverage of his signing).",
+          "The Vikings have discussed keeping Cousins beyond 2026 after his play since the trade, a sign the hot stretch has front-office buy-in, not just touchdown luck (RotoBaller)."
+        ]
+      },
+      "risks": [
+        "Fannin Jr.'s price already reflects his breakout; a quiet game or two and this looks like a buy at the top.",
+        "Cousins' efficiency since the trade could regress once Minnesota's defense stops bailing him out of close games."
+      ],
+      "sources": [
+        {
+          "title": "Harold Fannin Jr. Shines While Browns Play Catch Up",
+          "url": "https://www.draftsharks.com/fantasy-football-news/83900/harold-fannin-jr-shines-while-browns-play-catch-up"
+        },
+        {
+          "title": "Stefon Diggs Joins Commanders, Potentially Impacting Terry McLaurin's Target Share",
+          "url": "https://www.fantasynerds.com/news/story/2026/08/05/stefon-diggs-joins-commanders,-potentially-impacting-terry-mclaurins-target-share-1589287"
+        },
+        {
+          "title": "Vikings Discussed Keeping Kirk Cousins Beyond 2026",
+          "url": "https://www.rotoballer.com/?p=1994242"
+        }
+      ]
+    },
+    {
+      "id": "1pfj14z",
+      "partner": {
+        "roster_id": 2,
+        "name": "Strikes",
+        "user": "DStruyk",
+        "record": "7-3",
+        "thin": [
+          "QB",
+          "RB"
+        ],
+        "deep": [
+          "TE",
+          "WR"
+        ]
+      },
+      "give": [
+        {
+          "id": "9500",
+          "n": "Josh Downs",
+          "p": "WR",
+          "t": "KC",
+          "v": 1585,
+          "pr": 29,
+          "trend": 860,
+          "trendPct": 1.19,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 10,
+            "ppg": 9,
+            "proj": 10.7,
+            "perf": 0.84,
+            "snap": 74,
+            "tgtShare": 19,
+            "tpg": 6.2,
+            "touches": null,
+            "rz": 0.8
+          }
+        },
+        {
+          "id": "1166",
+          "n": "Kirk Cousins",
+          "p": "QB",
+          "t": "MIN",
+          "v": 973,
+          "pr": 13,
+          "trend": 559,
+          "trendPct": 1.35,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 10,
+            "ppg": 22.2,
+            "proj": 18.2,
+            "perf": 1.22,
+            "snap": 98,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 0.3
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "4983",
+          "n": "DJ Moore",
+          "p": "WR",
+          "t": "BUF",
+          "v": 2131,
+          "pr": 23,
+          "trend": 216,
+          "trendPct": 0.11,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 7,
+            "ppg": 11.6,
+            "proj": 12.8,
+            "perf": 0.91,
+            "snap": 56,
+            "tgtShare": 19,
+            "tpg": 5.4,
+            "touches": null,
+            "rz": 1
+          }
+        },
+        {
+          "id": "10219",
+          "n": "Chris Rodriguez Jr.",
+          "p": "RB",
+          "t": "JAX",
+          "v": 274,
+          "pr": 48,
+          "trend": 274,
+          "trendPct": 0,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 9,
+            "ppg": 6.1,
+            "proj": 6,
+            "perf": 1.01,
+            "snap": 25,
+            "tgtShare": 2,
+            "tpg": 0.6,
+            "touches": 7,
+            "rz": 1.3
+          }
+        }
+      ],
+      "value": {
+        "give": 2558,
+        "get": 2405,
+        "giveAdj": 2363,
+        "getAdj": 2350,
+        "diffPct": -0.006,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "gainPct": 2.2,
+        "changes": {
+          "in": [
+            {
+              "n": "DJ Moore",
+              "slot": "FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Josh Downs",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "gainPct": -0.9
+      },
+      "headline": "Sell two short-term hot streaks for a proven starter and fix their QB room at the same time",
+      "summary": "Downs and Cousins are both trading at season highs; DJ Moore is an established, every-week WR you can plug straight into your lineup.",
+      "confidence": "high",
+      "why": {
+        "give": [
+          "Downs is up 119% in value over 30 days off one hot debut with a new team; 74% snap share and a 19% target share don't yet support the price.",
+          "Cousins has been excellent in relief duty, but he's a rental on the bench behind Jayden Daniels with no path to your lineup."
+        ],
+        "get": [
+          "DJ Moore remains a clear, high-floor starting WR: 56% snap share, 19% target share and a 0.91x-of-projection line, even after playing through an early-season shoulder injury without missing further time.",
+          "Chris Rodriguez Jr. is a cheap, no-risk RB flier with a modest role (25% snap, 7 touches/game)."
+        ],
+        "you": [
+          "Moore steps straight into your flex in place of Downs, per the work file, upgrading a volatile new-scheme piece for a proven target hog."
+        ],
+        "them": [
+          "Strikes (7-3) are thin at QB and deep at WR/TE; swapping their backup Bo Nix for a QB who's outplaying projection all year is an easy yes for a team in playoff position.",
+          "They can afford to move Moore because they're deep at the position, and Downs' name value after a hot Chiefs debut has real appeal."
+        ],
+        "experts": [
+          "Downs got traded to Kansas City at the deadline and is already building chemistry with Patrick Mahomes after one productive debut, which is driving the current hype (KY3/AP).",
+          "Moore dealt with a shoulder injury earlier this season that reporting described as not serious; he played through it and isn't carrying a current injury designation.",
+          "Cousins was traded to Minnesota for a 2027 third-round pick and has posted top-12 fantasy finishes in 5 of his last 6 games since, exactly the kind of short rental window worth selling into (ESPN/RotoBaller)."
+        ]
+      },
+      "risks": [
+        "If Mahomes and Downs keep clicking, this sell-high ages poorly fast — his role could be a real one, not just hype.",
+        "Check Buffalo's weekly injury report before locking this in; Moore has had recurring, if minor, shoulder soreness this season."
+      ],
+      "sources": [
+        {
+          "title": "Josh Downs hits ground running in Kansas City, one day after Chiefs acquire WR from the Colts",
+          "url": "https://www.ky3.com/2026/11/12/josh-downs-hits-ground-running-kansas-city-one-day-after-chiefs-acquire-wr-colts/"
+        },
+        {
+          "title": "Bills Issue Injury Update on WR DJ Moore",
+          "url": "https://www.buffalobills.com/news/bills-issue-injury-update-on-wr-dj-moore"
+        },
+        {
+          "title": "Vikings Discussed Keeping Kirk Cousins Beyond 2026",
+          "url": "https://www.rotoballer.com/?p=1994242"
+        }
+      ]
+    },
+    {
+      "id": "viym91",
+      "partner": {
+        "roster_id": 10,
+        "name": "ChampaignTornadoes",
+        "user": "ChampaignTornadoes",
+        "record": "7-3",
+        "thin": [
+          "TE",
+          "QB"
+        ],
+        "deep": [
+          "WR",
+          "RB"
+        ]
+      },
+      "give": [
+        {
+          "id": "2449",
+          "n": "Stefon Diggs",
+          "p": "WR",
+          "t": "WAS",
+          "v": 1472,
+          "pr": 30,
+          "trend": 678,
+          "trendPct": 0.85,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 8,
+            "ppg": 13.8,
+            "proj": 11.2,
+            "perf": 1.23,
+            "snap": 61,
+            "tgtShare": 23,
+            "tpg": 7.4,
+            "touches": null,
+            "rz": 0.8
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "9484",
+          "n": "Tucker Kraft",
+          "p": "TE",
+          "t": "GB",
+          "v": 1283,
+          "pr": 10,
+          "trend": -297,
+          "trendPct": -0.19,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 10,
+            "ppg": 9.3,
+            "proj": 11.3,
+            "perf": 0.82,
+            "snap": 83,
+            "tgtShare": 16,
+            "tpg": 5.6,
+            "touches": null,
+            "rz": 1.1
+          }
+        },
+        {
+          "id": "12533",
+          "n": "Jacory Croskey-Merritt",
+          "p": "RB",
+          "t": "WAS",
+          "v": 208,
+          "pr": 51,
+          "trend": -460,
+          "trendPct": -0.69,
+          "status": "IR",
+          "sidelined": true,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 5,
+            "ppg": 9,
+            "proj": 10.9,
+            "perf": 0.82,
+            "snap": 45,
+            "tgtShare": 5,
+            "tpg": 1.4,
+            "touches": 14.4,
+            "rz": 1.4
+          }
+        }
+      ],
+      "value": {
+        "give": 1472,
+        "get": 1491,
+        "giveAdj": 1472,
+        "getAdj": 1449,
+        "diffPct": -0.016,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "gainPct": 3.5,
+        "changes": {
+          "in": [
+            {
+              "n": "Tucker Kraft",
+              "slot": "TE"
+            },
+            {
+              "n": "A.J. Brown",
+              "slot": "FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Juwan Johnson",
+              "slot": "TE"
+            },
+            {
+              "n": "Stefon Diggs",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "gainPct": -0.9
+      },
+      "headline": "Sell Diggs' hot stretch for a slumping-but-still-featured TE plus a cheap, soon-eligible RB stash",
+      "summary": "Tucker Kraft's role hasn't gone anywhere even though the touchdowns have dried up, and Jacory Croskey-Merritt is a free look at a player who was Washington's lead back before injured reserve.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Diggs is producing at 1.23x projection on a modest 61% snap share — the results are outrunning the role."
+        ],
+        "get": [
+          "Kraft is still playing 83% of Green Bay's snaps with a 16% target share and 1.1 red-zone looks per game; the production has gone cold, the role hasn't.",
+          "Croskey-Merritt was Washington's leading rusher (67 carries, 239 yards, 2 TDs) before a groin injury sent him to IR just before Week 6; he's eligible to return as soon as Washington's Week 11 game against Cincinnati — that's this week, so confirm he hasn't already been activated before trading for him."
+        ],
+        "you": [
+          "Kraft takes over your starting TE spot from Juwan Johnson, and per the work file A.J. Brown also returns to your flex once healthy."
+        ],
+        "them": [
+          "ChampaignTornadoes (7-3) are thin at TE and QB and deep at WR/RB; they can afford to move Kraft because Hunter Henry still gives them a startable option at the position.",
+          "Diggs' recent scoring run is an upgrade at a position where they already have surplus bodies, pure buy on name and form."
+        ],
+        "experts": [
+          "Kraft was held without a target of consequence in his most recent game and has gone cold over the past few weeks, but his snap share hasn't moved, which is the split that matters for a buy-low (Draft Sharks/RotoBaller).",
+          "Croskey-Merritt's IR stint began just before Washington's Week 6 game, and since their Week 7 bye doesn't count toward the four-game IR minimum, he's eligible back as of their Week 11 game against Cincinnati — this week. Verify his active/inactive status before trading, since this buy window may already be closing or closed (TSN)."
+        ]
+      },
+      "risks": [
+        "Kraft's slump could be about more than touchdown luck if Green Bay's offense has shifted away from him in the red zone.",
+        "Croskey-Merritt's return is tied to Washington's Week 11 game, which may already be underway or resolved by the time you'd make this trade — confirm his status first.",
+        "Even if activated, he could come back to a committee rather than reclaiming the full workload he had before injury."
+      ],
+      "sources": [
+        {
+          "title": "Tucker Kraft Vanishes in Packers Week 11 Win",
+          "url": "https://rotoballer.com/player-news/tucker-kraft-vanishes-in-packers-week-11-win/1496877"
+        },
+        {
+          "title": "Commanders Place Jacory Croskey-Merritt, Javontae Jean-Baptiste on Injured Reserve",
+          "url": "https://wjla.com/sports/washington-commanders/washington-commanders-jacory-croskey-merritt-javontae-jean-baptiste-injured-reserve-jeremy-mcnichols-trey-amos-jordan-magee-austin-keys-tj-maguranyanga-san-francisco-49ers-monday-night-football-groin-pectoral-quadriceps-ankle-hamstring-roster-cincinnati"
+        }
+      ]
+    },
+    {
+      "id": "uxw1pt",
+      "partner": {
+        "roster_id": 12,
+        "name": "Danger Zone",
+        "user": "HenryMyos",
+        "record": "7-3",
+        "thin": [
+          "RB",
+          "TE"
+        ],
+        "deep": [
+          "QB",
+          "WR"
+        ]
+      },
+      "give": [
+        {
+          "id": "12512",
+          "n": "Quinshon Judkins",
+          "p": "RB",
+          "t": "CLE",
+          "v": 1869,
+          "pr": 25,
+          "trend": -19,
+          "trendPct": -0.01,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 9,
+            "ppg": 12,
+            "proj": 11.4,
+            "perf": 1.05,
+            "snap": 52,
+            "tgtShare": 10,
+            "tpg": 3.2,
+            "touches": 16.8,
+            "rz": 2.9
+          }
+        },
+        {
+          "id": "7002",
+          "n": "Juwan Johnson",
+          "p": "TE",
+          "t": "NO",
+          "v": 299,
+          "pr": 18,
+          "trend": -401,
+          "trendPct": -0.57,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 9,
+            "ppg": 9.5,
+            "proj": 10.4,
+            "perf": 0.91,
+            "snap": 65,
+            "tgtShare": 13,
+            "tpg": 4.7,
+            "touches": null,
+            "rz": 0.8
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "12518",
+          "n": "Tyler Warren",
+          "p": "TE",
+          "t": "IND",
+          "v": 1483,
+          "pr": 9,
+          "trend": -1019,
+          "trendPct": -0.41,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 8,
+            "ppg": 10.8,
+            "proj": 12,
+            "perf": 0.9,
+            "snap": 87,
+            "tgtShare": 22,
+            "tpg": 7,
+            "touches": null,
+            "rz": 0.8
+          }
+        },
+        {
+          "id": "8136",
+          "n": "Rachaad White",
+          "p": "RB",
+          "t": "WAS",
+          "v": 704,
+          "pr": 41,
+          "trend": 123,
+          "trendPct": 0.21,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 8,
+            "ppg": 9.7,
+            "proj": 9.6,
+            "perf": 1.02,
+            "snap": 52,
+            "tgtShare": 9,
+            "tpg": 2.9,
+            "touches": 10.5,
+            "rz": 1.4
+          }
+        }
+      ],
+      "value": {
+        "give": 2168,
+        "get": 2187,
+        "giveAdj": 2108,
+        "getAdj": 2046,
+        "diffPct": -0.033,
+        "fair": true,
+        "verdict": "You pay a little more"
+      },
+      "you": {
+        "gainPct": 0.3,
+        "changes": {
+          "in": [
+            {
+              "n": "Woody Marks",
+              "slot": "RB"
+            },
+            {
+              "n": "Tyler Warren",
+              "slot": "TE"
+            }
+          ],
+          "out": [
+            {
+              "n": "Quinshon Judkins",
+              "slot": "RB"
+            },
+            {
+              "n": "Juwan Johnson",
+              "slot": "TE"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "gainPct": -0.1
+      },
+      "headline": "Trade from your deep RB room to fix the TE hole with an ascending rookie, plus a bonus starting-caliber RB",
+      "summary": "Judkins is blocked by surplus depth on your own roster; Tyler Warren is the real prize here — a legitimate high-target TE — with White as useful RB depth whose role could shrink fast if Washington's backfield picture changes.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Judkins is producing fine (1.05x projection, 16.8 touches/game) but you're already deep at RB with Jonathan Taylor as your clear lead back.",
+          "Johnson is below replacement level at TE: 13% target share and a value that's dropped 57% over 30 days."
+        ],
+        "get": [
+          "Warren carries an 87% snap share and 22% target share in Indianapolis' offense — a true focal-point role for a rookie TE, even through a quiet recent stretch.",
+          "White has been the lead or co-lead back in Washington's backfield while Croskey-Merritt is on IR (Austin Ekeler still gets some early-down work), producing a real workload (10.5 touches/game)."
+        ],
+        "you": [
+          "Per the work file, Warren takes over your starting TE spot — a clear upgrade over Johnson. The open RB spot actually projects to Woody Marks, your own injured bench back, ahead of White on paper; in practice, expect White to be the better real-world start while Marks works through his concussion protocol."
+        ],
+        "them": [
+          "Danger Zone (7-3) are thin at RB and TE and deep at QB/WR; this directly fills both of their needs with starting-caliber players.",
+          "They're paying a touch over fair value, so the needs match makes this an easy sell for a team chasing the playoffs."
+        ],
+        "experts": [
+          "Warren was a must-start piece once healthy earlier this season and projected as a top-10 TE in recent weeks, with analysts flagging his target rate as stable despite the Colts' offensive struggles (RotoBaller/FantasyPros).",
+          "White was already identified as Washington's top backfield option while Croskey-Merritt is out, giving him a real, currently-active role rather than a speculative one (TSN)."
+        ]
+      },
+      "risks": [
+        "Croskey-Merritt is eligible to return as soon as Washington's Week 11 game — this week — which could shrink White back to committee work immediately; confirm his status before trading for White.",
+        "Warren's per-game production has cooled over the last few weeks even with the role intact.",
+        "This trade is really 'two pieces for the TE upgrade' — White is a bonus, not a guaranteed lineup fix, with your own Woody Marks (hurt) still ranked ahead of him in the work file's math."
+      ],
+      "sources": [
+        {
+          "title": "Tyler Warren Reclaims Target Lead Amid Quiet Return",
+          "url": "https://www.draftsharks.com/fantasy-football-news/83891/tyler-warren-reclaims-target-lead-amid-quiet-return"
+        },
+        {
+          "title": "Commanders Place Jacory Croskey-Merritt, Javontae Jean-Baptiste on Injured Reserve",
+          "url": "https://wjla.com/sports/washington-commanders/washington-commanders-jacory-croskey-merritt-javontae-jean-baptiste-injured-reserve-jeremy-mcnichols-trey-amos-jordan-magee-austin-keys-tj-maguranyanga-san-francisco-49ers-monday-night-football-groin-pectoral-quadriceps-ankle-hamstring-roster-cincinnati"
+        }
+      ]
+    },
+    {
+      "id": "19swohv",
+      "partner": {
+        "roster_id": 10,
+        "name": "ChampaignTornadoes",
+        "user": "ChampaignTornadoes",
+        "record": "7-3",
+        "thin": [
+          "TE",
+          "QB"
+        ],
+        "deep": [
+          "WR",
+          "RB"
+        ]
+      },
+      "give": [
+        {
+          "id": "2449",
+          "n": "Stefon Diggs",
+          "p": "WR",
+          "t": "WAS",
+          "v": 1472,
+          "pr": 30,
+          "trend": 678,
+          "trendPct": 0.85,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 8,
+            "ppg": 13.8,
+            "proj": 11.2,
+            "perf": 1.23,
+            "snap": 61,
+            "tgtShare": 23,
+            "tpg": 7.4,
+            "touches": null,
+            "rz": 0.8
+          }
+        },
+        {
+          "id": "5846",
+          "n": "DK Metcalf",
+          "p": "WR",
+          "t": "PIT",
+          "v": 1089,
+          "pr": 35,
+          "trend": -187,
+          "trendPct": -0.15,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 9,
+            "ppg": 10.4,
+            "proj": 11.9,
+            "perf": 0.87,
+            "snap": 93,
+            "tgtShare": 24,
+            "tpg": 7.8,
+            "touches": null,
+            "rz": 0.4
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "7611",
+          "n": "Rhamondre Stevenson",
+          "p": "RB",
+          "t": "NE",
+          "v": 1699,
+          "pr": 27,
+          "trend": -623,
+          "trendPct": -0.27,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "numbers",
+          "form": {
+            "g": 10,
+            "ppg": 11.9,
+            "proj": 13.4,
+            "perf": 0.89,
+            "snap": 63,
+            "tgtShare": 11,
+            "tpg": 3.2,
+            "touches": 13.5,
+            "rz": 1.2
+          }
+        },
+        {
+          "id": "11576",
+          "n": "Braelon Allen",
+          "p": "RB",
+          "t": "NYJ",
+          "v": 805,
+          "pr": 38,
+          "trend": -55,
+          "trendPct": -0.06,
+          "status": null,
+          "sidelined": false,
+          "tag": null,
+          "tagBy": null,
+          "form": {
+            "g": 10,
+            "ppg": 11.3,
+            "proj": 10.9,
+            "perf": 1.03,
+            "snap": 63,
+            "tgtShare": 8,
+            "tpg": 2.5,
+            "touches": 14.8,
+            "rz": 1.8
+          }
+        }
+      ],
+      "value": {
+        "give": 2561,
+        "get": 2504,
+        "giveAdj": 2343,
+        "getAdj": 2343,
+        "diffPct": 0,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "gainPct": 0.9,
+        "changes": {
+          "in": [
+            {
+              "n": "Rhamondre Stevenson",
+              "slot": "FLEX"
+            }
+          ],
+          "out": [
+            {
+              "n": "Stefon Diggs",
+              "slot": "FLEX"
+            }
+          ]
+        },
+        "drop": null
+      },
+      "them": {
+        "gainPct": 0.2
+      },
+      "headline": "Clear a crowded WR bench and sell Diggs' hot stretch for a featured Patriots back plus a complementary flex piece",
+      "summary": "Diggs and Metcalf are both stuck behind better options on your own roster; Rhamondre Stevenson is still New England's featured back despite a rough recent game.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Diggs is producing at 1.23x projection on a 61% snap share — results ahead of role.",
+          "Metcalf can't crack your lineup behind Nabers, Wilson, Downs and Diggs even with a 93% snap share and 24% target share of his own — pure roster logjam, not a performance problem."
+        ],
+        "get": [
+          "Stevenson remains New England's featured back (63% snap, 13.5 touches/game) even through one bad game; the role hasn't shifted.",
+          "Allen adds a complementary 14.8 touches/game on a true committee role in New York."
+        ],
+        "you": [
+          "Per the work file, Stevenson steps into your flex in place of Diggs, turning a bench-crowded WR spot into lineup-ready RB depth."
+        ],
+        "them": [
+          "ChampaignTornadoes (7-3) are deep at WR/RB already, but they're buying two in-form, recognizable names (Diggs' scoring run, Metcalf's usage) to stash or flip again.",
+          "The swap is value-for-value, so it's an easy look for a team that already has roster flexibility."
+        ],
+        "experts": [
+          "Stevenson was held to minimal production in his last outing, but reporting describes him as still in the Patriots' featured role rather than losing snaps (Draft Sharks/RotoBaller).",
+          "Metcalf's usage (93% snap share, 24% target share) hasn't translated to efficient scoring recently, the profile of a player stuck on volume rather than one who's lost his role."
+        ]
+      },
+      "risks": [
+        "If New England's offensive line struggles continue, Stevenson's per-touch efficiency could stay poor regardless of role.",
+        "You're giving up two players with real standalone value just to clear a bench logjam — make sure neither Diggs nor Metcalf would start for you instead over a worse RB2 some week."
+      ],
+      "sources": [
+        {
+          "title": "Rhamondre Stevenson Held to Five Scrimmage Yards in Week 10",
+          "url": "https://www.rotoballer.com/?p=1994657"
+        },
+        {
+          "title": "Rhamondre Stevenson Moves Into a Featured Role",
+          "url": "https://www.draftsharks.com/fantasy-football-news/83921/rhamondre-stevenson-moves-into-a-featured-role"
+        }
+      ]
+    }
+  ],
+  "short_reason": null,
   "review": {
-    "checked": false
+    "checked": true,
+    "notes": [
+      "Fixed 1j87xrb: the Fannin Jr. expert bullet cited his outlier breakout game as 'most recent' when it was weeks old (Cleveland's bye is this week) and already baked into his price; replaced with his steady season-long usage and an explicit note that the spike is priced in.",
+      "Fixed 1pfj14z: removed a stale (Sept 2026) DJ Moore shoulder-injury claim presented as current; reworded as a resolved early-season issue and softened the risk bullet to a due-diligence check.",
+      "Fixed viym91: corrected the Croskey-Merritt return timeline — he's eligible back as of Washington's Week 11 game (this week), not 'the game off the bye'; added an explicit instruction to confirm his active status before trading, and a matching risk bullet.",
+      "Fixed uxw1pt (major): the original 'you' bullet wrongly said Rachaad White takes the open RB spot; the work file actually has Woody Marks (Ethan's own injured bench RB) projected there instead. Rewrote the you/get/risk sections to be accurate to the work file, reframed the trade as primarily a TE upgrade with White as a depth bonus, and dropped confidence from high to medium."
+    ]
   },
-  "draft_history": null,
-  "started": "2026-11-17T13:54:59.693Z"
+  "draft_history": null
 }
