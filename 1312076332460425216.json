@@ -1,23 +1,23 @@
 {
   "version": 1,
-  "status": "running",
+  "status": "ready",
   "league_id": "1312076332460425216",
   "league_name": "Family Dynasty",
   "season": "2026",
-  "week": 10,
-  "generated": "2026-11-10T19:13:42.838Z",
+  "week": 11,
+  "generated": "2026-11-17T19:14:03.083Z",
   "values_source": {
     "name": "FantasyCalc",
     "url": "https://fantasycalc.com",
     "api": "https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&numTeams=12&ppr=1",
-    "fetched": "2026-11-10T18:59:25.747Z"
+    "fetched": "2026-11-17T19:02:00.047Z"
   },
   "me": {
     "name": "Bob’s Dynasty",
-    "record": "6-3",
+    "record": "6-4",
     "thin": [
-      "TE",
-      "RB"
+      "RB",
+      "TE"
     ],
     "deep": [
       "WR",
@@ -26,45 +26,45 @@
   },
   "trades": [
     {
-      "id": "rli60k",
+      "id": "1ex77qo",
       "partner": {
         "roster_id": 12,
         "name": "The Galactic Empire",
         "user": "HenryMyos",
-        "record": "5-4",
+        "record": "6-4",
         "thin": [
           "TE",
-          "WR"
+          "QB"
         ],
         "deep": [
           "RB",
-          "QB"
+          "WR"
         ]
       },
       "give": [
         {
-          "id": "11564",
-          "n": "Drake Maye",
+          "id": "11560",
+          "n": "Caleb Williams",
           "p": "QB",
-          "t": "NE",
-          "v": 7976,
-          "pr": 2,
-          "trend": 1712,
-          "trendPct": 0.27,
+          "t": "CHI",
+          "v": 7565,
+          "pr": 3,
+          "trend": 732,
+          "trendPct": 0.11,
           "status": null,
           "sidelined": false,
           "tag": "sell_high",
           "tagBy": "research",
           "form": {
-            "g": 9,
-            "ppg": 24.1,
-            "proj": 22.6,
-            "perf": 1.06,
-            "snap": 96,
+            "g": 6,
+            "ppg": 22.5,
+            "proj": 20.3,
+            "perf": 1.11,
+            "snap": 98,
             "tgtShare": null,
             "tpg": null,
             "touches": null,
-            "rz": 0.7
+            "rz": 1.5
           }
         },
         {
@@ -72,11 +72,11 @@
           "n": "Kenneth Walker III",
           "p": "RB",
           "t": "KC",
-          "v": 6416,
+          "v": 6718,
           "pr": 3,
-          "trend": -544,
-          "trendPct": -0.08,
-          "status": null,
+          "trend": -198,
+          "trendPct": -0.03,
+          "status": "Out",
           "sidelined": false,
           "tag": "sell_high",
           "tagBy": "research",
@@ -99,24 +99,24 @@
           "n": "Jahmyr Gibbs",
           "p": "RB",
           "t": "DET",
-          "v": 10234,
+          "v": 10381,
           "pr": 1,
-          "trend": 100,
-          "trendPct": 0.01,
+          "trend": -524,
+          "trendPct": -0.05,
           "status": null,
           "sidelined": false,
-          "tag": null,
-          "tagBy": null,
+          "tag": "buy_low",
+          "tagBy": "research",
           "form": {
-            "g": 8,
-            "ppg": 26.7,
+            "g": 9,
+            "ppg": 28.6,
             "proj": 25.1,
-            "perf": 1.06,
-            "snap": 77,
-            "tgtShare": 17,
-            "tpg": 5.6,
-            "touches": 26.4,
-            "rz": 6.3
+            "perf": 1.14,
+            "snap": 76,
+            "tgtShare": 18,
+            "tpg": 5.9,
+            "touches": 26.7,
+            "rz": 5.9
           }
         },
         {
@@ -124,46 +124,42 @@
           "n": "Omarion Hampton",
           "p": "RB",
           "t": "LAC",
-          "v": 2822,
-          "pr": 18,
-          "trend": -841,
-          "trendPct": -0.23,
+          "v": 2546,
+          "pr": 23,
+          "trend": -662,
+          "trendPct": -0.21,
           "status": null,
           "sidelined": false,
           "tag": "buy_low",
-          "tagBy": "numbers",
+          "tagBy": "research",
           "form": {
-            "g": 8,
-            "ppg": 9,
-            "proj": 11.7,
-            "perf": 0.77,
-            "snap": 43,
+            "g": 9,
+            "ppg": 10,
+            "proj": 11.3,
+            "perf": 0.88,
+            "snap": 45,
             "tgtShare": 6,
-            "tpg": 1.6,
-            "touches": 14.1,
-            "rz": 2
+            "tpg": 1.7,
+            "touches": 15.1,
+            "rz": 2.1
           }
         }
       ],
       "value": {
-        "give": 14392,
-        "get": 13056,
-        "giveAdj": 13109,
-        "getAdj": 12492,
-        "diffPct": -0.06,
+        "give": 14283,
+        "get": 12927,
+        "giveAdj": 12939,
+        "getAdj": 12418,
+        "diffPct": -0.05,
         "fair": true,
         "verdict": "You pay a little more"
       },
       "you": {
-        "gainPct": -0.1,
+        "gainPct": 0.3,
         "changes": {
           "in": [
             {
               "n": "Jahmyr Gibbs",
-              "slot": "RB"
-            },
-            {
-              "n": "Omarion Hampton",
               "slot": "RB"
             },
             {
@@ -173,15 +169,11 @@
           ],
           "out": [
             {
-              "n": "Drake Maye",
+              "n": "Caleb Williams",
               "slot": "QB"
             },
             {
               "n": "Kenneth Walker III",
-              "slot": "RB"
-            },
-            {
-              "n": "Jonah Coleman",
               "slot": "RB"
             }
           ]
@@ -189,73 +181,281 @@
         "drop": null
       },
       "them": {
-        "gainPct": 0.3
+        "gainPct": 0
       },
-      "headline": "Package sell-high Drake Maye and Kenneth Walker III for workhorse Jahmyr Gibbs plus a buy-low Omarion Hampton",
-      "summary": "You turn a QB whose trade value has peaked and a cooling-off RB into the clear best running back in the deal, upgrading your thin RB spot without giving up real ground on value.",
-      "confidence": "high",
+      "headline": "Sell a cooling QB1 and an injury-prone RB for a true workhorse plus a discounted rookie",
+      "summary": "You flip Caleb Williams and Kenneth Walker III to The Galactic Empire for Jahmyr Gibbs and Omarion Hampton, turning your thinnest position into a strength.",
+      "confidence": "medium",
       "why": {
         "give": [
-          "Maye's buy-low window closed weeks ago as his price kept climbing; his value is riding a rising QB1-in-superflex premium that's unlikely to go higher from here.",
-          "Walker is a true workhorse right now (23.1 touches/g, 5.3 red-zone touches/g), but his FantasyCalc value is already down 8% over 30 days, so you're not even selling at the peak tick — just before it slides further."
+          "Caleb Williams' dynasty value has cooled since midsummer even as his box score stays solid, a sign the market has soured on the profile.",
+          "Kenneth Walker III was ruled out in Week 10 with a groin injury, missing practice all week before being downgraded.",
+          "Andy Reid's Chiefs backfields have a long history of spreading touches once everyone is healthy, capping Walker's role."
         ],
         "get": [
-          "Jahmyr Gibbs is healthy and still Detroit's clear lead back entering Week 10 (off the injury report, 26.4 touches/g, 77% snap share), and this deal lets you buy the best player in the trade without paying a premium on top of what you're giving up.",
-          "Omarion Hampton is still Los Angeles' nominal starter, but multiple reports describe a genuinely shrinking role under a new OC's three-way rotation, not just a market overreaction — treat him as a cheap, speculative stash rather than a clear buy-low."
+          "Jahmyr Gibbs just posted two touchdowns in a blowout of the Patriots and faces no real timeshare threat in Detroit.",
+          "Omarion Hampton is active and playing now, but his value is down 21% in 30 days as the Chargers lean on a rotation that's capped him at 45% snaps.",
+          "He was the clear lead back earlier this season; a dynasty roster can carry the committee risk for a RB this talented at a 21%-off price."
         ],
         "you": [
-          "Gibbs and Hampton both start at RB, directly fixing your thinnest position.",
-          "Zay Flowers simply slides into the vacated SUPER_FLEX spot, so you don't lose a starter anywhere else.",
-          "Maye, Walker and the marginal Jonah Coleman all come off your 53-man mix."
+          "Jahmyr Gibbs starts immediately at RB, fixing your thinnest roster spot.",
+          "Zay Flowers moves into your starting lineup once Caleb Williams leaves; Drake Maye, McCarthy and Shough keep your QB room deep."
         ],
         "them": [
-          "The Galactic Empire sit 5-4 and are deep at QB and RB already, but they still bench their own starting QB (Jared Goff) for Maye and start Walker over Hampton — a straight upgrade at both spots even without a positional need.",
-          "They're thin at WR/TE, which this trade doesn't touch, so it reads to them as pure value: better player at a spot they already play, not a reach."
+          "The Galactic Empire are thin at QB; Williams becomes their starter right away.",
+          "They're deep at RB already, so Walker is luxury upside on a 6-4 team already built to wait out his injury."
         ],
         "experts": [
-          "A Week 6 2026 trade value chart says any buy-low window on Maye 'slammed shut' as AJ Brown's return inflated his price further (rotostreetjournal.com).",
-          "Gibbs is off Detroit's Week 10 injury report entirely and remains the clear focal point of the offense (profootballnetwork.com).",
-          "Hampton's rush-success rate has fallen from 42% to 37% under new OC Mike McDaniel's 'hot hand' committee approach, and separate reports independently describe his role as genuinely shrinking, not just undervalued by the market (roundtable.io, abc30.com)."
+          "A dynasty manager said in August they'd been trying to trade Williams away without finding a taker, even while pushing hard.",
+          "The Chiefs ruled Walker out on Nov. 14 with a groin injury after he missed practice with it that week.",
+          "Hampton's 30-day value has dropped 21% while the Chargers rotate backs, even though he's active and still the most talented back in that room."
         ]
       },
       "risks": [
-        "Maye's price is already near its ceiling, so there's less margin if the partner balks or a better offer doesn't come along.",
-        "If McDaniel keeps spreading touches around the Chargers backfield, Hampton's role stays capped — this is a speculative stash, not a lock to pay off this year.",
-        "Concentrating your RB room around one workhorse (Gibbs) raises your injury risk at a thin position."
+        "Walker's groin issue could linger into a multi-week absence, further depressing his value before this fully plays out.",
+        "If the Chargers keep rotating backs instead of re-establishing Hampton as the lead, his price may not recover this season."
       ],
       "sources": [
         {
-          "title": "2026 Fantasy Football Week 6 Trade Value Chart",
-          "url": "https://www.rotostreetjournal.com/2026/10/13/2026-fantasy-football-week-6-trade-value-chart/"
+          "title": "The Caleb Williams Crossroads: Why Fantasy Managers Are Cooling on the Bears QB",
+          "url": "https://www.profootballnetwork.com/?p=1013105"
         },
         {
-          "title": "Jahmyr Gibbs Fantasy Hub: Week 10 Injury Update, Start/Sit Advice, Projections, and More",
-          "url": "https://www.profootballnetwork.com/?p=702911"
+          "title": "Chiefs rule Kenneth Walker out against Falcons with groin injury",
+          "url": "https://www.kctv5.com/2026/11/14/chiefs-rule-kenneth-walker-out-against-falcons-with-groin-injury/?outputType=amp"
         },
         {
-          "title": "Mike McDaniel needs to commit to Omarion Hampton",
-          "url": "https://roundtable.io/sports/nfl/chargers/opinion/mike-mcdaniel-needs-to-commit-to-omarion-hampton"
-        },
-        {
-          "title": "Why is Chargers RB Omarion Hampton's snap count decreasing?",
-          "url": "https://abc30.com/post/is-chargers-rb-omarion-hamptons-snap-count-decreasing/19947238/"
+          "title": "Jahmyr Gibbs Has Two TDs in Big Win vs. Patriots",
+          "url": "https://www.rotoballer.com/?p=1994638"
         }
       ]
     },
     {
-      "id": "v412o2",
+      "id": "g9sxb9",
       "partner": {
-        "roster_id": 7,
-        "name": "Elite 11 QB camp",
-        "user": "JohnStruyk",
-        "record": "1-8",
+        "roster_id": 8,
+        "name": "Beat My Kids Tour 2026",
+        "user": "davemyos",
+        "record": "9-1",
         "thin": [
-          "RB",
+          "TE",
           "WR"
         ],
         "deep": [
           "QB",
-          "TE"
+          "RB"
+        ]
+      },
+      "give": [
+        {
+          "id": "12517",
+          "n": "Colston Loveland",
+          "p": "TE",
+          "t": "CHI",
+          "v": 4006,
+          "pr": 3,
+          "trend": 498,
+          "trendPct": 0.14,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 9,
+            "ppg": 9.5,
+            "proj": 10.6,
+            "perf": 0.89,
+            "snap": 87,
+            "tgtShare": 19,
+            "tpg": 6.3,
+            "touches": null,
+            "rz": 1.1
+          }
+        },
+        {
+          "id": "8131",
+          "n": "Isaiah Likely",
+          "p": "TE",
+          "t": "NYG",
+          "v": 3527,
+          "pr": 4,
+          "trend": 523,
+          "trendPct": 0.17,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 9,
+            "ppg": 18.1,
+            "proj": 11.7,
+            "perf": 1.54,
+            "snap": 77,
+            "tgtShare": 27,
+            "tpg": 8.9,
+            "touches": null,
+            "rz": 1.1
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "6813",
+          "n": "Jonathan Taylor",
+          "p": "RB",
+          "t": "IND",
+          "v": 4535,
+          "pr": 7,
+          "trend": -1133,
+          "trendPct": -0.2,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 10,
+            "ppg": 17.4,
+            "proj": 19.1,
+            "perf": 0.91,
+            "snap": 76,
+            "tgtShare": 13,
+            "tpg": 4,
+            "touches": 20.5,
+            "rz": 3.4
+          }
+        },
+        {
+          "id": "7525",
+          "n": "DeVonta Smith",
+          "p": "WR",
+          "t": "PHI",
+          "v": 2796,
+          "pr": 23,
+          "trend": -394,
+          "trendPct": -0.12,
+          "status": "Out",
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 4,
+            "ppg": 17.3,
+            "proj": 14.4,
+            "perf": 1.2,
+            "snap": 86,
+            "tgtShare": 33,
+            "tpg": 10.3,
+            "touches": null,
+            "rz": 0.8
+          }
+        }
+      ],
+      "value": {
+        "give": 7533,
+        "get": 7331,
+        "giveAdj": 6828,
+        "getAdj": 6772,
+        "diffPct": -0.012,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "gainPct": 2.1,
+        "changes": {
+          "in": [
+            {
+              "n": "Jonathan Taylor",
+              "slot": "RB"
+            },
+            {
+              "n": "Harold Fannin Jr.",
+              "slot": "TE"
+            }
+          ],
+          "out": [
+            {
+              "n": "Jonah Coleman",
+              "slot": "RB"
+            },
+            {
+              "n": "Isaiah Likely",
+              "slot": "TE"
+            }
+          ]
+        },
+        "drop": {
+          "id": "11199",
+          "n": "Emari Demercado",
+          "p": "RB",
+          "v": 175
+        }
+      },
+      "them": {
+        "gainPct": 2.9
+      },
+      "headline": "Flip a redundant TE and a hot one for a workhorse RB1 and an elite WR1 who's cheap because he's hurt",
+      "summary": "You send Colston Loveland and Isaiah Likely to the league's 9-1 team for Jonathan Taylor and DeVonta Smith, upgrading RB and banking a discounted elite WR.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Loveland is running a 19% target share but producing under his projection (0.89x) — his price is up 14% in 30 days on name value, not production, and you already have Likely and Fannin at the position.",
+          "Likely just posted 127 yards and a 66-yard touchdown on 9-of-11 targets, his third big scoring week in four — a pace that regresses."
+        ],
+        "get": [
+          "Jonathan Taylor is still handling a bellcow role (20.5 touches, 3.4 red-zone touches per game) despite Indianapolis's stated plan to manage his snaps.",
+          "His price has fallen 20% in 30 days even though the role has barely changed.",
+          "DeVonta Smith is out with a hamstring injury, which is exactly why he's priced at a discount; before it he was running an 86% snap share and a 33% target share, both career highs."
+        ],
+        "you": [
+          "Jonathan Taylor walks into your starting backfield immediately, fixing your thinnest position; Jonah Coleman drops to the bench since Taylor is the better play.",
+          "Harold Fannin Jr. replaces Likely as your starting TE with no real drop-off; you drop Emari Demercado to make room."
+        ],
+        "them": [
+          "This partner is 9-1 and thin at TE and WR; Likely and Loveland fill both needs right as their roster pushes for the playoffs."
+        ],
+        "experts": [
+          "Isaiah Likely's 127-yard, one-touchdown Week 10 game against Washington was his third strong outing in four weeks.",
+          "Reports from October say there wasn't 'much optimism' Smith would play through his hamstring injury, and he was expected to miss multiple games.",
+          "The Colts' own coaching staff has said publicly it wants to lighten Taylor's workload, yet his touches per game haven't meaningfully dropped."
+        ]
+      },
+      "risks": [
+        "If Smith's hamstring lingers into December, you're banking future value instead of production during your playoff push.",
+        "Loveland and Likely could keep producing if Taylor's workload erodes further under Indianapolis's stated plan."
+      ],
+      "sources": [
+        {
+          "title": "Isaiah Likely Torments Commanders' Secondary on TNF",
+          "url": "https://www.rotoballer.com/?p=1992062"
+        },
+        {
+          "title": "Colston Loveland 2026 Outlook",
+          "url": "https://www.fantasypros.com/nfl/notes/419896/colston-loveland-2026-outlook.php"
+        },
+        {
+          "title": "Colts aiming to take some of that workload off RB Jonathan Taylor in 2026",
+          "url": "https://mobile-www.nfl.com/news/colts-aiming-to-take-some-of-that-workload-off-rb-jonathan-taylor-in-2026"
+        },
+        {
+          "title": "DeVonta Smith injured: latest news, Eagles WR's status amid hamstring issue",
+          "url": "https://bleacherreport.com/articles/25505671-devonta-smith-injured-latest-news-eagles-wrs-status-vs-rams-amid-hamstring-issue"
+        }
+      ]
+    },
+    {
+      "id": "il5wry",
+      "partner": {
+        "roster_id": 6,
+        "name": "28AllDay",
+        "user": "28AllDay",
+        "record": "6-4",
+        "thin": [
+          "WR",
+          "QB"
+        ],
+        "deep": [
+          "TE",
+          "RB"
         ]
       },
       "give": [
@@ -264,10 +464,10 @@
           "n": "Luther Burden III",
           "p": "WR",
           "t": "CHI",
-          "v": 4274,
-          "pr": 13,
-          "trend": 965,
-          "trendPct": 0.29,
+          "v": 4569,
+          "pr": 10,
+          "trend": 1417,
+          "trendPct": 0.45,
           "status": "Questionable",
           "sidelined": false,
           "tag": "sell_high",
@@ -279,71 +479,71 @@
             "perf": 1.32,
             "snap": 59,
             "tgtShare": 22,
-            "tpg": 7.2,
+            "tpg": 7.3,
             "touches": null,
             "rz": 1.4
           }
         },
         {
-          "id": "11586",
-          "n": "Blake Corum",
+          "id": "12481",
+          "n": "Cam Skattebo",
           "p": "RB",
-          "t": "LAR",
-          "v": 1999,
-          "pr": 29,
-          "trend": 418,
-          "trendPct": 0.26,
+          "t": "NYG",
+          "v": 2761,
+          "pr": 20,
+          "trend": 303,
+          "trendPct": 0.12,
           "status": null,
           "sidelined": false,
           "tag": "sell_high",
           "tagBy": "research",
           "form": {
-            "g": 9,
-            "ppg": 10.5,
-            "proj": 8.1,
-            "perf": 1.3,
-            "snap": 31,
-            "tgtShare": 5,
-            "tpg": 1.9,
-            "touches": 10.7,
-            "rz": 1.4
+            "g": 8,
+            "ppg": 12.5,
+            "proj": 12.9,
+            "perf": 0.96,
+            "snap": 59,
+            "tgtShare": 6,
+            "tpg": 2.1,
+            "touches": 16.3,
+            "rz": 2.3
           }
         }
       ],
       "get": [
         {
-          "id": "11834",
-          "n": "Devaughn Vele",
-          "p": "WR",
-          "t": "NO",
-          "v": 1089,
-          "pr": 74,
-          "trend": -349,
-          "trendPct": -0.24,
+          "id": "421",
+          "n": "Matthew Stafford",
+          "p": "QB",
+          "t": "LAR",
+          "v": 2329,
+          "pr": 22,
+          "trend": -658,
+          "trendPct": -0.22,
           "status": null,
           "sidelined": false,
           "tag": "buy_low",
-          "tagBy": "numbers",
+          "tagBy": "research",
           "form": {
-            "g": 8,
-            "ppg": 11.2,
-            "proj": 9.9,
-            "perf": 1.12,
-            "snap": 92,
-            "tgtShare": 18,
-            "tpg": 6.5,
+            "g": 10,
+            "ppg": 19.9,
+            "proj": 20.5,
+            "perf": 0.97,
+            "snap": 99,
+            "tgtShare": null,
+            "tpg": null,
             "touches": null,
-            "rz": 0.9
+            "rz": 0.6
           }
         },
         {
-          "id": "pick_2027_1_7",
+          "id": "pick_2027_1_6",
           "n": "2027 1st (Early)",
           "p": "PICK",
           "t": "own",
-          "v": 4975,
+          "v": 4915,
           "pr": null,
-          "trend": -69,
+          "trend": -37,
           "trendPct": -0.01,
           "status": null,
           "sidelined": false,
@@ -354,20 +554,20 @@
           "season": 2027,
           "round": 1,
           "slot": "early",
-          "from": 7
+          "from": 6
         }
       ],
       "value": {
-        "give": 6273,
-        "get": 6064,
-        "giveAdj": 5873,
-        "getAdj": 5846,
-        "diffPct": -0.005,
+        "give": 7330,
+        "get": 7244,
+        "giveAdj": 6778,
+        "getAdj": 6778,
+        "diffPct": 0,
         "fair": true,
         "verdict": "Even"
       },
       "you": {
-        "gainPct": 0.5,
+        "gainPct": 0.3,
         "changes": {
           "in": [
             {
@@ -385,105 +585,244 @@
         "drop": null
       },
       "them": {
-        "gainPct": 19
+        "gainPct": 9.4
       },
-      "headline": "Flip hot rookie Luther Burden III and timeshare back Blake Corum for a cheap WR plus a safer 2027 Early 1st",
-      "summary": "You cash out two TD-driven, boom-or-bust pieces near their peak price for a future first your own league's draft history says rarely busts.",
+      "headline": "Cash out a concussion-protocol rookie's hot streak and a boom-bust RB for a 2027 early first",
+      "summary": "You send Luther Burden III and Cam Skattebo to 28AllDay for Matthew Stafford and a 2027 early first-round pick.",
       "confidence": "medium",
       "why": {
         "give": [
-          "Burden is currently Questionable and boom-or-bust: a 7-catch, 56-yard, 1-TD explosion against Seattle, but zero second-half targets in his breakout outing against the Patriots, while splitting the Bears' passing game with Rome Odunze and Colston Loveland.",
-          "Corum's 31% snap share and 1.3x performance over projection are a hot stretch, not a bigger role — the Rams' own plan still has Kyren Williams projected for roughly 51.5% of carries to Corum's 36.5%."
+          "Burden just finished a three-game stretch as a legitimate WR1 before landing in concussion protocol; one Week 11 preview still calls his role risky and inconsistent.",
+          "Skattebo alternates between huge weeks (two touchdowns in Week 10) and disappearing acts (zero carries, six snaps in Week 6) tied to fumble issues."
         ],
         "get": [
-          "This league's own rookie-pick history shows Early first-round picks have realized a median 4,072 in value against a 4,975 market price (about 18% below market) but with only a 4% bust rate — and three of your own best-ever hits (Jaxon Smith-Njigba, Jahmyr Gibbs, Bijan Robinson) came from that exact slot.",
-          "Devaughn Vele is a minor throw-in to balance value, not a reason to make the deal."
+          "Stafford is still a near-every-down, efficient starter (99% snap share, right at his season-long projection) despite a 22% value drop in 30 days.",
+          "The drop looks tied to retirement speculation and the Rams drafting Ty Simpson, not his actual play.",
+          "The attached 2027 early first is real capital in a league whose own first-round picks have outperformed their market price historically."
         ],
         "you": [
-          "Zay Flowers moves into the vacated FLEX spot once Burden leaves, so your lineup stays full.",
-          "You bank an Early 2027 1st that, per your own draft history, is one of the safer pick slots to hold rather than a plain WR/RB asset carrying weekly injury and role risk."
+          "Zay Flowers moves into your starting lineup once Burden leaves, with no lineup downgrade.",
+          "The pick restocks your 2027 capital, and Stafford is rock-solid QB depth or trade bait in a superflex format."
         ],
         "them": [
-          "Elite 11 QB camp are 1-8 and thin at RB/WR; Burden and Corum are proven roster talent they need now, more than a pick three years out.",
-          "They have to cut a zero-value roster spot (Tanner Koziol) just to fit this trade, which tells you how much they want the immediate talent upgrade."
+          "28AllDay (6-4) are thin at WR and QB; Burden fills a need at a hot moment, and Skattebo adds depth behind a deep-but-unproven RB room."
         ],
         "experts": [
-          "Chicago Sun-Times: the Bears are getting a surge from Colston Loveland and Luther Burden 'at just the right time' as the playoff race heats up (chicago.suntimes.com).",
-          "DraftSharks: Burden matched Loveland for the team lead in targets with a 7-of-9, 56-yard, 1-TD day against Seattle (draftsharks.com).",
-          "Roundtable.io and DraftSharks both frame the Rams backfield as trending toward a split rather than a clear Corum takeover (roundtable.io, draftsharks.com)."
+          "A Draft Sharks piece detailed Burden's three-game WR1 run ending in concussion protocol, and a Bear Digest start/sit column still had him as a sit for Week 11.",
+          "Skattebo has fumbled four times in his last five games, which one outlet ties directly to his limited usage in close games.",
+          "Rams GM Les Snead has said Stafford is 'closer to retirement than not,' weighing on his long-term trade value even as he keeps playing well."
         ]
       },
       "risks": [
-        "Burden's Questionable tag could mean missed snaps right away, which would make this look like a bad time to sell in hindsight.",
-        "If the Rams lean into Corum more than projected, you've sold before the real payoff.",
-        "Even a 4% bust rate on the pick means there's some chance this is just a worse player than Burden in three years."
+        "If Burden stays healthy and his target share keeps climbing, this looks like selling too early.",
+        "Stafford's retirement timeline is genuinely unresolved, so his dynasty value could keep sliding regardless of his 2026 play."
       ],
       "sources": [
         {
-          "title": "Bears get surge from Colston Loveland, Luther Burden at just the right time",
-          "url": "https://chicago.suntimes.com/bears/2026/10/24/bears-colston-loveland-luther-burden-surge-right-time-ben-johnson-caleb-williams-patriots-thursday-night-football"
+          "title": "Luther Burden's 3-Game WR1 Run Hits Concussion Protocol",
+          "url": "https://www.draftsharks.com/fantasy-football-news/84092/luther-burdens-3-game-wr1-run-hits-concussion-protocol"
         },
         {
-          "title": "Luther Burden burns Seattle for 7-56-1 and another WR1 week",
-          "url": "https://www.draftsharks.com/fantasy-football-news/83939/luther-burden-burns-seattle-for-7-56-1-and-another-wr1-week"
+          "title": "Start/Sit: Chicago Bears Players Fantasy Football Week 11",
+          "url": "https://www.si.com/nfl/bears/onsi/news/start-sit-chicago-bears-players-fantasy-football-week-11-caleb-williams-rome-odunze"
         },
         {
-          "title": "Rams' Blake Corum could force bigger split carry role",
-          "url": "https://roundtable.io/sports/nfl/rams/news/rams-blake-corum-could-force-bigger-split-carry-role"
+          "title": "Cam Skattebo points his fumble history as reason for limited late action in Week 10 TNF",
+          "url": "https://bolavip.com/en/nfl/cam-skattebo-points-his-fumble-history-vs-commanders-as-the-reason-for-limited-late-action-in-week-10-tnf"
+        },
+        {
+          "title": "What Matthew Stafford's Extension Means for His Future With the Rams",
+          "url": "https://www.si.com/nfl/rams/onsi/what-matthew-stafford-extension-means-for-rams-future"
         }
       ]
     },
     {
-      "id": "1t2rydf",
+      "id": "1e6ygnu",
       "partner": {
-        "roster_id": 10,
-        "name": "Simon3y",
-        "user": "Simon3y",
-        "record": "3-6",
+        "roster_id": 11,
+        "name": "Katseye Dad",
+        "user": "jyouakim",
+        "record": "3-7",
         "thin": [
-          "WR",
+          "TE",
           "QB"
         ],
         "deep": [
-          "TE",
-          "RB"
+          "RB",
+          "WR"
         ]
       },
       "give": [
         {
-          "id": "12517",
-          "n": "Colston Loveland",
+          "id": "12506",
+          "n": "Harold Fannin Jr.",
           "p": "TE",
-          "t": "CHI",
-          "v": 4171,
-          "pr": 3,
-          "trend": 246,
-          "trendPct": 0.06,
+          "t": "CLE",
+          "v": 3192,
+          "pr": 6,
+          "trend": 431,
+          "trendPct": 0.16,
           "status": null,
           "sidelined": false,
-          "tag": null,
-          "tagBy": null,
+          "tag": "sell_high",
+          "tagBy": "research",
           "form": {
-            "g": 9,
-            "ppg": 9.5,
-            "proj": 10.6,
-            "perf": 0.89,
+            "g": 10,
+            "ppg": 12.2,
+            "proj": 10.8,
+            "perf": 1.14,
             "snap": 87,
-            "tgtShare": 19,
+            "tgtShare": 20,
+            "tpg": 6.2,
+            "touches": null,
+            "rz": 0.4
+          }
+        }
+      ],
+      "get": [
+        {
+          "id": "13346",
+          "n": "Denzel Boston",
+          "p": "WR",
+          "t": "CLE",
+          "v": 2312,
+          "pr": 29,
+          "trend": -466,
+          "trendPct": -0.17,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 10,
+            "ppg": 11.1,
+            "proj": 10.1,
+            "perf": 1.11,
+            "snap": 90,
+            "tgtShare": 20,
             "tpg": 6.3,
             "touches": null,
-            "rz": 1.1
+            "rz": 1
           }
         },
+        {
+          "id": "4199",
+          "n": "Aaron Jones Sr.",
+          "p": "RB",
+          "t": "MIN",
+          "v": 1149,
+          "pr": 49,
+          "trend": -275,
+          "trendPct": -0.19,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 9,
+            "ppg": 10.8,
+            "proj": 12.1,
+            "perf": 0.9,
+            "snap": 58,
+            "tgtShare": 10,
+            "tpg": 2.6,
+            "touches": 15.9,
+            "rz": 2.3
+          }
+        }
+      ],
+      "value": {
+        "give": 3192,
+        "get": 3461,
+        "giveAdj": 3192,
+        "getAdj": 3231,
+        "diffPct": 0.012,
+        "fair": true,
+        "verdict": "Even"
+      },
+      "you": {
+        "gainPct": -0.1,
+        "changes": {
+          "in": [],
+          "out": []
+        },
+        "drop": {
+          "id": "11199",
+          "n": "Emari Demercado",
+          "p": "RB",
+          "v": 175
+        }
+      },
+      "them": {
+        "gainPct": 11
+      },
+      "headline": "Trade a hot teammate tight end for his own offense's breakout rookie WR plus a veteran RB",
+      "summary": "You send Harold Fannin Jr. to Katseye Dad for Denzel Boston and Aaron Jones Sr., turning a redundant hot TE into usable WR and RB depth.",
+      "confidence": "medium",
+      "why": {
+        "give": [
+          "Fannin is in the middle of a strong stretch (87% snap share, 20% target share, trending up 16% in 30 days) — exactly the kind of price spike to sell into.",
+          "You're rostering three TEs with real sell-high value right now (Loveland, Likely, Fannin); Fannin is the one to cash in since his price is at a 30-day high."
+        ],
+        "get": [
+          "Denzel Boston, Cleveland's second-round rookie, leads all rookie receivers in yards through the first month and already has a 55-yard touchdown.",
+          "He plays in the exact same offense as Fannin, so the role is verifiable rather than speculative.",
+          "Aaron Jones Sr. adds a credible veteran complement in a league where you're thin at RB."
+        ],
+        "you": [
+          "No lineup change today, but you clear a redundant hot-name bench TE for pieces at positions you actually need.",
+          "You drop Emari Demercado (21% snap share, under 2 points per game) to make room."
+        ],
+        "them": [
+          "Katseye Dad are rebuilding at 3-7 and thin at TE; Fannin fills a long-term hole with a player producing right now."
+        ],
+        "experts": [
+          "Harold Fannin Jr. has emerged as a key target for Deshaun Watson in Cleveland's offense this season, with his value trending up.",
+          "Denzel Boston leads all rookie receivers in yards and has a 55-yard touchdown fueling the Browns' hot start, on the same 20% target share as Fannin.",
+          "Browns coach Todd Monken has specifically called for a bigger red-zone role for Boston as a size matchup at receiver."
+        ]
+      },
+      "risks": [
+        "If Fannin's role keeps climbing ahead of Boston's, you've sold the better long-term tight end.",
+        "Boston's rookie workload could cool once Cleveland's other receivers are fully healthy."
+      ],
+      "sources": [
+        {
+          "title": "Harold Fannin Jr. Emerges as Key Target for Deshaun Watson",
+          "url": "https://fantasynerds.com/news/story/2026/10/26/harold-fannin-jr-emerges-as-key-target-for-deshaun-watson-1661420"
+        },
+        {
+          "title": "Rookie WR Boston Making Major Impact to Fuel Browns' Hot Start",
+          "url": "https://www.tsn.ca/nfl/article/rookie-wr-boston-making-major-impact-to-fuel-browns-hot-start/"
+        }
+      ]
+    },
+    {
+      "id": "4rveog",
+      "partner": {
+        "roster_id": 2,
+        "name": "Mother Theresa’s child",
+        "user": "paigie123456789",
+        "record": "5-5",
+        "thin": [
+          "QB",
+          "RB"
+        ],
+        "deep": [
+          "TE",
+          "WR"
+        ]
+      },
+      "give": [
         {
           "id": "13345",
           "n": "Jonah Coleman",
           "p": "RB",
           "t": "DEN",
-          "v": 2588,
-          "pr": 23,
-          "trend": 818,
-          "trendPct": 0.46,
+          "v": 3000,
+          "pr": 18,
+          "trend": 1179,
+          "trendPct": 0.65,
           "status": null,
           "sidelined": false,
           "tag": "sell_high",
@@ -499,75 +838,95 @@
             "touches": 12,
             "rz": 2.6
           }
+        },
+        {
+          "id": "9502",
+          "n": "Tank Dell",
+          "p": "WR",
+          "t": "HOU",
+          "v": 1510,
+          "pr": 50,
+          "trend": 701,
+          "trendPct": 0.87,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 3,
+            "ppg": 12.4,
+            "proj": 4.2,
+            "perf": 2.97,
+            "snap": 40,
+            "tgtShare": 14,
+            "tpg": 4.7,
+            "touches": null,
+            "rz": 0.3
+          }
         }
       ],
       "get": [
         {
-          "id": "8138",
-          "n": "James Cook III",
-          "p": "RB",
-          "t": "BUF",
-          "v": 4890,
-          "pr": 5,
-          "trend": -548,
-          "trendPct": -0.1,
+          "id": "11624",
+          "n": "Xavier Worthy",
+          "p": "WR",
+          "t": "KC",
+          "v": 1281,
+          "pr": 60,
+          "trend": -373,
+          "trendPct": -0.23,
           "status": null,
           "sidelined": false,
           "tag": "buy_low",
           "tagBy": "research",
           "form": {
-            "g": 8,
-            "ppg": 19,
-            "proj": 17.1,
-            "perf": 1.12,
-            "snap": 65,
-            "tgtShare": 8,
-            "tpg": 2.3,
-            "touches": 22.6,
-            "rz": 4.3
+            "g": 9,
+            "ppg": 7.4,
+            "proj": 9.8,
+            "perf": 0.76,
+            "snap": 83,
+            "tgtShare": 18,
+            "tpg": 5.6,
+            "touches": null,
+            "rz": 0.9
           }
         },
         {
-          "id": "12489",
-          "n": "RJ Harvey",
-          "p": "RB",
-          "t": "DEN",
-          "v": 1575,
-          "pr": 37,
-          "trend": -366,
-          "trendPct": -0.19,
-          "status": "IR",
-          "sidelined": true,
+          "id": "pick_2027_1_1",
+          "n": "2027 1st (Mid)",
+          "p": "PICK",
+          "t": "via Pint-Sized Punishers",
+          "v": 3236,
+          "pr": null,
+          "trend": -25,
+          "trendPct": -0.01,
+          "status": null,
+          "sidelined": false,
           "tag": null,
           "tagBy": null,
-          "form": {
-            "g": 6,
-            "ppg": 12.2,
-            "proj": 10.8,
-            "perf": 1.13,
-            "snap": 39,
-            "tgtShare": 17,
-            "tpg": 4.7,
-            "touches": 8.2,
-            "rz": 0.8
-          }
+          "form": null,
+          "isPick": true,
+          "season": 2027,
+          "round": 1,
+          "slot": "mid",
+          "from": 1
         }
       ],
       "value": {
-        "give": 6759,
-        "get": 6465,
-        "giveAdj": 6241,
-        "getAdj": 6150,
-        "diffPct": -0.019,
+        "give": 4510,
+        "get": 4517,
+        "giveAdj": 4208,
+        "getAdj": 4261,
+        "diffPct": 0.016,
         "fair": true,
         "verdict": "Even"
       },
       "you": {
-        "gainPct": 4,
+        "gainPct": 0.4,
         "changes": {
           "in": [
             {
-              "n": "James Cook III",
+              "n": "Cam Skattebo",
               "slot": "RB"
             }
           ],
@@ -581,178 +940,178 @@
         "drop": null
       },
       "them": {
-        "gainPct": 3.6
+        "gainPct": 5.1
       },
-      "headline": "Send bench TE Colston Loveland and sell-high Jonah Coleman for lead-back James Cook III plus RJ Harvey",
-      "summary": "Two pieces with no real path to your lineup turn into a true every-down starter for your thin RB spot.",
-      "confidence": "high",
+      "headline": "Sell two hot, low-cost bench pieces for a full 2027 first-round pick",
+      "summary": "You send Jonah Coleman and Tank Dell to Mother Theresa's child for Xavier Worthy and a 2027 first-round pick (mid).",
+      "confidence": "medium",
       "why": {
         "give": [
-          "Loveland is stuck behind Harold Fannin Jr. on your own roster and never starts for you.",
-          "Coleman's role depends entirely on Denver's backfield staying banged up — the Broncos' own plan has J.K. Dobbins diminishing RJ Harvey's share whenever healthy, and Coleman sits below both of them on the depth chart."
+          "Coleman's value is up 65% in 30 days after reclaiming touches off a four-game ankle absence, but he's still sharing Denver's backfield with J.K. Dobbins and RJ Harvey.",
+          "Tank Dell is producing at nearly 3x his projection on a 40% snap share and 14% target share — about as unsustainable a scoring pace as a sell-high shows."
         ],
         "get": [
-          "James Cook III is a clear every-down Bills back (65% snap share, 22.6 touches/g, 4.3 red-zone touches/g) whose FantasyCalc price has still dipped 10% over 30 days — role fully intact at a discounted price.",
-          "RJ Harvey is the same Denver backfield Coleman is leaving, but has held the steadier role of the two all season."
+          "The headline return is a full 2027 first-round pick; this league's own rookie drafts show first-rounders have hit well above their market price historically.",
+          "Xavier Worthy is still playing an every-down role (83% snap share) but his value is down 23% in 30 days on a disappointing per-target output — a former first-round talent at a real discount."
         ],
         "you": [
-          "James Cook III starts immediately at RB, directly addressing your thinnest position.",
-          "Jonah Coleman, a roster-only piece whose role was never secure, is the only real loss for you."
+          "Cam Skattebo moves into the flex spot Coleman vacates, your only lineup change.",
+          "You're flipping two short-lived hot names for a future first plus a discounted former first-round WR."
         ],
         "them": [
-          "Simon3y sit 3-6 and are thin at WR/QB but deep at TE/RB, yet still gain value here (+3.6%) betting Coleman's role grows as Denver's backfield sorts itself out, while Loveland gives them a TE who could unseat Dalton Schultz even in a position they're already deep at."
+          "Mother Theresa's child (5-5) is thin at RB; Coleman adds a committee piece there, and Dell is cheap WR depth for a team spending a future pick to add win-now production."
         ],
         "experts": [
-          "SI.com: Denver's backfield picture remains the biggest question mark for Coleman's fantasy outlook (si.com).",
-          "FantasyNerds: analysts expect Dobbins to hold the bulk of the early-down work as long as he's healthy, which caps Coleman's upside (fantasynerds.com)."
+          "Jonah Coleman reclaimed a significant role in Denver's backfield in late October after missing four games with an ankle injury, but still shares touches with Dobbins and Harvey.",
+          "One NFL analyst said in a recent piece he has 'major concerns' about Xavier Worthy's outlook in Kansas City given his inconsistent role and recurring injuries this season."
         ]
       },
       "risks": [
-        "If Denver's backfield stays banged up, Coleman's current spike continues and you've sold before the real payoff.",
-        "Buffalo could lean more pass-heavy down the stretch and cap Cook's workload."
+        "This league's own draft history shows a 31%+ bust rate on picks outside Round 1, so even a first-rounder carries real downside.",
+        "Worthy's history of injuries and inconsistent target share this season could keep his price depressed even after this trade."
       ],
       "sources": [
         {
-          "title": "Most Concerning Question Mark Broncos Face with Jonah Coleman",
-          "url": "https://www.si.com/nfl/broncos/onsi/most-concerning-question-mark-broncos-face-with-jonah-coleman"
+          "title": "Jonah Coleman Reclaims Significant Role in Broncos Backfield",
+          "url": "https://fantasynerds.com/news/story/2026/10/26/jonah-coleman-reclaims-significant-role-in-broncos-backfield-1661482"
         },
         {
-          "title": "Broncos Rookie RB Jonah Coleman Emerging as Potential Threat to Roster Spot",
-          "url": "https://fantasynerds.com/news/story/2026/06/26/broncos-rookie-rb-jonah-coleman-emerging-as-potential-threat-to-roster-spot-1562592"
+          "title": "'I Do Have Major Concerns' — NFL Analyst Raises Issues About Xavier Worthy's Outlook for Chiefs in 2026",
+          "url": "https://www.profootballnetwork.com/?p=1492454"
         }
       ]
     },
     {
-      "id": "1kv1tpt",
+      "id": "1kqxa3",
       "partner": {
-        "roster_id": 11,
-        "name": "Katseye Dad",
-        "user": "jyouakim",
-        "record": "3-6",
+        "roster_id": 10,
+        "name": "Simon3y",
+        "user": "Simon3y",
+        "record": "4-6",
         "thin": [
-          "TE",
+          "WR",
           "QB"
         ],
         "deep": [
-          "RB",
-          "WR"
+          "TE",
+          "RB"
         ]
       },
       "give": [
+        {
+          "id": "13298",
+          "n": "KC Concepcion Jr.",
+          "p": "WR",
+          "t": "CLE",
+          "v": 2593,
+          "pr": 26,
+          "trend": 296,
+          "trendPct": 0.13,
+          "status": null,
+          "sidelined": false,
+          "tag": "sell_high",
+          "tagBy": "research",
+          "form": {
+            "g": 10,
+            "ppg": 10.8,
+            "proj": 10.1,
+            "perf": 1.07,
+            "snap": 75,
+            "tgtShare": 20,
+            "tpg": 6.3,
+            "touches": null,
+            "rz": 0.7
+          }
+        },
         {
           "id": "11565",
           "n": "J.J. McCarthy",
           "p": "QB",
           "t": "NYG",
-          "v": 1793,
-          "pr": 30,
-          "trend": 781,
-          "trendPct": 0.77,
-          "status": "Questionable",
-          "sidelined": false,
-          "tag": "sell_high",
-          "tagBy": "research",
-          "form": {
-            "g": 4,
-            "ppg": 10.3,
-            "proj": 8.8,
-            "perf": 1.17,
-            "snap": 49,
-            "tgtShare": null,
-            "tpg": null,
-            "touches": null,
-            "rz": 0.3
-          }
-        },
-        {
-          "id": "12482",
-          "n": "Savion Williams",
-          "p": "WR",
-          "t": "GB",
-          "v": 601,
-          "pr": 93,
-          "trend": 484,
-          "trendPct": 4.14,
+          "v": 2183,
+          "pr": 25,
+          "trend": 684,
+          "trendPct": 0.46,
           "status": null,
           "sidelined": false,
           "tag": "sell_high",
           "tagBy": "research",
           "form": {
-            "g": 4,
-            "ppg": 8.1,
-            "proj": 3.9,
-            "perf": 2.06,
-            "snap": 54,
-            "tgtShare": 9,
-            "tpg": 3.3,
+            "g": 5,
+            "ppg": 13.3,
+            "proj": 10.9,
+            "perf": 1.22,
+            "snap": 58,
+            "tgtShare": null,
+            "tpg": null,
             "touches": null,
-            "rz": 0.8
+            "rz": 0.2
           }
         }
       ],
       "get": [
         {
-          "id": "5872",
-          "n": "Deebo Samuel Sr.",
-          "p": "WR",
-          "t": "SF",
-          "v": 1279,
-          "pr": 62,
-          "trend": -337,
-          "trendPct": -0.21,
-          "status": "Out",
-          "sidelined": true,
-          "tag": null,
-          "tagBy": null,
-          "form": {
-            "g": 5,
-            "ppg": 13.7,
-            "proj": 10.3,
-            "perf": 1.33,
-            "snap": 57,
-            "tgtShare": 15,
-            "tpg": 4,
-            "touches": null,
-            "rz": 1
-          }
-        },
-        {
-          "id": "4199",
-          "n": "Aaron Jones Sr.",
-          "p": "RB",
-          "t": "MIN",
-          "v": 1241,
-          "pr": 45,
-          "trend": -271,
-          "trendPct": -0.18,
+          "id": "6797",
+          "n": "Justin Herbert",
+          "p": "QB",
+          "t": "LAC",
+          "v": 3375,
+          "pr": 19,
+          "trend": -438,
+          "trendPct": -0.11,
           "status": null,
           "sidelined": false,
           "tag": "buy_low",
-          "tagBy": "numbers",
+          "tagBy": "research",
           "form": {
-            "g": 8,
-            "ppg": 10.6,
-            "proj": 12.4,
+            "g": 9,
+            "ppg": 14.8,
+            "proj": 17.5,
             "perf": 0.85,
-            "snap": 60,
-            "tgtShare": 10,
-            "tpg": 2.8,
-            "touches": 16.4,
-            "rz": 1.9
+            "snap": 97,
+            "tgtShare": null,
+            "tpg": null,
+            "touches": null,
+            "rz": 0.8
+          }
+        },
+        {
+          "id": "5045",
+          "n": "Courtland Sutton",
+          "p": "WR",
+          "t": "DEN",
+          "v": 1199,
+          "pr": 67,
+          "trend": 38,
+          "trendPct": 0.03,
+          "status": null,
+          "sidelined": false,
+          "tag": "buy_low",
+          "tagBy": "research",
+          "form": {
+            "g": 9,
+            "ppg": 7.1,
+            "proj": 9.1,
+            "perf": 0.77,
+            "snap": 78,
+            "tgtShare": 18,
+            "tpg": 5.1,
+            "touches": null,
+            "rz": 0.9
           }
         }
       ],
       "value": {
-        "give": 2394,
-        "get": 2520,
-        "giveAdj": 2274,
-        "getAdj": 2272,
+        "give": 4776,
+        "get": 4574,
+        "giveAdj": 4339,
+        "getAdj": 4334,
         "diffPct": -0.001,
         "fair": true,
         "verdict": "Even"
       },
       "you": {
-        "gainPct": 0,
+        "gainPct": 0.1,
         "changes": {
           "in": [],
           "out": []
@@ -760,216 +1119,49 @@
         "drop": null
       },
       "them": {
-        "gainPct": 0.3
+        "gainPct": 0.7
       },
-      "headline": "Clear backup QB J.J. McCarthy and flier Savion Williams for Deebo Samuel Sr. and buy-low Aaron Jones Sr.",
-      "summary": "A pure bench-for-bench swap: you move two pieces with no real path to your lineup for two with at least a shot at touches.",
+      "headline": "Move a buried backup QB and a crowded rookie WR for a former top-5 fantasy arm at a floor price",
+      "summary": "You send KC Concepcion Jr. and J.J. McCarthy to Simon3y for Justin Herbert and Courtland Sutton.",
       "confidence": "low",
       "why": {
         "give": [
-          "McCarthy only landed on your roster because the Giants traded for him in September as Jameis Winston's backup after Jaxson Dart's season-ending injury; he has no real path to snaps, and his +77% 30-day value spike is scarcity noise, not production.",
-          "Savion Williams is a 54%-snap WR4 whose +414% 30-day trend is an outlier that won't hold."
+          "McCarthy's value is up 46% in 30 days even though he's stuck as QB2/emergency behind Jameis Winston on a Giants team showing no urgency to bench its starter.",
+          "Concepcion is stuck in an increasingly crowded Cleveland WR room now that fellow rookie Denzel Boston is also commanding targets."
         ],
         "get": [
-          "Deebo Samuel Sr. returned to San Francisco on a one-year deal but projects as a part-time Z-receiver/'wide back,' a lower ceiling than his old role, yet still a cheap depth add.",
-          "Aaron Jones Sr. is tagged buy-low after exiting Minnesota's Week 9 win over the Colts with a knee injury, but the Vikings have leaned on his production whenever he's been healthy this year."
+          "Herbert remains a full-time starter (97% snap share) whose value has fallen 11% in 30 days while the Chargers are deep in a losing skid, not because of any decline in his own play.",
+          "Courtland Sutton is an established, full-time outside receiver who adds depth you can flip for more immediate value later."
         ],
         "you": [
-          "No starters move in this deal — it only clears dead-weight bench pieces for ones with a plausible path to value."
+          "No immediate lineup change; Herbert is a buy-and-hold stash in a superflex format, and Sutton is pure trade-bait depth.",
+          "You move two pieces that weren't going to produce for your roster this year anyway."
         ],
         "them": [
-          "Katseye Dad are 3-6 and thin at TE/QB; they have to cut a zero-value roster spot (Evan Engram) just to take this on, which shows how much they need the added QB/WR depth."
+          "Simon3y (4-6) is thin at WR and QB; Concepcion gives them a cheap, trending wide receiver and McCarthy is a developmental QB stash."
         ],
         "experts": [
-          "FantasyNerds: Deebo Samuel is set for an expanded but part-time role with the 49ers in the return game, at receiver, and in the backfield (fantasynerds.com).",
-          "NBC Sports: Samuel's 'wide back' role doesn't look especially fantasy-friendly on its own (nbcsports.com).",
-          "ProFootballNetwork: Aaron Jones Sr. exited Minnesota's Week 9 game with a knee issue that remains unresolved (profootballnetwork.com)."
+          "FantasyPros has flagged Herbert as a fantasy dud this season and advises against starting him in most formats, citing a thin supporting cast around him.",
+          "The Giants officially listed McCarthy as QB2 behind Jameis Winston after acquiring him in a trade, with Winston entrenched as the starter.",
+          "Denzel Boston's emergence in Cleveland has created real target competition for Concepcion in the same receiver room."
         ]
       },
       "risks": [
-        "Aaron Jones's knee injury severity isn't confirmed yet — check his status before pulling the trigger.",
-        "If McCarthy ever gets a real shot with the Giants, his value would spike well past this deal's price, so there's real opportunity cost in selling now."
+        "If the Chargers' weapons situation doesn't improve, Herbert's redraft value could keep sliding even though his talent is intact.",
+        "McCarthy could still earn a starting shot in New York if Winston struggles, which would make selling now look premature."
       ],
       "sources": [
         {
-          "title": "Deebo Samuel Set for Expanded Role with 49ers, Including RB and Kick Returner",
-          "url": "https://www.fantasynerds.com/news/story/2026/08/01/deebo-samuel-set-for-expanded-role-with-49ers,-including-rb-and-kick-returner-1585776"
+          "title": "Justin Herbert player page",
+          "url": "https://www.fantasypros.com/nfl/players/justin-herbert.php"
         },
         {
-          "title": "Samuel to play Z WR, 'wide back' in part-time role",
-          "url": "https://www.nbcsports.com/fantasy/football/player-news/2026-08-20/samuel-to-play-z-wr-wide-back-in-part-time-role"
+          "title": "Giants depth chart, 2027 NFL draft picks, salary cap after surprise J.J. McCarthy trade",
+          "url": "https://bleacherreport.com/articles/25504126-giants-depth-chart-2027-nfl-draft-picks-salary-cap-after-surprise-jj-mccarthy-trade-vikings"
         },
         {
-          "title": "Aaron Jones Sr. Injury Update: Latest on Vikings RB After Exiting Week 9 vs. Lions",
-          "url": "https://www.profootballnetwork.com/?p=1178830"
-        }
-      ]
-    },
-    {
-      "id": "1s3ghc9",
-      "partner": {
-        "roster_id": 5,
-        "name": "The Bedouin",
-        "user": "CJ129",
-        "record": "8-1",
-        "thin": [
-          "RB",
-          "TE"
-        ],
-        "deep": [
-          "WR",
-          "QB"
-        ]
-      },
-      "give": [
-        {
-          "id": "pick_2027_2_9",
-          "n": "2027 2nd (Early)",
-          "p": "PICK",
-          "t": "via ChampaignTornadoes",
-          "v": 2029,
-          "pr": null,
-          "trend": -34,
-          "trendPct": -0.02,
-          "status": null,
-          "sidelined": false,
-          "tag": null,
-          "tagBy": null,
-          "form": null,
-          "isPick": true,
-          "season": 2027,
-          "round": 2,
-          "slot": "early",
-          "from": 9
-        },
-        {
-          "id": "pick_2027_2_4",
-          "n": "2027 2nd (Late)",
-          "p": "PICK",
-          "t": "own",
-          "v": 1449,
-          "pr": null,
-          "trend": -26,
-          "trendPct": -0.02,
-          "status": null,
-          "sidelined": false,
-          "tag": null,
-          "tagBy": null,
-          "form": null,
-          "isPick": true,
-          "season": 2027,
-          "round": 2,
-          "slot": "late",
-          "from": 4
-        }
-      ],
-      "get": [
-        {
-          "id": "12509",
-          "n": "Tre' Harris",
-          "p": "WR",
-          "t": "LAC",
-          "v": 989,
-          "pr": 80,
-          "trend": -402,
-          "trendPct": -0.29,
-          "status": null,
-          "sidelined": false,
-          "tag": "buy_low",
-          "tagBy": "numbers",
-          "form": {
-            "g": 7,
-            "ppg": 6.7,
-            "proj": 7.1,
-            "perf": 0.95,
-            "snap": 70,
-            "tgtShare": 18,
-            "tpg": 5,
-            "touches": null,
-            "rz": 0.6
-          }
-        },
-        {
-          "id": "pick_2027_1_4",
-          "n": "2027 1st (Late)",
-          "p": "PICK",
-          "t": "via Bob’s Dynasty",
-          "v": 2525,
-          "pr": null,
-          "trend": -39,
-          "trendPct": -0.02,
-          "status": null,
-          "sidelined": false,
-          "tag": null,
-          "tagBy": null,
-          "form": null,
-          "isPick": true,
-          "season": 2027,
-          "round": 1,
-          "slot": "late",
-          "from": 4
-        }
-      ],
-      "value": {
-        "give": 3478,
-        "get": 3514,
-        "giveAdj": 3188,
-        "getAdj": 3316,
-        "diffPct": 0.051,
-        "fair": true,
-        "verdict": "Slightly in your favor"
-      },
-      "you": {
-        "gainPct": -0.2,
-        "changes": {
-          "in": [],
-          "out": []
-        },
-        "drop": {
-          "id": "8129",
-          "n": "Dameon Pierce",
-          "p": "RB",
-          "v": 294
-        }
-      },
-      "them": {
-        "gainPct": 0.4
-      },
-      "headline": "Consolidate two 2027 second-round picks into a 2027 Late 1st plus a buy-low WR flier",
-      "summary": "You trade a round this league's own history says routinely overpays into a round that almost never busts, buying back your original late 2027 first in the process.",
-      "confidence": "medium",
-      "why": {
-        "give": [
-          "This league's draft history shows second-round picks have realized a median of just 803 at the late slot against a 1,449 market price — nearly 45% below what the market pays, with a 25% bust rate across the round.",
-          "The Early 2027 2nd you're sending is priced closer to fair (market 2,029 vs. a realized median of 1,999 for early seconds in this league), so you're mainly selling the pick that's actually overpriced."
-        ],
-        "get": [
-          "The 2027 1st (Late) you get back is your own original pick, previously traded away — this league's first-round picks carry only a 4% bust rate and have realized value close to market (2,486 realized vs. 2,525 market at the late slot), a far safer round to hold than two seconds.",
-          "Tre' Harris is tagged buy-low off a 29% value drop over 30 days, even though his role (70% snap share, 18% target share) hasn't gone anywhere — he's a minor piece, not the reason for the deal."
-        ],
-        "you": [
-          "No starters move either way — this is a pure draft-capital upgrade, consolidating two picks this league's history says are shaky into one that almost never busts, plus getting your own natural pick back.",
-          "You also drop the inactive Dameon Pierce to make room."
-        ],
-        "them": [
-          "The Bedouin are 8-1 and already deep at WR/QB; they're thin at RB/TE, but take this deal anyway because it turns one parked late 1st into two seconds — more draft volume and more swings at the RB/TE picks they actually need, while shedding a WR (Tre' Harris) they don't."
-        ],
-        "experts": [
-          "Harris has settled in as a clear top-three Chargers receiver behind Ladd McConkey, with reports pegging him around a 93% snap share and a 16-21% target share in recent weeks — his role hasn't shrunk, just his recent price (nbcsports.com, thescore.com)."
-        ]
-      },
-      "risks": [
-        "You're giving up two picks for one, so you lose draft-day flexibility even if the quality upgrade is real.",
-        "A 4% bust rate on the 1st isn't zero — this is a probability bet, not a sure thing."
-      ],
-      "sources": [
-        {
-          "title": "Harris leads Chargers in pass routes",
-          "url": "https://www.nbcsports.com/fantasy/football/player-news/2026-09-13/harris-leads-chargers-in-pass-routes"
-        },
-        {
-          "title": "Chargers' Tre' Harris: Looking at expanded role in 2026",
-          "url": "https://thescore.com/news/3546833"
+          "title": "Rookie WR Boston Making Major Impact to Fuel Browns' Hot Start",
+          "url": "https://www.tsn.ca/nfl/article/rookie-wr-boston-making-major-impact-to-fuel-browns-hot-start/"
         }
       ]
     }
@@ -978,12 +1170,12 @@
   "review": {
     "checked": true,
     "notes": [
-      "Reviewer caught a false claim that Drake Maye lost his 2025 season to injury (he played all of it) — removed, since the sell-high case stands on price alone.",
-      "Reviewer caught that Colston Loveland was offered as the throw-in in two different standalone trades at once (an impossible double-give) — dropped the Breece Hall trade and replaced it with a pick-consolidation trade (two 2027 2nds for a 2027 1st Late plus Tre' Harris) that doesn't touch Loveland.",
-      "Reviewer flagged the Gibbs 'get' bullet for citing a stale Week 1 stat on a current-week health claim — swapped in the Week 10 injury-report status instead.",
-      "Reviewer flagged the Hampton 'get' bullet as too rosy given independently reported role erosion (not just market overreaction) — softened to a speculative stash, not a clear buy-low.",
-      "Reviewer confirmed the Likely/Nabers hold calls (overriding the numbers' sell-high tags) are well supported and that neither appears in any published trade.",
-      "Fixed an ambiguous 'Patriots breakout game' phrasing in the Burden trade."
+      "1ex77qo: Omarion Hampton's injury/bye-rehab storyline was stale (a year-old source); rewrote the buy-low case around his real situation, an active role with a 21% 30-day value drop from a backfield rotation, not an absence.",
+      "g9sxb9: Loveland was wrongly called 'hot' when his perf is 0.89 (underproducing); reframed the sell as roster redundancy plus a rising price despite flat production. Added the Jonah Coleman bench swap to the lineup bullets.",
+      "1e6ygnu: Removed the claim that Boston was outright crowding Fannin's role (both have the same 20% target share per the work file); reframed as cashing in Fannin while you already roster three sell-high TEs.",
+      "4rveog: Xavier Worthy's hamstring-injury framing was stale (status is clear now); reframed the buy-low around his real 23% value drop on an every-down snap share. Fixed self-contradictory lineup wording.",
+      "1kqxa3: Softened an unverified Chargers record and FantasyPros QB27 rank claim that couldn't be re-confirmed; kept the verified -11% 30-day value drop as the core evidence.",
+      "il5wry: no changes; reviewer confirmed all claims against the work file and current reporting."
     ]
   },
   "draft_history": {
@@ -997,86 +1189,86 @@
       {
         "round": 1,
         "n": 48,
-        "median": 2795,
-        "early": 4072,
-        "mid": 2458,
-        "late": 2486,
+        "median": 2726,
+        "early": 3948,
+        "mid": 2524,
+        "late": 2541,
         "busts": 4,
         "best": [
-          {
-            "name": "Jaxon Smith-Njigba",
-            "pos": "WR",
-            "season": "2023",
-            "pick": "1.07",
-            "v": 10452
-          },
           {
             "name": "Jahmyr Gibbs",
             "pos": "RB",
             "season": "2023",
             "pick": "1.05",
-            "v": 10234
+            "v": 10381
+          },
+          {
+            "name": "Jaxon Smith-Njigba",
+            "pos": "WR",
+            "season": "2023",
+            "pick": "1.07",
+            "v": 10280
           },
           {
             "name": "Bijan Robinson",
             "pos": "RB",
             "season": "2023",
             "pick": "1.01",
-            "v": 8928
+            "v": 9438
           }
         ],
         "market": {
-          "early": 4975,
-          "mid": 3276,
-          "late": 2525,
-          "any": 2907
+          "early": 4915,
+          "mid": 3236,
+          "late": 2510,
+          "any": 2849
         }
       },
       {
         "round": 2,
         "n": 48,
-        "median": 1297,
-        "early": 1999,
-        "mid": 619,
-        "late": 803,
-        "busts": 25,
+        "median": 1281,
+        "early": 2107,
+        "mid": 524,
+        "late": 854,
+        "busts": 31,
         "best": [
           {
             "name": "Luther Burden",
             "pos": "WR",
             "season": "2025",
             "pick": "2.01",
-            "v": 4274
-          },
-          {
-            "name": "Jaxson Dart",
-            "pos": "QB",
-            "season": "2025",
-            "pick": "2.02",
-            "v": 4047
+            "v": 4569
           },
           {
             "name": "Devon Achane",
             "pos": "RB",
             "season": "2023",
             "pick": "2.03",
-            "v": 3867
+            "v": 3865
+          },
+          {
+            "name": "Jaxson Dart",
+            "pos": "QB",
+            "season": "2025",
+            "pick": "2.02",
+            "v": 3834
           }
         ],
         "market": {
-          "early": 2029,
-          "mid": 1685,
-          "late": 1449,
-          "any": 1588
+          "early": 2031,
+          "mid": 1698,
+          "late": 1457,
+          "any": 1594
         }
       },
       {
         "round": 3,
         "n": 48,
-        "median": 286,
-        "early": 576,
-        "mid": 84,
-        "late": 343,
+        "median": 256,
+        "early": 563,
+        "mid": 50,
+        "late": 266,
         "busts": 60,
         "best": [
           {
@@ -1084,31 +1276,30 @@
             "pos": "RB",
             "season": "2024",
             "pick": "3.02",
-            "v": 4239
+            "v": 4359
           },
           {
             "name": "Chase Brown",
             "pos": "RB",
             "season": "2023",
             "pick": "3.03",
-            "v": 2819
+            "v": 3119
           },
           {
             "name": "Braelon Allen",
             "pos": "RB",
             "season": "2024",
             "pick": "3.11",
-            "v": 1980
+            "v": 1854
           }
         ],
         "market": {
-          "early": 1269,
-          "mid": 1128,
-          "late": 1033,
-          "any": 1097
+          "early": 1273,
+          "mid": 1129,
+          "late": 1018,
+          "any": 1096
         }
       }
     ]
-  },
-  "started": "2026-11-17T18:55:04.241Z"
+  }
 }
