@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "ready",
+  "status": "running",
   "league_id": "1312115063020081152",
   "league_name": "UMN Dynasty League 🧨",
   "season": "2026",
@@ -988,5 +988,6 @@
       "Verified the Diggs/Jacobs, Lawrence/Purdy and Lawrence/Goff trades against fresh sources; no factual corrections needed there."
     ]
   },
-  "draft_history": null
+  "draft_history": null,
+  "started": "2026-11-24T23:55:43.880Z"
 }
